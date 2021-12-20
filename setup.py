@@ -14,7 +14,7 @@ setup(
     packages=find_packages(),
     entry_points={
         "console_scripts": [
-            "behave-asl = behave_asl.cli:main",
+            "behave-asl = behaveasl.cli:main",
         ]
     },
     url=(
