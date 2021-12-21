@@ -12,7 +12,8 @@ setup(
     description="",
     install_requires=[
         "behave>=1.0.25",
-        "PyYAML==5.4.1",
+        "jsonpath_ng<2.0.0",
+        "PyYAML>=5.4.1",
     ],
     name="behave-asl",
     packages=find_packages(),
