@@ -18,6 +18,7 @@ Feature: Parse json definitions
         }
     }
     """
+    When the state machine executes
 
   Scenario: Incorrect Json
     Given an invalid state machine defined by:
