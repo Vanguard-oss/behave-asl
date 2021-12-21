@@ -70,7 +70,7 @@ def then_execution_ended(context):
     assert context.execution.last_step_result.end_execution
 
 
-@then(u"the execution was successful")
+@then(u"the execution succeeded")
 def then_execution_successful(context):
     assert not context.execution.last_step_result.failed
 
