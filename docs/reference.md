@@ -1,7 +1,6 @@
 # behave-asl Steps
 
-## Given
-### a state machine defined in "filename"
+## Given a state machine defined in "filename"
 Load an ASL file in either json or yaml format.
 
 **Parameters**
@@ -13,7 +12,7 @@ Feature: Example feature
   Scenario: Load a state machine from an asl file
     Given a state machine defined in "my-state-machine.asl"
 ```
-### the execution is currently at "name"
+## Given the execution is currently at "name"
 Tell the state machine execution that it is currently at the specific state
 
 **Parameters**
@@ -26,8 +25,7 @@ Feature: Example feature
     Given a state machine defined in "my-state-machine.asl"
     And the execution is currently at "SecondState"
 ```
-## When
-### the state machine executes
+## When the state machine executes
 Mock the execution of a single step of the state machine
 **Examples**
 ```
@@ -36,8 +34,7 @@ Feature: Example feature
     Given a state machine defined in "my-state-machine.asl"
     When the state machine executes
 ```
-## Then
-### the step result data path "path" contains "value"
+## Then the step result data path "path" contains "value"
 Verify that the path within the result data contains the string
 
 **Parameters**
@@ -64,7 +61,7 @@ Feature: Example feature
 ```
 
 
-### the step result data path "path" has "count" entries
+## Then the step result data path "path" has "count" entries
 Verify that the path within the result data contains the given number of entries.  This step works for both lists and dictionaries
 
 **Parameters**
@@ -89,7 +86,7 @@ Feature: Example feature
     Then the step result data path "$.hello" has "2" entries
 ```
 
-### the step result data path "path" has "count" entry
+## Then the step result data path "path" has "count" entry
 Verify that the path within the result data contains the given number of entries.  This step works for both lists and dictionaries.  This is the same step as above, but with the word `entries` changed to `entry` to make the scenario with `1` entry feel more natural
 
 **Parameters**
@@ -114,7 +111,7 @@ Feature: Example feature
     Then the step result data path "$.hello" has "2" entries
 ```
 
-### the step result data path "path" is a dict
+## Then the step result data path "path" is a dict
 Verify that the path within the result data is a dictionary/map
 **Parameters**
 * path - JsonPath to the data element to check
@@ -136,7 +133,7 @@ Feature: Example feature
     Then the step result data path "$.hello.world" matches "yes"
     And the step result data path "$.hello" is a dict
 ```
-### the step result data path "path" is an int
+## Then the step result data path "path" is an int
 Verify that the path within the result data is an integer
 
 **Parameters**
@@ -159,7 +156,7 @@ Feature: Example feature
     And the step result data path "$.hello" is an int
 ```
 
-### the step result data path "path" is a list
+## Then the step result data path "path" is a list
 Verify that the path within the result data is a list of values
 
 **Parameters**
@@ -181,7 +178,7 @@ Feature: Example feature
     Then the step result data path "$.hello" is a list
 ```
 
-### the step result data path "path" is a string
+## Then the step result data path "path" is a string
 Verify that the path within the result data is a string
 **Parameters**
 * path - JsonPath to the data element to check
@@ -201,7 +198,7 @@ Feature: Example feature
     Then the step result data path "$.hello" is a string
 ```
 
-### the step result data path "path" matches "value"
+## Then the step result data path "path" matches "value"
 Validate a field in the step's result data.
 
 **Parameters**

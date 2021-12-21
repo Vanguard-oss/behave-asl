@@ -74,8 +74,8 @@ behave-asl
 `behave-asl` is a wrapper around `behave`.  All of `behave`'s command line options are available to `behave-asl`
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-[Basic Contributor Guide](CONTRIBUTING.md)
-[Development Guides](docs/devguide.md)
+* [Basic Contributor Guide](CONTRIBUTING.md)
+* [Development Guides](docs/devguide.md)
 
 ## License
 [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0/)
