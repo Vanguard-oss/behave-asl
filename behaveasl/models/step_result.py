@@ -5,6 +5,7 @@ from dataclasses import dataclass
 class StepResult:
     """Data Class storing information about the result of a step execution"""
 
-    next_state: str
-    result_data: object
+    next_state: str = None
+    result_data: object = None
     end_execution: bool = False
+    failed: bool = False
