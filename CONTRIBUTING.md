@@ -10,16 +10,17 @@ External contributor signs contributor license agreement, and issues a pull requ
 - Fork the repo
 - Create a branch in your forked repo
 - Merge your changes back to your master branch.
-- Open a PR to merge the master branch of your fork into sql_translate's master branch
+- Open a PR to merge the master branch of your fork into behave-asl's master branch
 - Add your name to [CONTRIBUTORS.md](CONTRIBUTORS.md)
 - Done!
 
 ## Requirements
 
-- The code shall be formatted with `autopep8`
+- The Python code shall be formatted with `black`
+- The Feature files shall be formatted with `reformat-gherkin`
 - Google docstring format shall be used
 - The code shall pass all existing tests
 - New changes:
-    - Shall have 100% test coverage
+    - Shall have 80% test coverage
     - Shall have an updated docstring as applicable
     - Should have inline comments as needed
