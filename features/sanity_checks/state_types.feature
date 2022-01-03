@@ -20,7 +20,7 @@ Feature: Perform sanity checks against the parser
     """
     When the parser runs
     Then a "StateMachineModel" is created
-    And the "FirstStep" step is a "Pass" type object
+    And the "FirstState" step is a "PassState" object
 
   Scenario: State with Type=Task
     Given a state machine defined by:
@@ -41,6 +41,9 @@ Feature: Perform sanity checks against the parser
         }
     }
     """
+    When the parser runs
+    Then a "StateMachineModel" is created
+    And the "FirstState" step is a "TaskState" object
 
   Scenario: State with Type=Choice
     Given a state machine defined by:
@@ -66,6 +69,9 @@ Feature: Perform sanity checks against the parser
         }
     }
     """
+    When the parser runs
+    Then a "StateMachineModel" is created
+    And the "FirstState" step is a "ChoiceState" object
 
   Scenario: State with Type=Wait
     Given a state machine defined by:
@@ -86,6 +92,9 @@ Feature: Perform sanity checks against the parser
         }
     }
     """
+    When the parser runs
+    Then a "StateMachineModel" is created
+    And the "FirstState" step is a "WaitState" object
 
   Scenario: State with Type=Succeed
     Given a state machine defined by:
@@ -99,6 +108,9 @@ Feature: Perform sanity checks against the parser
         }
     }
     """
+    When the parser runs
+    Then a "StateMachineModel" is created
+    And the "FirstState" step is a "SucceedState" object
 
   Scenario: State with Type=Fail
     Given a state machine defined by:
@@ -117,6 +129,9 @@ Feature: Perform sanity checks against the parser
         }
     }
     """
+    When the parser runs
+    Then a "StateMachineModel" is created
+    And the "FirstState" step is a "FailState" object
 
   Scenario: State with Type=Parallel
     Given a state machine defined by:
@@ -151,3 +166,6 @@ Feature: Perform sanity checks against the parser
         }
     }
     """
+    When the parser runs
+    Then a "StateMachineModel" is created
+    And the "FirstState" step is a "ParallelState" object
