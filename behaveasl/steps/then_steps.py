@@ -2,8 +2,16 @@ import jsonpath_ng
 from behave import then
 
 
+@then(u'the step result data path "{path}" does not exist')
+def then_match_result_data(context, path):
+    jpexpr = jsonpath_ng.parse(path)
+    results = jpexpr.find(context.execution.last_step_result.result_data)
+    assert len(results) == 0
+
+
 @then(u'the step result data path "{path}" matches "{value}"')
 def then_match_result_data(context, path, value):
+    print(str(context.execution.last_step_result.result_data))
     jpexpr = jsonpath_ng.parse(path)
     results = jpexpr.find(context.execution.last_step_result.result_data)
     assert len(results) == 1

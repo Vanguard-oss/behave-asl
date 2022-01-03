@@ -4,7 +4,7 @@ class Retry:
         self.interval_seconds = interval_seconds
         self.max_attempts = max_attempts
         self.backoff_rate = backoff_rate
-    
+
     def _execute(self):
         # TODO: implement
         pass
