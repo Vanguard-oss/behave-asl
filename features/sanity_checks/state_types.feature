@@ -18,6 +18,9 @@ Feature: Perform sanity checks against the parser
         }
     }
     """
+    When the parser runs
+    Then a "StateMachineModel" is created
+    And the "FirstStep" step is a "Pass" type object
 
   Scenario: State with Type=Task
     Given a state machine defined by:
