@@ -114,18 +114,21 @@ class SucceedState(AbstractStateModel):
 class FailState(AbstractStateModel):
     """The Fail state terminates the machine and marks it as a failure"""
 
-    def __init__(self, *args, **kwargs):
-
-        pass
-
-    # def __init__(self, state_name, state_details):
-    #     self.state_name = state_name
-    #     pass
+    def __init__(self, state_name, state_details, **kwargs):
+        self._error = state_details.get("Error", None)
+        self._cause = state_details.get("Cause", None)
 
     def execute(self, state_input):
-        """The fail state will always raise an error with a cause"""
-        # TODO: implement
-        pass
+        """The fail state will optionally raise an error with a cause"""
+        res = StepResult()
+        res.end_execution = True
+        res.failed = True
+
+        res.result_data = {}
+        res.result_data["Error"] = self._error
+        res.result_data["Cause"] = self._cause
+
+        return res
 
 
 class ParallelState(AbstractStateModel):
