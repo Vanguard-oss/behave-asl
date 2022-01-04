@@ -47,6 +47,7 @@ def then_result_data_is_int(context, path):
 def then_result_data_is_str(context, path):
     jpexpr = jsonpath_ng.parse(path)
     results = jpexpr.find(context.execution.last_step_result.result_data)
+    print(str(context.execution.last_step_result.result_data))
     assert len(results) == 1
     assert type(results[0].value) == str
 
