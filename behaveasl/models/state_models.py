@@ -98,17 +98,21 @@ class WaitState(AbstractStateModel):
 
 
 class SucceedState(AbstractStateModel):
-    def __init__(self, *args, **kwargs):
+    """The Succeed state terminates that machine and marks it as a success"""
 
-        pass
-
-    # def __init__(self, state_name, state_details):
-    #     self.state_name = state_name
-    #     pass
+    def __init__(self, state_name, state_details, **kwargs):
+        self._phases = []
+        self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
 
     def execute(self, state_input):
-        # TODO: implement
-        pass
+        sr = StepResult()
+        sr.end_execution = True
+        current_data = copy.deepcopy(state_input)
+        for phase in self._phases:
+            current_data = phase.execute(state_input, current_data, sr)
+        sr.result_data = current_data
+
+        return sr
 
 
 class FailState(AbstractStateModel):
@@ -124,6 +128,7 @@ class FailState(AbstractStateModel):
         res.end_execution = True
         res.failed = True
 
+        # TODO: figure out if error and cause go in result data or somewhere else
         res.result_data = {}
         res.result_data["Error"] = self._error
         res.result_data["Cause"] = self._cause
