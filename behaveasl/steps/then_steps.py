@@ -18,6 +18,15 @@ def then_match_result_data(context, path, value):
     assert str(results[0].value) == value
 
 
+@then(u'the step result data path "{path}" is null')
+def then_match_result_data(context, path):
+    print(str(context.execution.last_step_result.result_data))
+    jpexpr = jsonpath_ng.parse(path)
+    results = jpexpr.find(context.execution.last_step_result.result_data)
+    assert len(results) == 1
+    assert results[0].value == None
+
+
 @then(u'the step result data path "{path}" contains "{value}"')
 def then_contains_result_data(context, path, value):
     jpexpr = jsonpath_ng.parse(path)

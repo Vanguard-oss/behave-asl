@@ -15,6 +15,8 @@ Feature: The Fail state type is supported
     When the state machine executes
     Then the execution failed
     And the execution ended
+    And the step result data path "Error" is null
+    And the step result data path "Cause" is null
 
   Scenario: The Fail type works with multiple steps
     Given a state machine defined by:
