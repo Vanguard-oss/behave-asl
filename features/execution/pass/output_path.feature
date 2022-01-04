@@ -1,6 +1,6 @@
-Feature: The Pass type can set result data
+Feature: The Pass type can filter results by using OutputPath
 
-  Scenario: The Pass type can add values to a path within the input
+  Scenario: The Pass type can use '$' in the OutputPath to copy everything
     Given a state machine defined by:
     """
     {
@@ -13,7 +13,8 @@ Feature: The Pass type can set result data
                     "StringField": "ABC",
                     "IntField": 123
                 },
-                "ResultPath": "$.output"
+                "ResultPath": "$.output",
+                "OutputPath": "$"
             },
             "EndState": {
                 "Type": "Pass",
@@ -38,37 +39,8 @@ Feature: The Pass type can set result data
     And the step result data path "$.Existing" is a string
     And the step result data path "$.Existing" matches "Value"
 
-  Scenario: The Pass type can set a single String result
-    Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Pass",
-                "Next": "EndState",
-                "Result": "ABC"
-            },
-            "EndState": {
-                "Type": "Pass",
-                "Result": "end",
-                "End": true
-            }
-        }
-    }
-    """
-    And the current state data is:
-    """
-    {
-        "Existing": "Value"
-    }
-    """
-    When the state machine executes
-    Then the next state is "EndState"
-    And the step result data path "$" is a string
-    And the step result data path "$" matches "ABC"
 
-  Scenario: The Pass type will replace the output by default
+  Scenario: When the ResultPath and OutputPath match, the Result replaces the State Input
     Given a state machine defined by:
     """
     {
@@ -80,7 +52,9 @@ Feature: The Pass type can set result data
                 "Result": {
                     "StringField": "ABC",
                     "IntField": 123
-                }
+                },
+                "ResultPath": "$.output",
+                "OutputPath": "$.output"
             },
             "EndState": {
                 "Type": "Pass",

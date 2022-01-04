@@ -1,60 +1,51 @@
 import copy
 
-import jsonpath_ng
-
+from behaveasl.models.abstract_phase import AbstractPhase
 from behaveasl.models.abstract_state import AbstractStateModel
 from behaveasl.models.choice import Choice
 from behaveasl.models.retry import Retry
+from behaveasl.models.state_phases import (
+    OutputPathPhase,
+    ParametersPhase,
+    ResultPathPhase,
+)
 from behaveasl.models.step_result import StepResult
+
+
+class PassResultPhase(AbstractPhase):
+    def __init__(self, state_details):
+        self._next_state = state_details.get("Next", None)
+        self._is_end = state_details.get("End", False)
+        self._result = state_details.get("Result", None)
+
+    def execute(self, state_input, phase_input, sr: StepResult):
+        if self._next_state is not None:
+            sr.next_state = self._next_state
+        sr.end_execution = self._is_end
+
+        if self._result is None:
+            return phase_input
+        return self._result
 
 
 # Order of classes follows: https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-common-fields.html
 class PassState(AbstractStateModel):
     def __init__(self, state_name, state_details, **kwargs):
-        self._parameters = state_details.get("Parameters", None)
-        self._result = state_details.get("Result", None)
-        self._result_path = state_details.get("ResultPath", None)
-        self._next_state = state_details.get("Next", None)
-        self._is_end = state_details.get("End", False)
+        self._phases = []
+        if "Parameters" in state_details:
+            self._phases.append(ParametersPhase(state_details["Parameters"]))
+        self._phases.append(PassResultPhase(state_details))
+        self._phases.append(ResultPathPhase(state_details.get("ResultPath", "$")))
+        self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
 
     def execute(self, state_input):
-        """Either set the next state or end the execution"""
-        output = copy.deepcopy(state_input)
-        input = {}
-
-        if self._result is not None:
-            # If the Result was specified, then use that as the Input
-            input = self._result
-
-        elif self._parameters is not None:
-            # If Parameters were specified, then create the input based on the
-            # Parameters
-            for k, v in self._parameters.items():
-                # If 'v' is a JsonPath, then eval it against the state_input
-                if k.endswith(".$"):
-                    jpexpr = jsonpath_ng.parse(v)
-                    results = jpexpr.find(state_input)
-                    if len(results) == 1:
-                        input[k[0:-2]] = results[0].value
-                else:
-                    input[k] = v
-
-        res = StepResult()
-        if self._next_state is not None:
-            res.next_state = self._next_state
-        res.end_execution = self._is_end
-
-        if self._result_path is not None:
-            jpexpr = jsonpath_ng.parse(self._result_path)
-            jpexpr.update_or_create(output, input)
-        elif type(input) == dict:
-            output.update(input)
-        else:
-            output = input
-
-        res.result_data = output
-
-        return res
+        # This logic may be able to move into the base class
+        sr = StepResult()
+        current_data = copy.deepcopy(state_input)
+        for phase in self._phases:
+            current_data = phase.execute(state_input, current_data, sr)
+        sr.result_data = current_data
+        return sr
 
 
 class TaskState(AbstractStateModel):
