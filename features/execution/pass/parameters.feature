@@ -143,3 +143,53 @@ Feature: The Pass type can have parameters set
     And the step result data path "$.output.Key" matches "Something"
     And the step result data path "$.Existing" is a string
     And the step result data path "$.Existing" matches "Value"
+
+  Scenario: The Pass type can have a nested json path expression
+    Given a state machine defined by:
+    """
+    {
+    "StartAt": "FirstState",
+    "States": {
+        "FirstState": {
+            "Type": "Pass",
+            "Next": "EndState",
+            "Parameters": {
+                "OutputDetails": {
+                    "colorData": {
+                        "color.$": "$.product.details.color"
+                    },
+                    "size.$": "$.product.details.size",
+                    "staticValue": "foo"
+                }
+            },
+            "ResultPath": "$.output"
+        },
+        "EndState": {
+            "Type": "Pass",
+            "Result": "end",
+            "End": true
+        }
+    }
+    }
+    """
+    And the current state data is:
+    """
+    {
+    "product": {
+        "details": {
+            "color": "blue",
+            "size": "small",
+            "material": "cotton"
+        }
+        }
+    }
+    """
+    When the state machine executes
+    Then the next state is "EndState"
+    And the step result data path "$.output.OutputDetails.colorData.color" is a string
+    And the step result data path "$.output.OutputDetails.colorData.color" matches "blue"
+    And the step result data path "$.output.OutputDetails.size" is a string
+    And the step result data path "$.output.OutputDetails.size" matches "small"
+    And the step result data path "$.output.OutputDetails.staticValue" is a string
+    And the step result data path "$.output.OutputDetails.staticValue" matches "foo"
+    And the step result data path "$.product.details.color" matches "blue"
