@@ -1,7 +1,6 @@
 import copy
 
 import jsonpath_ng
-
 from behaveasl.models.abstract_phase import AbstractPhase
 from behaveasl.models.step_result import StepResult
 

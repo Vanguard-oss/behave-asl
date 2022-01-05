@@ -1,5 +1,6 @@
-import jsonpath_ng
 from behave import then
+
+import jsonpath_ng
 
 
 @then(u'the step result data path "{path}" does not exist')
