@@ -59,3 +59,18 @@ class OutputPathPhase(AbstractPhase):
                 f"OutputPathPhase: Replaced '{phase_input}' with '{phase_output}', path='{self._path}'"
             )
             return phase_output
+
+
+class InputPathPhase(AbstractPhase):
+    def __init__(self, input_path: str = "$"):
+        self._path = input_path
+        self._expr = jsonpath_ng.parse(input_path)
+
+    def execute(self, state_input, phase_input, sr: StepResult):
+        res = self._expr.find(phase_input)
+        if len(res) == 1:
+            phase_output = res[0].value
+            print(
+                f"InputPathPhase: Replaced '{phase_input}' with '{phase_output}', path='{self._path}'"
+            )
+            return phase_output
