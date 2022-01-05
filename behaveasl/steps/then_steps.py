@@ -1,10 +1,10 @@
 from behave import then
 
-from behaveasl import jsonpath
+from behaveasl import assertions, jsonpath
 
 
 @then(u'the step result data path "{path}" does not exist')
-def then_match_result_data(context, path):
+def then_result_data_path_does_not_exist(context, path):
     jpexpr = jsonpath.get_instance(path)
     results = jpexpr.find(context.execution.last_step_result.result_data)
     assert len(results) == 0
@@ -20,12 +20,12 @@ def then_match_result_data(context, path, value):
 
 
 @then(u'the step result data path "{path}" is null')
-def then_match_result_data(context, path):
+def then_result_data_is_none(context, path):
     print(str(context.execution.last_step_result.result_data))
     jpexpr = jsonpath.get_instance(path)
     results = jpexpr.find(context.execution.last_step_result.result_data)
     assert len(results) == 1
-    assert results[0].value == None
+    assert results[0].value is None
 
 
 @then(u'the step result data path "{path}" contains "{value}"')
@@ -76,6 +76,14 @@ def then_result_data_is_dict(context, path):
     results = jpexpr.find(context.execution.last_step_result.result_data)
     assert len(results) == 1
     assert type(results[0].value) == dict
+
+
+@then(u"the step result data is")
+def then_full_match(context):
+    assert context.text is not None
+    assertions.assert_result_data_matches(
+        context.text, context.execution.last_step_result.result_data
+    )
 
 
 @then(u'the next state is "{name}"')
