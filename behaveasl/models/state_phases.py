@@ -1,7 +1,6 @@
 import copy
 
-import jsonpath_ng
-
+from behaveasl import jsonpath
 from behaveasl.models.abstract_phase import AbstractPhase
 from behaveasl.models.step_result import StepResult
 
@@ -9,7 +8,7 @@ from behaveasl.models.step_result import StepResult
 class ResultPathPhase(AbstractPhase):
     def __init__(self, result_path: str = "$"):
         self._path = result_path
-        self._expr = jsonpath_ng.parse(result_path)
+        self._expr = jsonpath.get_instance(result_path)
 
     def execute(self, state_input, phase_input, sr: StepResult):
         # jsonpath-ng doesn't seem to handle the '$' copy the same way AWS does
@@ -34,7 +33,7 @@ class ParametersPhase(AbstractPhase):
         for k, v in self._parameters.items():
             # If 'v' is a JsonPath, then eval it against the state_input
             if k.endswith(".$"):
-                jpexpr = jsonpath_ng.parse(v)
+                jpexpr = jsonpath.get_instance(v)
                 results = jpexpr.find(phase_input)
                 if len(results) == 1:
                     phase_output[k[0:-2]] = results[0].value
@@ -49,7 +48,7 @@ class ParametersPhase(AbstractPhase):
 class OutputPathPhase(AbstractPhase):
     def __init__(self, output_path: str = "$"):
         self._path = output_path
-        self._expr = jsonpath_ng.parse(output_path)
+        self._expr = jsonpath.get_instance(output_path)
 
     def execute(self, state_input, phase_input, sr: StepResult):
         res = self._expr.find(phase_input)
@@ -64,7 +63,7 @@ class OutputPathPhase(AbstractPhase):
 class InputPathPhase(AbstractPhase):
     def __init__(self, input_path: str = "$"):
         self._path = input_path
-        self._expr = jsonpath_ng.parse(input_path)
+        self._expr = jsonpath.get_instance(input_path)
 
     def execute(self, state_input, phase_input, sr: StepResult):
         res = self._expr.find(phase_input)
