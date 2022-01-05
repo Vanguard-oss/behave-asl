@@ -51,3 +51,57 @@ Feature: Result Data can be checked
     And the step result data path "$.key" contains "name"
     And the step result data path "$.key" has "1" entry
     And the step result data path "$.key" is a dict
+    And the step result data is:
+    """
+    {
+        "key": {
+            "name": "value"
+        }
+    }
+    """
+
+  Scenario: A full match allows keys to be in different order
+    Given a simple state machine
+    When the step result is:
+    """
+    {
+        "key1": {
+            "name": "value"
+        },
+        "key2": {
+            "name": "value"
+        }
+    }
+    """
+    Then the step result data is:
+    """
+    {
+        "key2": {
+            "name": "value"
+        },
+        "key1": {
+            "name": "value"
+        }
+    }
+    """
+
+  Scenario: A full match does not allow arrays to be in a different order
+    Given a simple state machine
+    When the step result is:
+    """
+    {
+        "key": ["A","B"]
+    }
+    """
+    Then the step result data is:
+    """
+    {
+        "key": ["A","B"]
+    }
+    """
+    And the step result data is not:
+    """
+    {
+        "key": ["B","A"]
+    }
+    """

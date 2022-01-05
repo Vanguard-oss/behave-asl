@@ -37,6 +37,16 @@ Feature: The Pass type can set result data
     And the step result data path "$.output.IntField" matches "123"
     And the step result data path "$.Existing" is a string
     And the step result data path "$.Existing" matches "Value"
+    And the step result data is:
+    """
+    {
+        "output": {
+            "StringField": "ABC",
+            "IntField": 123
+        },
+        "Existing": "Value"
+    }
+    """
 
   Scenario: The Pass type can set a single String result
     Given a state machine defined by:
