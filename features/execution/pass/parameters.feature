@@ -156,10 +156,14 @@ Feature: The Pass type can have parameters set
             "Parameters": {
                 "OutputDetails": {
                     "colorData": {
-                        "color.$": "$.product.details.color"
+                        "color.$": "$.product.details.color",
+                        "materialData": {
+                            "material.$": "$.product.details.material"
+                        }
                     },
-                    "size.$": "$.product.details.size",
-                    "staticValue": "foo"
+                    "productDetails.$": "$.product.details",
+                    "staticValue": "foo",
+                    "sizes.$": "$.product.details.sizes"
                 }
             },
             "ResultPath": "$.output"
@@ -178,7 +182,7 @@ Feature: The Pass type can have parameters set
     "product": {
         "details": {
             "color": "blue",
-            "size": "small",
+            "sizes": ["small", "medium", "large"],
             "material": "cotton"
         }
         }
@@ -186,10 +190,15 @@ Feature: The Pass type can have parameters set
     """
     When the state machine executes
     Then the next state is "EndState"
+    And the step result data path "$.output.OutputDetails.colorData.materialData.material" is a string
+    And the step result data path "$.output.OutputDetails.colorData.materialData.material" matches "cotton"
     And the step result data path "$.output.OutputDetails.colorData.color" is a string
     And the step result data path "$.output.OutputDetails.colorData.color" matches "blue"
-    And the step result data path "$.output.OutputDetails.size" is a string
-    And the step result data path "$.output.OutputDetails.size" matches "small"
     And the step result data path "$.output.OutputDetails.staticValue" is a string
     And the step result data path "$.output.OutputDetails.staticValue" matches "foo"
-    And the step result data path "$.product.details.color" matches "blue"
+    And the step result data path "$.output.OutputDetails.sizes" is a list
+    And the step result data path "$.output.OutputDetails.sizes" matches "['small', 'medium', 'large']"
+    And the step result data path "$.output.OutputDetails.productDetails.color" is a string
+    And the step result data path "$.output.OutputDetails.productDetails.color" matches "blue"
+    And the step result data path "$.output.OutputDetails.productDetails.material" is a string
+    And the step result data path "$.output.OutputDetails.productDetails.material" matches "cotton"
