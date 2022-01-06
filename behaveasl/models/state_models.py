@@ -2,8 +2,10 @@ import copy
 
 from behaveasl.models.abstract_phase import AbstractPhase
 from behaveasl.models.abstract_state import AbstractStateModel
+from behaveasl.models.catch import Catch
 from behaveasl.models.choice import Choice
 from behaveasl.models.retry import Retry
+from behaveasl.models.state_param_exception import StateParamException
 from behaveasl.models.state_phases import (
     OutputPathPhase,
     ParametersPhase,
@@ -13,12 +15,12 @@ from behaveasl.models.step_result import StepResult
 
 
 class PassResultPhase(AbstractPhase):
-    def __init__(self, state_details):
+    def __init__(self, state_details: dict):
         self._next_state = state_details.get("Next", None)
         self._is_end = state_details.get("End", False)
         self._result = state_details.get("Result", None)
 
-    def execute(self, state_input, phase_input, sr: StepResult):
+    def execute(self, state_input: dict, phase_input: dict, sr: StepResult):
         if self._next_state is not None:
             sr.next_state = self._next_state
         sr.end_execution = self._is_end
@@ -28,9 +30,44 @@ class PassResultPhase(AbstractPhase):
         return self._result
 
 
+class TaskResultPhase(AbstractPhase):
+    def __init__(self, state_details: dict):
+        self._next_state = state_details.get("Next", None)
+        self._is_end = state_details.get("End", False)
+        self._resource = state_details.get("Resource", None)
+        self._retry = state_details.get("Retry", None)
+        self._catch = state_details.get("Catch", None)
+        self._result_selector = state_details.get("ResultSelector", None)
+        self._timeout_seconds = state_details.get("TimeoutSeconds", 99999999)
+        self._timeout_seconds_path = state_details.get("TimeoutSecondsPath", None)
+        self._heartbeat_seconds = state_details.get("HeartbeatSeconds", 99999999)
+        self._heartbeat_seconds_path = state_details.get("HeartbeatSecondsPath", None)
+
+        if self._resource is None:
+            raise StateParamException("A Resource field must be provided.")
+
+        if self._retry:
+            self._retry_list = []
+            for r in self._retry:
+                self._retry_list.append(Retry(r))
+
+        if self._catch:
+            self._catch_list = []
+            for c in self._catch:
+                self._catch_list.append(Catch(c))
+
+    def execute(self, state_input: dict, phase_input: dict, sr: StepResult):
+        # TODO: execute the resource
+        if self._next_state is not None:
+            sr.next_state = self._next_state
+        sr.end_execution = self._is_end
+
+        return phase_input
+
+
 # Order of classes follows: https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-common-fields.html
 class PassState(AbstractStateModel):
-    def __init__(self, state_name, state_details, **kwargs):
+    def __init__(self, state_name: str, state_details: dict, **kwargs):
         self._phases = []
         if "Parameters" in state_details:
             self._phases.append(ParametersPhase(state_details["Parameters"]))
@@ -38,7 +75,7 @@ class PassState(AbstractStateModel):
         self._phases.append(ResultPathPhase(state_details.get("ResultPath", "$")))
         self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
 
-    def execute(self, state_input):
+    def execute(self, state_input: dict):
         # This logic may be able to move into the base class
         sr = StepResult()
         current_data = copy.deepcopy(state_input)
@@ -49,21 +86,21 @@ class PassState(AbstractStateModel):
 
 
 class TaskState(AbstractStateModel):
-    def __init__(self, *args, **kwargs):
-        pass
-        # def __init__(self, state_name, state_details):
-        # self.state_name = state_name
-        # self.resource = None
-        # self.next_state = None
-        # self.retry_list = None
-        # self.input = None # For a non-SDK call - note that input and parameters will both work for either SDK or non-SDK calls
-        # self.parameters = None # For an SDK call - note that input and parameters will both work for either SDK or non-SDK calls
-        # # TODO: for retry in retry_list, create an instance of Retry and add it to the list
-        pass
+    def __init__(self, state_name: str, state_details: dict, **kwargs):
+        self._phases = []
+        if "Parameters" in state_details:
+            self._phases.append(ParametersPhase(state_details["Parameters"]))
+        self._phases.append(TaskResultPhase(state_details))
+        self._phases.append(ResultPathPhase(state_details.get("ResultPath", "$")))
+        self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
 
-    def execute(self, state_input):
-        # TODO: implement
-        pass
+    def execute(self, state_input: dict):
+        sr = StepResult()
+        current_data = copy.deepcopy(state_input)
+        for phase in self._phases:
+            current_data = phase.execute(state_input, current_data, sr)
+        sr.result_data = current_data
+        return sr
 
 
 class ChoiceState(AbstractStateModel):
@@ -77,7 +114,7 @@ class ChoiceState(AbstractStateModel):
     #     # TODO: for choice in choice_list, create an instance of Choice and add it to the list
     #     pass
 
-    def execute(self, state_input):
+    def execute(self, state_input: dict):
         # TODO: implement
         pass
 
@@ -91,7 +128,7 @@ class WaitState(AbstractStateModel):
     #     self.state_name = state_name
     #     pass
 
-    def execute(self, state_input):
+    def execute(self, state_input: dict):
         """The fail state will always raise an error with a cause"""
         # TODO: implement
         pass
@@ -100,11 +137,11 @@ class WaitState(AbstractStateModel):
 class SucceedState(AbstractStateModel):
     """The Succeed state terminates that machine and marks it as a success"""
 
-    def __init__(self, state_name, state_details, **kwargs):
+    def __init__(self, state_name: str, state_details: dict, **kwargs):
         self._phases = []
         self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
 
-    def execute(self, state_input):
+    def execute(self, state_input: dict):
         sr = StepResult()
         sr.end_execution = True
         current_data = copy.deepcopy(state_input)
@@ -118,11 +155,11 @@ class SucceedState(AbstractStateModel):
 class FailState(AbstractStateModel):
     """The Fail state terminates the machine and marks it as a failure"""
 
-    def __init__(self, state_name, state_details, **kwargs):
+    def __init__(self, state_name: str, state_details: dict, **kwargs):
         self._error = state_details.get("Error", None)
         self._cause = state_details.get("Cause", None)
 
-    def execute(self, state_input):
+    def execute(self, state_input: dict):
         """The fail state will optionally raise an error with a cause"""
         res = StepResult()
         res.end_execution = True
@@ -145,7 +182,7 @@ class ParallelState(AbstractStateModel):
     #     self.state_name = state_name
     #     pass
 
-    def execute(self, state_input):
+    def execute(self, state_input: dict):
         """The fail state will always raise an error with a cause"""
         # TODO: implement
         pass
@@ -160,7 +197,7 @@ class MapState(AbstractStateModel):
     #     self.state_name = state_name
     #     pass
 
-    def execute(self, state_input):
+    def execute(self, state_input: dict):
         """The fail state will always raise an error with a cause"""
         # TODO: implement
         pass
