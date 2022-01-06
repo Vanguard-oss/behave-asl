@@ -1,9 +1,10 @@
 import copy
 
+import jsonpath_ng
+
 from behaveasl import jsonpath
 from behaveasl.models.abstract_phase import AbstractPhase
 from behaveasl.models.step_result import StepResult
-
 
 class ResultPathPhase(AbstractPhase):
     def __init__(self, result_path: str = "$"):
