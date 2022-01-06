@@ -30,41 +30,6 @@ class PassResultPhase(AbstractPhase):
         return self._result
 
 
-class TaskResultPhase(AbstractPhase):
-    def __init__(self, state_details: dict):
-        self._next_state = state_details.get("Next", None)
-        self._is_end = state_details.get("End", False)
-        self._resource = state_details.get("Resource", None)
-        self._retry = state_details.get("Retry", None)
-        self._catch = state_details.get("Catch", None)
-        self._result_selector = state_details.get("ResultSelector", None)
-        self._timeout_seconds = state_details.get("TimeoutSeconds", 99999999)
-        self._timeout_seconds_path = state_details.get("TimeoutSecondsPath", None)
-        self._heartbeat_seconds = state_details.get("HeartbeatSeconds", 99999999)
-        self._heartbeat_seconds_path = state_details.get("HeartbeatSecondsPath", None)
-
-        if self._resource is None:
-            raise StateParamException("A Resource field must be provided.")
-
-        if self._retry:
-            self._retry_list = []
-            for r in self._retry:
-                self._retry_list.append(Retry(r))
-
-        if self._catch:
-            self._catch_list = []
-            for c in self._catch:
-                self._catch_list.append(Catch(c))
-
-    def execute(self, state_input: dict, phase_input: dict, sr: StepResult):
-        # TODO: execute the resource
-        if self._next_state is not None:
-            sr.next_state = self._next_state
-        sr.end_execution = self._is_end
-
-        return phase_input
-
-
 # Order of classes follows: https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-common-fields.html
 class PassState(AbstractStateModel):
     def __init__(self, state_name: str, state_details: dict, **kwargs):
@@ -90,9 +55,32 @@ class TaskState(AbstractStateModel):
         self._phases = []
         if "Parameters" in state_details:
             self._phases.append(ParametersPhase(state_details["Parameters"]))
-        self._phases.append(TaskResultPhase(state_details))
         self._phases.append(ResultPathPhase(state_details.get("ResultPath", "$")))
         self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
+
+        self._next_state = state_details.get("Next", None)
+        self._is_end = state_details.get("End", False)
+        self._resource = state_details.get("Resource", None)
+        self._retry = state_details.get("Retry", None)
+        self._catch = state_details.get("Catch", None)
+        self._result_selector = state_details.get("ResultSelector", None)
+        self._timeout_seconds = state_details.get("TimeoutSeconds", 99999999)
+        self._timeout_seconds_path = state_details.get("TimeoutSecondsPath", None)
+        self._heartbeat_seconds = state_details.get("HeartbeatSeconds", 99999999)
+        self._heartbeat_seconds_path = state_details.get("HeartbeatSecondsPath", None)
+
+        if self._resource is None:
+            raise StateParamException("A Resource field must be provided.")
+
+        if self._retry:
+            self._retry_list = []
+            for r in self._retry:
+                self._retry_list.append(Retry(r))
+
+        if self._catch:
+            self._catch_list = []
+            for c in self._catch:
+                self._catch_list.append(Catch(c))
 
     def execute(self, state_input: dict):
         sr = StepResult()
@@ -100,6 +88,12 @@ class TaskState(AbstractStateModel):
         for phase in self._phases:
             current_data = phase.execute(state_input, current_data, sr)
         sr.result_data = current_data
+
+        # TODO: execute the resource
+        if self._next_state is not None:
+            sr.next_state = self._next_state
+        sr.end_execution = self._is_end
+
         return sr
 
 
