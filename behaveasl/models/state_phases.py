@@ -6,6 +6,7 @@ from behaveasl import jsonpath
 from behaveasl.models.abstract_phase import AbstractPhase
 from behaveasl.models.step_result import StepResult
 
+
 class ResultPathPhase(AbstractPhase):
     def __init__(self, result_path: str = "$"):
         self._path = result_path
@@ -31,9 +32,11 @@ class ParametersPhase(AbstractPhase):
     def execute(self, state_input, phase_input, sr: StepResult):
         phase_output = {}
         # TODO: ASL supports JsonPath in nested values
-        phase_output = self.parse_phase_output(current_parameters=self._parameters, phase_input=phase_input)
+        phase_output = self.parse_phase_output(
+            current_parameters=self._parameters, phase_input=phase_input
+        )
         return phase_output
-    
+
     def parse_phase_output(self, current_parameters, phase_input, phase_output=None):
         if phase_output is None:
             phase_output = {}
@@ -42,7 +45,9 @@ class ParametersPhase(AbstractPhase):
             if type(v) == dict:
                 new_dict = {}
                 phase_output[k] = new_dict
-                self.parse_phase_output(current_parameters=v, phase_input=phase_input, phase_output=new_dict)
+                self.parse_phase_output(
+                    current_parameters=v, phase_input=phase_input, phase_output=new_dict
+                )
             else:
                 # Base cases
                 # If 'v' is a JsonPath, then eval it against the state_input
