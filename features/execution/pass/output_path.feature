@@ -39,7 +39,6 @@ Feature: The Pass type can filter results by using OutputPath
     And the step result data path "$.Existing" is a string
     And the step result data path "$.Existing" matches "Value"
 
-
   Scenario: When the ResultPath and OutputPath match, the Result replaces the State Input
     Given a state machine defined by:
     """

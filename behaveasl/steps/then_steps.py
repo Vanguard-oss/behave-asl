@@ -1,10 +1,11 @@
-import jsonpath_ng
 from behave import then
+
+from behaveasl import assertions, jsonpath
 
 
 @then(u'the step result data path "{path}" does not exist')
-def then_match_result_data(context, path):
-    jpexpr = jsonpath_ng.parse(path)
+def then_result_data_path_does_not_exist(context, path):
+    jpexpr = jsonpath.get_instance(path)
     results = jpexpr.find(context.execution.last_step_result.result_data)
     assert len(results) == 0
 
@@ -12,24 +13,24 @@ def then_match_result_data(context, path):
 @then(u'the step result data path "{path}" matches "{value}"')
 def then_match_result_data(context, path, value):
     print(str(context.execution.last_step_result.result_data))
-    jpexpr = jsonpath_ng.parse(path)
+    jpexpr = jsonpath.get_instance(path)
     results = jpexpr.find(context.execution.last_step_result.result_data)
     assert len(results) == 1
     assert str(results[0].value) == value
 
 
 @then(u'the step result data path "{path}" is null')
-def then_match_result_data(context, path):
+def then_result_data_is_none(context, path):
     print(str(context.execution.last_step_result.result_data))
-    jpexpr = jsonpath_ng.parse(path)
+    jpexpr = jsonpath.get_instance(path)
     results = jpexpr.find(context.execution.last_step_result.result_data)
     assert len(results) == 1
-    assert results[0].value == None
+    assert results[0].value is None
 
 
 @then(u'the step result data path "{path}" contains "{value}"')
 def then_contains_result_data(context, path, value):
-    jpexpr = jsonpath_ng.parse(path)
+    jpexpr = jsonpath.get_instance(path)
     results = jpexpr.find(context.execution.last_step_result.result_data)
     assert len(results) == 1
     assert value in results[0].value
@@ -38,7 +39,7 @@ def then_contains_result_data(context, path, value):
 @then(u'the step result data path "{path}" has "{value}" entry')
 @then(u'the step result data path "{path}" has "{value}" entries')
 def then_result_data_list_size(context, path, value):
-    jpexpr = jsonpath_ng.parse(path)
+    jpexpr = jsonpath.get_instance(path)
     results = jpexpr.find(context.execution.last_step_result.result_data)
     assert len(results) == 1
     assert len(results[0].value) == int(value)
@@ -46,7 +47,7 @@ def then_result_data_list_size(context, path, value):
 
 @then(u'the step result data path "{path}" is an int')
 def then_result_data_is_int(context, path):
-    jpexpr = jsonpath_ng.parse(path)
+    jpexpr = jsonpath.get_instance(path)
     results = jpexpr.find(context.execution.last_step_result.result_data)
     assert len(results) == 1
     assert type(results[0].value) == int
@@ -54,7 +55,7 @@ def then_result_data_is_int(context, path):
 
 @then(u'the step result data path "{path}" is a string')
 def then_result_data_is_str(context, path):
-    jpexpr = jsonpath_ng.parse(path)
+    jpexpr = jsonpath.get_instance(path)
     results = jpexpr.find(context.execution.last_step_result.result_data)
     print(str(context.execution.last_step_result.result_data))
     assert len(results) == 1
@@ -63,7 +64,7 @@ def then_result_data_is_str(context, path):
 
 @then(u'the step result data path "{path}" is a list')
 def then_result_data_is_list(context, path):
-    jpexpr = jsonpath_ng.parse(path)
+    jpexpr = jsonpath.get_instance(path)
     results = jpexpr.find(context.execution.last_step_result.result_data)
     assert len(results) == 1
     assert type(results[0].value) == list
@@ -71,10 +72,18 @@ def then_result_data_is_list(context, path):
 
 @then(u'the step result data path "{path}" is a dict')
 def then_result_data_is_dict(context, path):
-    jpexpr = jsonpath_ng.parse(path)
+    jpexpr = jsonpath.get_instance(path)
     results = jpexpr.find(context.execution.last_step_result.result_data)
     assert len(results) == 1
     assert type(results[0].value) == dict
+
+
+@then(u"the step result data is")
+def then_full_match(context):
+    assert context.text is not None
+    assertions.assert_result_data_matches(
+        context.text, context.execution.last_step_result.result_data
+    )
 
 
 @then(u'the next state is "{name}"')
