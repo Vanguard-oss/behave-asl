@@ -31,18 +31,31 @@ class ParametersPhase(AbstractPhase):
     def execute(self, state_input, phase_input, sr: StepResult):
         phase_output = {}
         # TODO: ASL supports JsonPath in nested values
-        for k, v in self._parameters.items():
-            # If 'v' is a JsonPath, then eval it against the state_input
-            if k.endswith(".$"):
-                jpexpr = jsonpath_ng.parse(v)
-                results = jpexpr.find(phase_input)
-                if len(results) == 1:
-                    phase_output[k[0:-2]] = results[0].value
+        phase_output = self.parse_phase_output(current_parameters=self._parameters, phase_input=phase_input)
+        return phase_output
+    
+    def parse_phase_output(self, current_parameters, phase_input, phase_output=None):
+        if phase_output is None:
+            phase_output = {}
+        for k, v in current_parameters.items():
+            # If 'v' is a dictionary, recurse - else:
+            if type(v) == dict:
+                new_dict = {}
+                phase_output[k] = new_dict
+                self.parse_phase_output(current_parameters=v, phase_input=phase_input, phase_output=new_dict)
             else:
-                phase_output[k] = v
-        print(
-            f"ParametersPhase: Replaced '{phase_input}' with '{phase_output}', params='{self._parameters}'"
-        )
+                # Base cases
+                # If 'v' is a JsonPath, then eval it against the state_input
+                if k.endswith(".$"):
+                    jpexpr = jsonpath_ng.parse(v)
+                    results = jpexpr.find(phase_input)
+                    if len(results) == 1:
+                        phase_output[k[0:-2]] = results[0].value
+                else:
+                    phase_output[k] = v
+            print(
+                f"ParametersPhase: Replaced '{phase_input}' with '{phase_output}', params='{self._parameters}'"
+            )
         return phase_output
 
 
