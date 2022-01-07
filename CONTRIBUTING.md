@@ -21,6 +21,6 @@ External contributor signs contributor license agreement, and issues a pull requ
 - Google docstring format shall be used
 - The code shall pass all existing tests
 - New changes:
-    - Shall have 80% test coverage
-    - Shall have an updated docstring as applicable
-    - Should have inline comments as needed
+  - Shall have 80% test coverage
+  - Shall have an updated docstring as applicable
+  - Should have inline comments as needed

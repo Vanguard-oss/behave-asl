@@ -1,7 +1,6 @@
 import copy
 
 import jsonpath_ng
-
 from behaveasl import jsonpath
 from behaveasl.models.abstract_phase import AbstractPhase
 from behaveasl.models.step_result import StepResult
@@ -92,3 +91,40 @@ class InputPathPhase(AbstractPhase):
                 f"InputPathPhase: Replaced '{phase_input}' with '{phase_output}', path='{self._path}'"
             )
             return phase_output
+
+
+class ResultSelectorPhase(AbstractPhase):
+    def __init__(self, result_selector: dict):
+        self._selector = result_selector
+
+    def execute(self, state_input, phase_input, sr: StepResult):
+        phase_output = {}
+        # TODO: ASL supports JsonPath in nested values
+        phase_output = self.parse_phase_output(self._selector, phase_input)
+        return phase_output
+
+    def parse_phase_output(self, current_selector, phase_input, phase_output=None):
+        if phase_output is None:
+            phase_output = {}
+        for k, v in current_selector.items():
+            # If 'v' is a dictionary, recurse - else:
+            if type(v) == dict:
+                new_dict = {}
+                phase_output[k] = new_dict
+                self.parse_phase_output(
+                    current_selector=v, phase_input=phase_input, phase_output=new_dict
+                )
+            else:
+                # Base cases
+                # If 'v' is a JsonPath, then eval it against the state_input
+                if k.endswith(".$"):
+                    jpexpr = jsonpath_ng.parse(v)
+                    results = jpexpr.find(phase_input)
+                    if len(results) == 1:
+                        phase_output[k[0:-2]] = results[0].value
+                else:
+                    phase_output[k] = v
+            print(
+                f"ResultSelectorPhase: Replaced '{phase_input}' with '{phase_output}', selector='{self._selector}'"
+            )
+        return phase_output
