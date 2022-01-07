@@ -58,9 +58,10 @@ class TaskState(AbstractStateModel):
         self._phases = []
         if "Parameters" in state_details:
             self._phases.append(ParametersPhase(state_details["Parameters"]))
-        self._phases.append(
-            ResultSelectorPhase(state_details.get("ResultSelector", "$"))
-        )
+        if "ResultSelector" in state_details:
+            self._phases.append(
+                ResultSelectorPhase(state_details.get("ResultSelector", "$"))
+            )
         self._phases.append(ResultPathPhase(state_details.get("ResultPath", "$")))
         self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
 
