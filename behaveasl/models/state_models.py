@@ -22,7 +22,7 @@ class PassResultPhase(AbstractPhase):
         self._is_end = state_details.get("End", False)
         self._result = state_details.get("Result", None)
 
-    def execute(self, state_input: dict, phase_input: dict, sr: StepResult):
+    def execute(self, state_input, phase_input, sr: StepResult):
         if self._next_state is not None:
             sr.next_state = self._next_state
         sr.end_execution = self._is_end
@@ -43,7 +43,7 @@ class PassState(AbstractStateModel):
         self._phases.append(ResultPathPhase(state_details.get("ResultPath", "$")))
         self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
 
-    def execute(self, state_input: dict):
+    def execute(self, state_input):
         # This logic may be able to move into the base class
         sr = StepResult()
         current_data = copy.deepcopy(state_input)
@@ -98,7 +98,7 @@ class TaskState(AbstractStateModel):
             for c in self._catch:
                 self._catch_list.append(Catch(c))
 
-    def execute(self, state_input: dict):
+    def execute(self, state_input):
         sr = StepResult()
         current_data = copy.deepcopy(state_input)
         for phase in self._phases:
@@ -125,7 +125,7 @@ class ChoiceState(AbstractStateModel):
     #     # TODO: for choice in choice_list, create an instance of Choice and add it to the list
     #     pass
 
-    def execute(self, state_input: dict):
+    def execute(self, state_input):
         # TODO: implement
         pass
 
@@ -139,7 +139,7 @@ class WaitState(AbstractStateModel):
     #     self.state_name = state_name
     #     pass
 
-    def execute(self, state_input: dict):
+    def execute(self, state_input):
         """The fail state will always raise an error with a cause"""
         # TODO: implement
         pass
@@ -153,7 +153,7 @@ class SucceedState(AbstractStateModel):
         self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
         self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
 
-    def execute(self, state_input: dict):
+    def execute(self, state_input):
         sr = StepResult()
         sr.end_execution = True
         current_data = copy.deepcopy(state_input)
@@ -171,7 +171,7 @@ class FailState(AbstractStateModel):
         self._error = state_details.get("Error", None)
         self._cause = state_details.get("Cause", None)
 
-    def execute(self, state_input: dict):
+    def execute(self, state_input):
         """The fail state will optionally raise an error with a cause"""
         res = StepResult()
         res.end_execution = True
@@ -194,7 +194,7 @@ class ParallelState(AbstractStateModel):
     #     self.state_name = state_name
     #     pass
 
-    def execute(self, state_input: dict):
+    def execute(self, state_input):
         """The fail state will always raise an error with a cause"""
         # TODO: implement
         pass
@@ -209,7 +209,7 @@ class MapState(AbstractStateModel):
     #     self.state_name = state_name
     #     pass
 
-    def execute(self, state_input: dict):
+    def execute(self, state_input):
         """The fail state will always raise an error with a cause"""
         # TODO: implement
         pass
