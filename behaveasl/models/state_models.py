@@ -11,6 +11,7 @@ from behaveasl.models.state_phases import (
     OutputPathPhase,
     ParametersPhase,
     ResultPathPhase,
+    ResultSelectorPhase,
 )
 from behaveasl.models.step_result import StepResult
 
@@ -57,6 +58,9 @@ class TaskState(AbstractStateModel):
         self._phases = []
         if "Parameters" in state_details:
             self._phases.append(ParametersPhase(state_details["Parameters"]))
+        self._phases.append(
+            ResultSelectorPhase(state_details.get("ResultSelector", "$"))
+        )
         self._phases.append(ResultPathPhase(state_details.get("ResultPath", "$")))
         self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
 
@@ -65,14 +69,23 @@ class TaskState(AbstractStateModel):
         self._resource = state_details.get("Resource", None)
         self._retry = state_details.get("Retry", None)
         self._catch = state_details.get("Catch", None)
-        self._result_selector = state_details.get("ResultSelector", None)
-        self._timeout_seconds = state_details.get("TimeoutSeconds", 99999999)
+        self._timeout_seconds = state_details.get("TimeoutSeconds", None)
         self._timeout_seconds_path = state_details.get("TimeoutSecondsPath", None)
-        self._heartbeat_seconds = state_details.get("HeartbeatSeconds", 99999999)
+        self._heartbeat_seconds = state_details.get("HeartbeatSeconds", None)
         self._heartbeat_seconds_path = state_details.get("HeartbeatSecondsPath", None)
 
         if self._resource is None:
             raise StateParamException("A Resource field must be provided.")
+
+        if self._timeout_seconds and self._timeout_seconds_path:
+            raise StateParamException(
+                "Only one of TimeoutSeconds and TimeoutSecondsPath can be set."
+            )
+
+        if self._heartbeat_seconds and self._heartbeat_seconds_path:
+            raise StateParamException(
+                "Only one of HeartbeatSeconds and HeartbeatSecondsPath can be set."
+            )
 
         if self._retry:
             self._retry_list = []
@@ -92,6 +105,7 @@ class TaskState(AbstractStateModel):
         sr.result_data = current_data
 
         # TODO: execute the resource
+
         if self._next_state is not None:
             sr.next_state = self._next_state
         sr.end_execution = self._is_end
