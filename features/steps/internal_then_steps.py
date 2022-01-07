@@ -1,5 +1,6 @@
 from behave import then
 
+from behaveasl import assertions
 from behaveasl.models.state_machine import StateMachineModel
 from behaveasl.models.state_models import (
     ChoiceState,
@@ -31,3 +32,16 @@ def then_step_is_created_with_correct_object_type(context, step_name, class_name
     expected_class = f"<class 'behaveasl.models.state_models.{class_name}'>"
     # There should be a better way to do this w/isinstance and dynamic class loading but I can't think of it right now
     assert step_class == expected_class
+
+
+@then("the step result data is not")
+def then_full_match_not(context):
+
+    try:
+        assertions.assert_result_data_matches(
+            context.text, context.execution.last_step_result.result_data
+        )
+    except AssertionError as e:
+        return
+    # Fail if the data actually matched
+    assert False

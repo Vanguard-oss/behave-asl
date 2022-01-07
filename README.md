@@ -86,6 +86,11 @@ behave-asl
 
 `behave-asl` is a wrapper around `behave`.  All of `behave`'s command line options are available to `behave-asl`
 
+### More Documentation
+
+- [Reference Guide](docs/reference.md)
+- [Compatability Guide](docs/compatability.md)
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

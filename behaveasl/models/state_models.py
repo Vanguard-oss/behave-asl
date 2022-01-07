@@ -7,6 +7,7 @@ from behaveasl.models.choice import Choice
 from behaveasl.models.retry import Retry
 from behaveasl.models.state_param_exception import StateParamException
 from behaveasl.models.state_phases import (
+    InputPathPhase,
     OutputPathPhase,
     ParametersPhase,
     ResultPathPhase,
@@ -34,6 +35,7 @@ class PassResultPhase(AbstractPhase):
 class PassState(AbstractStateModel):
     def __init__(self, state_name: str, state_details: dict, **kwargs):
         self._phases = []
+        self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
         if "Parameters" in state_details:
             self._phases.append(ParametersPhase(state_details["Parameters"]))
         self._phases.append(PassResultPhase(state_details))
@@ -133,6 +135,7 @@ class SucceedState(AbstractStateModel):
 
     def __init__(self, state_name: str, state_details: dict, **kwargs):
         self._phases = []
+        self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
         self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
 
     def execute(self, state_input: dict):
