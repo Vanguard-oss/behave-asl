@@ -7,6 +7,6 @@ class AbstractStateModel(ABC):
     """Base class for the various state types"""
 
     @abstractmethod
-    def execute(self, input) -> StepResult:
+    def execute(self, input, execution) -> StepResult:
         """Execute the step and return the result"""
         raise NotImplementedError

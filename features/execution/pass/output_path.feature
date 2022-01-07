@@ -76,3 +76,38 @@ Feature: The Pass type can filter results by using OutputPath
     And the step result data path "$.IntField" is an int
     And the step result data path "$.IntField" matches "123"
     And the step result data path "$.Existing" does not exist
+
+  Scenario: The OutputPath can use values from the Context object
+    Given a state machine defined by:
+    """
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Pass",
+                "Next": "EndState",
+                "Result": {
+                    "StringField": "ABC",
+                    "IntField": 123
+                },
+                "OutputPath": "$$.Execution.Input.Existing"
+            },
+            "EndState": {
+                "Type": "Pass",
+                "Result": "end",
+                "End": true
+            }
+        }
+    }
+    """
+    And the execution input is:
+    """
+    {
+        "Existing": "Value"
+    }
+    """
+    When the state machine executes
+    Then the step result data is:
+    """
+    "Value"
+    """

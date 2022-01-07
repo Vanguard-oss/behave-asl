@@ -26,5 +26,10 @@ def given_set_current_state(context, name):
 
 
 @given(u"the current state data is")
-def step_impl(context):
+def given_set_current_state_data(context):
     context.execution.set_current_state_data(json.loads(context.text))
+
+
+@given(u"the execution input is")
+def given_set_execution_input(context):
+    context.execution.set_execution_input_data(json.loads(context.text))
