@@ -31,6 +31,46 @@ Feature: Example feature
     And the execution is currently at "SecondState"
 ```
 
+## Given the current state data is
+
+Tell the state machine execution what the input for the next state to execute is
+**Text**
+Json object representing the input data
+
+**Examples**
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    And the current state data is:
+    """
+    {
+        "Key": "Value"
+    }
+    """
+```
+
+## Given the execution input is
+
+Tell the state machine execution what the input is for the overall execution
+**Text**
+Json object representing the input data
+
+**Examples**
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    And the execution input is:
+    """
+    {
+        "Key": "Value"
+    }
+    """
+```
+
 ______________________________________________________________________
 
 ## When the state machine executes

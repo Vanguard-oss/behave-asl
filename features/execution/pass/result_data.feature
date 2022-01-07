@@ -113,3 +113,51 @@ Feature: The Pass type can set result data
     And the step result data path "$.IntField" is an int
     And the step result data path "$.IntField" matches "123"
     And the step result data path "$.Existing" does not exist
+
+
+  Scenario: The second state ResultData cannot pull from the execution input
+    Given a state machine defined by:
+    """
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Pass",
+                "Next": "SecondState"
+            },
+            "SecondState": {
+                "Type": "Pass",
+                "Result": {
+                    "Size.$": "$$.Execution.Input.Size"
+                },
+                "Next": "EndState"
+            },
+            "EndState": {
+                "Type": "Pass",
+                "End": true
+            }
+        }
+    }
+    """
+    And the state machine is current at the state "SecondState"
+    And the current state data is:
+    """
+    {
+        "Type": "Teapot",
+        "Size": "Big"
+    }
+    """
+    And the execution input is:
+    """
+    {
+        "Type": "Teapot",
+        "Size": "Little"
+    }
+    """
+    When the state machine executes
+    Then the step result data is:
+    """
+    {
+        "Size.$": "$$.Execution.Input.Size"
+    }
+    """

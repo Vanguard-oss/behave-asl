@@ -72,3 +72,39 @@ Feature: The Pass type can have an input path that filters the input
     And the step result data path "$.output.Key" matches "Value"
     And the step result data path "$.Map.Key" is a string
     And the step result data path "$.Map.Key" matches "Value"
+
+
+  Scenario: The Pass type can set an input path from the Context object
+    Given a state machine defined by:
+    """
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Pass",
+                "Next": "EndState",
+                "InputPath": "$$.Execution.Input.Map"
+            },
+            "EndState": {
+                "Type": "Pass",
+                "Result": "end",
+                "End": true
+            }
+        }
+    }
+    """
+    And the execution input is:
+    """
+    {
+        "Map": {
+            "Key": "Value"
+        }
+    }
+    """
+    When the state machine executes
+    Then the step result data is:
+    """
+    {
+        "Key": "Value"
+    }
+    """
