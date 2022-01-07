@@ -1,5 +1,8 @@
 import copy
+from datetime import datetime, timezone
+from time import sleep
 
+from behaveasl.expr_eval import replace_expression
 from behaveasl.models.abstract_phase import AbstractPhase
 from behaveasl.models.abstract_state import AbstractStateModel
 from behaveasl.models.catch import Catch
@@ -21,6 +24,7 @@ class PassResultPhase(AbstractPhase):
         self._next_state = state_details.get("Next", None)
         self._is_end = state_details.get("End", False)
         self._result = state_details.get("Result", None)
+        self._comment = state_details.get("Comment", None)
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
         if self._next_state is not None:
@@ -67,6 +71,7 @@ class TaskState(AbstractStateModel):
 
         self._next_state = state_details.get("Next", None)
         self._is_end = state_details.get("End", False)
+        self._comment = state_details.get("Comment", None)
         self._resource = state_details.get("Resource", None)
         self._retry = state_details.get("Retry", None)
         self._catch = state_details.get("Catch", None)
@@ -131,18 +136,65 @@ class ChoiceState(AbstractStateModel):
 
 
 class WaitState(AbstractStateModel):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, state_name: str, state_details):
+        self._phases = []
+        self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
+        self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
 
-        pass
+        self._next_state = state_details.get("Next", None)
+        self._is_end = state_details.get("End", False)
+        self._comment = state_details.get("Comment", None)
 
-    # def __init__(self, state_name, state_details):
-    #     self.state_name = state_name
-    #     pass
+        self._seconds = state_details.get("Seconds", None)
+        self._timestamp = state_details.get("Timestamp", None)
+        self._seconds_path = state_details.get("SecondsPath", None)
+        self._timestamp_path = state_details.get("TimestampPath", None)
+
+        # TODO: make sure only one of the 4 fields is set
 
     def execute(self, state_input, execution):
-        """The fail state will always raise an error with a cause"""
-        # TODO: implement
-        pass
+        """The wait state delays the state machine from continuing for a specified time"""
+        sr = StepResult()
+        current_data = copy.deepcopy(state_input)
+        for phase in self._phases:
+            current_data = phase.execute(state_input, current_data, sr, execution)
+        sr.result_data = current_data
+
+        if self._next_state is not None:
+            sr.next_state = self._next_state
+        sr.end_execution = self._is_end
+
+        if self._seconds:
+            sleep(self._seconds)
+        elif self._timestamp:
+            diff = self._convert_timestamp_to_seconds(self._timestamp)
+            sleep(diff)
+        elif self._seconds_path:
+            parsed_seconds = replace_expression(
+                expr=self._seconds_path, input=state_input, context=execution.context
+            )
+            sleep(parsed_seconds)
+        elif self._timestamp_path:
+            parsed_timestamp = replace_expression(
+                expr=self._timestamp_path, input=state_input, context=execution.context
+            )
+            diff = self._convert_timestamp_to_seconds(parsed_timestamp)
+            sleep(diff)
+
+        return sr
+
+    def _convert_timestamp_to_seconds(self, timestamp: str) -> int:
+        current_ts = datetime.now(timezone.utc)
+        print(f"Current time: {current_ts}")
+        if "Z" in timestamp:
+            timestamp = timestamp.replace("Z", "+00:00")
+        target_ts = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S%z")
+
+        if target_ts > current_ts:
+            diff = target_ts - current_ts
+        else:
+            raise ArithmeticError("Timestamp is not greater than the current time.")
+        return diff.total_seconds()
 
 
 class SucceedState(AbstractStateModel):
