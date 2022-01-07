@@ -1,7 +1,5 @@
 import copy
 
-import jsonpath_ng
-
 from behaveasl import expr_eval, jsonpath
 from behaveasl.models.abstract_phase import AbstractPhase
 from behaveasl.models.step_result import StepResult
@@ -134,13 +132,14 @@ class ResultSelectorPhase(AbstractPhase):
                     execution=execution,
                 )
             else:
+
                 # Base cases
                 # If 'v' is a JsonPath, then eval it against the state_input
                 if k.endswith(".$"):
-                    jpexpr = jsonpath_ng.parse(v)
-                    results = jpexpr.find(phase_input)
-                    if len(results) == 1:
-                        phase_output[k[0:-2]] = results[0].value
+                    new_value = expr_eval.replace_expression(
+                        expr=v, input=phase_input, context=execution.context
+                    )
+                    phase_output[k[0:-2]] = new_value
                 else:
                     phase_output[k] = v
             print(

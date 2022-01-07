@@ -74,17 +74,20 @@
 
 ### Task
 
+The Task state doesn't simulate the interaction with an external resource yet.  It
+is just a passthrough.
+
 | Field | Status |
 | ----- | ------ |
 | Type | Yes |
 | Comment | Yes |
-| InputPath | No|
-| OutputPath | No |
-| Next | No |
-| End | No |
-| ResultPath | No |
-| Parameters | No |
-| ResultSelector | No |
+| InputPath | Yes|
+| OutputPath | Yes |
+| Next | Yes |
+| End | Yes |
+| ResultPath | Yes |
+| Parameters | Yes |
+| ResultSelector | Yes |
 | Retry | No |
 | Catch | No |
 
@@ -106,11 +109,7 @@
 | State Input | Yes |
 | State Output | Yes |
 | Execution Input | Yes |
-| Context Object | No |
-
-### Notes
-
-1. Reference lookups are only supported at the first level.  Deeper lookups are not yet supported
+| Context Object | Yes |
 
 ## Intrinsics
 
