@@ -114,7 +114,6 @@ Feature: The Pass type can set result data
     And the step result data path "$.IntField" matches "123"
     And the step result data path "$.Existing" does not exist
 
-
   Scenario: The second state ResultData cannot pull from the execution input
     Given a state machine defined by:
     """

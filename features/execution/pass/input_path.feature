@@ -73,7 +73,6 @@ Feature: The Pass type can have an input path that filters the input
     And the step result data path "$.Map.Key" is a string
     And the step result data path "$.Map.Key" matches "Value"
 
-
   Scenario: The Pass type can set an input path from the Context object
     Given a state machine defined by:
     """

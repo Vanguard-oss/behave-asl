@@ -75,7 +75,6 @@ Feature: The Execution has it's own input data
     }
     """
 
-
   Scenario: When starting at the second state, the Pass params can pull from the execution input
     Given a state machine defined by:
     """
@@ -122,5 +121,3 @@ Feature: The Execution has it's own input data
         "Size": "Little"
     }
     """
-
-

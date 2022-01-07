@@ -77,7 +77,6 @@ Feature: The Pass type can filter results by using OutputPath
     And the step result data path "$.IntField" matches "123"
     And the step result data path "$.Existing" does not exist
 
-
   Scenario: The OutputPath can use values from the Context object
     Given a state machine defined by:
     """
