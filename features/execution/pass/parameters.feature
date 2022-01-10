@@ -70,6 +70,39 @@ Feature: The Pass type can have parameters set
     And the step result data path "$.Existing" is a string
     And the step result data path "$.Existing" matches "Value"
 
+  Scenario: The Pass type can set a parameter that is a JsonPath selector that is nonsense
+    Given a state machine defined by:
+    """
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Pass",
+                "Next": "EndState",
+                "Parameters": {
+                    "Param.$": "Invalid"
+                },
+                "ResultPath": "$.output"
+            },
+            "EndState": {
+                "Type": "Pass",
+                "Result": "end",
+                "End": true
+            }
+        }
+    }
+    """
+    And the current state data is:
+    """
+    {
+        "Existing": "Value"
+    }
+    """
+    When the state machine executes
+    Then the execution failed
+    And the execution error was "States.Runtime"
+    And the execution error cause contained "Invalid"
+
   Scenario: The Pass type can set a parameter that looks like a JsonPath selector of the input
     Given a state machine defined by:
     """

@@ -21,6 +21,12 @@ Feature: The Task type can filter results by using OutputPath
         }
     }
     """
+    And the resource "Lambda" will be called with any parameters and return:
+    """
+    {
+        "New": "Data"
+    }
+    """
     And the current state data is:
     """
     {

@@ -81,7 +81,7 @@ def then_result_data_is_dict(context, path):
 @then(u"the step result data is")
 def then_full_match(context):
     assert context.text is not None
-    assertions.assert_result_data_matches(
+    assertions.assert_json_matches(
         context.text, context.execution.last_step_result.result_data
     )
 
@@ -105,3 +105,28 @@ def then_execution_successful(context):
 @then(u"the execution failed")
 def then_execution_failed(context):
     assert context.execution.last_step_result.failed
+
+
+@then(u'the execution error was "{error}"')
+def then_error_was(context, error):
+    assert context.execution.last_step_result.error == error
+
+
+@then(u"the execution error was null")
+def then_error_was_null(context):
+    assert context.execution.last_step_result.error is None
+
+
+@then(u'the execution error cause was "{cause}"')
+def then_error_cause_was(context, cause):
+    assert context.execution.last_step_result.cause == cause
+
+
+@then(u"the execution error cause was null")
+def then_error_cause_was_null(context):
+    assert context.execution.last_step_result.cause is None
+
+
+@then(u'the execution error cause contained "{cause}"')
+def then_error_cause_contained(context, cause):
+    assert cause in context.execution.last_step_result.cause

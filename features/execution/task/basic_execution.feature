@@ -19,6 +19,11 @@ Feature: The Task state type is supported
         }
     }
     """
+    And the resource "Lambda" will be called with any parameters and return:
+    """
+    {
+    }
+    """
     When the state machine executes
     Then the next state is "EndState"
 
@@ -39,6 +44,11 @@ Feature: The Task state type is supported
                 "End": true
             }
         }
+    }
+    """
+    And the resource "Lambda" will be called with any parameters and return:
+    """
+    {
     }
     """
     And the state machine is current at the state "EndState"
@@ -63,6 +73,16 @@ Feature: The Task state type is supported
                 "End": true
             }
         }
+    }
+    """
+    And the resource "Lambda" will be called with any parameters and return:
+    """
+    {
+    }
+    """
+    And the resource "Lambda" will be called with any parameters and return:
+    """
+    {
     }
     """
     When the state machine executes

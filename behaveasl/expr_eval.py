@@ -1,4 +1,5 @@
 from behaveasl import jsonpath
+from behaveasl.models.exceptions import StatesRuntimeException
 
 
 def replace_expression(*, expr: str, input, context: dict):
@@ -12,6 +13,7 @@ def replace_expression(*, expr: str, input, context: dict):
                 f"Replacing '{expr}' [from Context] with '{new_value}', context='{context}'"
             )
             return new_value
+        raise StatesRuntimeException(f"Invalid path {expr}: No results")
     elif expr.startswith("$"):
         jpexpr = jsonpath.get_instance(expr)
         results = jpexpr.find(input)
@@ -19,4 +21,5 @@ def replace_expression(*, expr: str, input, context: dict):
             new_value = results[0].value
             print(f"Replacing '{expr}' [from Input] with '{new_value}'")
             return new_value
-    raise Exception(f"Failed to process: expr={expr}, context={context}")
+        raise StatesRuntimeException(f"Invalid path {expr}: No results")
+    raise StatesRuntimeException(f"Invalid expression {expr}: Nonsense")

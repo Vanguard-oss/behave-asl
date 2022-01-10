@@ -5,8 +5,8 @@ from behaveasl.models.abstract_phase import AbstractPhase
 from behaveasl.models.abstract_state import AbstractStateModel
 from behaveasl.models.catch import Catch
 from behaveasl.models.choice import Choice
+from behaveasl.models.exceptions import StatesCompileException
 from behaveasl.models.retry import Retry
-from behaveasl.models.state_param_exception import StateParamException
 from behaveasl.models.state_phases import (
     InputPathPhase,
     OutputPathPhase,
@@ -54,11 +54,23 @@ class PassState(AbstractStateModel):
         return sr
 
 
+class TaskMockPhase(AbstractPhase):
+    def __init__(self, state_details: dict):
+        self._resource = state_details["Resource"]
+
+    def execute(self, state_input, phase_input, sr: StepResult, execution):
+        execution.resource_expectations.execute(self._resource, phase_input)
+        resp = execution.resource_response_mocks.execute(self._resource, phase_input)
+        print(f"TaskMockPhase: '{self._resource}' returned '{resp}'")
+        return resp
+
+
 class TaskState(AbstractStateModel):
     def __init__(self, state_name: str, state_details: dict, **kwargs):
         self._phases = []
         if "Parameters" in state_details:
             self._phases.append(ParametersPhase(state_details["Parameters"]))
+        self._phases.append(TaskMockPhase(state_details))
         if "ResultSelector" in state_details:
             self._phases.append(
                 ResultSelectorPhase(state_details.get("ResultSelector", "$"))
@@ -77,15 +89,15 @@ class TaskState(AbstractStateModel):
         self._heartbeat_seconds_path = state_details.get("HeartbeatSecondsPath", None)
 
         if self._resource is None:
-            raise StateParamException("A Resource field must be provided.")
+            raise StatesCompileException("A Resource field must be provided.")
 
         if self._timeout_seconds and self._timeout_seconds_path:
-            raise StateParamException(
+            raise StatesCompileException(
                 "Only one of TimeoutSeconds and TimeoutSecondsPath can be set."
             )
 
         if self._heartbeat_seconds and self._heartbeat_seconds_path:
-            raise StateParamException(
+            raise StatesCompileException(
                 "Only one of HeartbeatSeconds and HeartbeatSecondsPath can be set."
             )
 
@@ -105,8 +117,6 @@ class TaskState(AbstractStateModel):
         for phase in self._phases:
             current_data = phase.execute(state_input, current_data, sr, execution)
         sr.result_data = current_data
-
-        # TODO: execute the resource
 
         if self._next_state is not None:
             sr.next_state = self._next_state
@@ -212,11 +222,9 @@ class FailState(AbstractStateModel):
         res = StepResult()
         res.end_execution = True
         res.failed = True
-
-        # TODO: figure out if error and cause go in result data or somewhere else
-        res.result_data = {}
-        res.result_data["Error"] = self._error
-        res.result_data["Cause"] = self._cause
+        res.error = self._error
+        res.cause = self._cause
+        res.result_data = None
 
         return res
 
