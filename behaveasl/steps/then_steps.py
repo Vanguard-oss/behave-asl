@@ -81,7 +81,7 @@ def then_result_data_is_dict(context, path):
 @then(u"the step result data is")
 def then_full_match(context):
     assert context.text is not None
-    assertions.assert_result_data_matches(
+    assertions.assert_json_matches(
         context.text, context.execution.last_step_result.result_data
     )
 
