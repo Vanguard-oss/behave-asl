@@ -1,5 +1,6 @@
 import copy
 
+from behaveasl import expr_eval, jsonpath
 from behaveasl.models.abstract_phase import AbstractPhase
 from behaveasl.models.abstract_state import AbstractStateModel
 from behaveasl.models.catch import Catch
@@ -123,18 +124,44 @@ class ChoiceState(AbstractStateModel):
 
         # For choice in choice_list, create an instance of Choice and add it to the list
         for choice in state_details["Choices"]:
+            # Each Choice *must* have a "Next" field
+            if 'Next' not in choice.keys():
+                raise StateParamException("Each Choice requires an associated Next field.")
+
             # TODO: deal with Boolean Choices like Or/And where there will be multiple conditions
             # They will be recognizable either by the "And"/"Or"/etc or by their list type
             
-            # To get the evaluation type, we'll take all the keys, then remove "Variable" and "Next" -
+            # To get the evaluation type, we need to find the key that isn't 'Variable' or 'Next'
             # the remaining key should be the evaluation type and value
-            evaluation_type=set(['Variable', 'Next']).symmetric_difference(set(choice.keys()))
+            evaluation_type=list(filter(lambda x: x not in ['Variable', 'Next'], choice.keys()))[0]
+
             self._choices.append(Choice(variable=choice["Variable"], evaluation_type=evaluation_type,
-            evaluation_value=choice['evaluation_type'], next_state=choice['Next']))
+            evaluation_value=choice[evaluation_type], next_state=choice['Next']))
         
     def execute(self, state_input, execution):
         # TODO: implement
-        pass
+        self._state_input = state_input
+        sr = StepResult()
+        # Given the state input, we need to try to find a matching Choice(s)
+        # matching_choices = filter(self.apply_rules, self._choices) # Can probably do this with a filter ultimately
+        for choice in self._choices:
+            choice_matches = self._apply_rules(choice=choice)
+        # TODO: what happens if 2 choices match?!?
+
+    def _apply_rules(self, choice):
+        state_input = self._state_input
+        # We'll use a dictionary to map the evaluation type to a Python comparator
+        evaluation_type_to_comparator = {
+            # value if true if condition else value if false
+            'StringEquals': lambda state_input, evaluation_value: True if state_input == evaluation_value else False,
+            'BooleanEquals': lambda state_input, evaluation_value: True if bool(state_input) == bool(evaluation_value) else False,
+            'IsBoolean': lambda state_input, evaluation_value: True if type(state_input) == bool else False,
+        }
+        # We'll always have a Variable - so try to find it in the input using json path
+        # Apply the comparisons
+        
+        # EOD 1/9/22: need to use jsonpath-ng to extract choice.variable from self._state_input
+        # And use the choice.evaluation_type to apply the lambda from the evaluation_type_to_comparator dictionary
 
 
 class WaitState(AbstractStateModel):
