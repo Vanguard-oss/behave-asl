@@ -38,7 +38,7 @@ def then_step_is_created_with_correct_object_type(context, step_name, class_name
 def then_full_match_not(context):
 
     try:
-        assertions.assert_result_data_matches(
+        assertions.assert_json_matches(
             context.text, context.execution.last_step_result.result_data
         )
     except AssertionError as e:

@@ -53,11 +53,23 @@ class PassState(AbstractStateModel):
         return sr
 
 
+class TaskMockPhase(AbstractPhase):
+    def __init__(self, state_details: dict):
+        self._resource = state_details["Resource"]
+
+    def execute(self, state_input, phase_input, sr: StepResult, execution):
+        execution.resource_expectations.execute(self._resource, phase_input)
+        resp = execution.resource_response_mocks.execute(self._resource, phase_input)
+        print(f"TaskMockPhase: '{self._resource}' returned '{resp}'")
+        return resp
+
+
 class TaskState(AbstractStateModel):
     def __init__(self, state_name: str, state_details: dict, **kwargs):
         self._phases = []
         if "Parameters" in state_details:
             self._phases.append(ParametersPhase(state_details["Parameters"]))
+        self._phases.append(TaskMockPhase(state_details))
         if "ResultSelector" in state_details:
             self._phases.append(
                 ResultSelectorPhase(state_details.get("ResultSelector", "$"))
