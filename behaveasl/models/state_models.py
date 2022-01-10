@@ -115,16 +115,23 @@ class TaskState(AbstractStateModel):
 
 
 class ChoiceState(AbstractStateModel):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, state_name: str, state_details: dict, **kwargs):
+        self.state_name = state_name
+        self._choices = []
+        # The set of Choices can also have a "Default" (if nothing matches) but is not required
+        self._default_next_state=state_details.get("Default", None)
 
-        pass
-
-    # def __init__(self, state_name, state_details):
-    #     self.state_name = state_name
-    #     self.choice_list = None
-    #     # TODO: for choice in choice_list, create an instance of Choice and add it to the list
-    #     pass
-
+        # For choice in choice_list, create an instance of Choice and add it to the list
+        for choice in state_details["Choices"]:
+            # TODO: deal with Boolean Choices like Or/And where there will be multiple conditions
+            # They will be recognizable either by the "And"/"Or"/etc or by their list type
+            
+            # To get the evaluation type, we'll take all the keys, then remove "Variable" and "Next" -
+            # the remaining key should be the evaluation type and value
+            evaluation_type=set(['Variable', 'Next']).symmetric_difference(set(choice.keys()))
+            self._choices.append(Choice(variable=choice["Variable"], evaluation_type=evaluation_type,
+            evaluation_value=choice['evaluation_type'], next_state=choice['Next']))
+        
     def execute(self, state_input, execution):
         # TODO: implement
         pass
