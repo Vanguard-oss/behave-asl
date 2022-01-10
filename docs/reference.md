@@ -84,12 +84,9 @@ Json object representing the resource response
 
 **Examples**
 
+*Definition*
+
 ```
-Feature: Example feature
-  Scenario: Load a state machine from an asl file
-    Given a state machine defined in "my-state-machine.asl"
-    And the execution input is:
-    """
     {
         "StartAt": "FirstState",
         "States": {
@@ -108,7 +105,14 @@ Feature: Example feature
             }
         }
     }
-    """
+```
+
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
     And the resource "Lambda" will be called with:
     """
     {
@@ -142,13 +146,9 @@ parameters are used to call the resource.
 Json object representing the resource response
 
 **Examples**
+*Definition*
 
 ```
-Feature: Example feature
-  Scenario: Load a state machine from an asl file
-    Given a state machine defined in "my-state-machine.asl"
-    And the execution input is:
-    """
     {
         "StartAt": "FirstState",
         "States": {
@@ -167,7 +167,14 @@ Feature: Example feature
             }
         }
     }
-    """
+```
+
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
     And the resource "Lambda" will be called with any parameters and return
     """
     {
@@ -193,13 +200,9 @@ Tell the execution environment that you expect the mocked resource to be called 
 Json object representing the parameters you expect the resource to be called with
 
 **Examples**
+*Definition*
 
 ```
-Feature: Example feature
-  Scenario: Load a state machine from an asl file
-    Given a state machine defined in "my-state-machine.asl"
-    And the execution input is:
-    """
     {
         "StartAt": "FirstState",
         "States": {
@@ -218,7 +221,14 @@ Feature: Example feature
             }
         }
     }
-    """
+```
+
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
     And the resource "Lambda" will be called with:
     """
     {
@@ -537,4 +547,154 @@ Feature: Example feature
     Given a state machine defined in "my-state-machine.asl"
     When the state machine executes
     Then the step result data path "$.hello" matches "world"
+```
+
+## Then the execution ended
+
+Validates that the execution has ended
+
+**Examples**
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    When the state machine executes
+    Then the exeuction has ended
+```
+
+## Then the execution succeeded
+
+Validates that the execution has ended with a successful execution
+
+**Examples**
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    When the state machine executes
+    Then the exeuction has ended
+    And the execution succeeded
+```
+
+## Then the execution failed
+
+Validates that the execution has ended with a failed execution
+
+**Examples**
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    When the state machine executes
+    Then the exeuction has ended
+    And the execution failed
+```
+
+## Then the execution error was "error"
+
+Validates that the execution failed with a specific error.
+
+The error can be a standard [Error Name](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html)
+or it could be a custom one from the `Fail` state.
+
+**Parameters**
+
+- error - name of the error
+
+**Examples**
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    When the state machine executes
+    Then the exeuction has ended
+    And the execution failed
+    And the execution error was "States.Runtime"
+```
+
+## Then the execution error was null
+
+Validates that the execution failed without an error.  This happens
+when the `Fail` state successfuly executes but without an `Error`
+configuration.
+
+**Examples**
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    When the state machine executes
+    Then the exeuction has ended
+    And the execution failed
+    And the execution error was null
+```
+
+## Then the execution error cause was "cause"
+
+Validates that the execution failed with a specific error cause.
+
+**Parameters**
+
+- cause - the exact text of the error cause
+
+**Examples**
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    When the state machine executes
+    Then the exeuction has ended
+    And the execution failed
+    And the execution error cause was "My Custom Error"
+```
+
+## Then the execution error cause contained "cause"
+
+Validates that the execution failed cause contains the message
+
+**Parameters**
+
+- cause - a string that should be in the error cause
+
+**Examples**
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    When the state machine executes
+    Then the exeuction has ended
+    And the execution failed
+    And the execution error cause contained "Invalid"
+```
+
+## Then the execution error cause was null
+
+Validates that the execution failed without a cause.  This happens when
+the `Fail` state runs without a `Cause` setting.
+
+**Examples**
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    When the state machine executes
+    Then the exeuction has ended
+    And the execution failed
+    And the execution error cause was null
 ```
