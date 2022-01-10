@@ -1,6 +1,7 @@
 import copy
 import datetime
 
+from .exceptions import StatesException
 from .state_machine import StateMachineModel
 from .step_result import StepResult
 from .task_mock import ResourceMockMap
@@ -33,11 +34,18 @@ class Execution:
         self._context_obj["State"]["Name"] = self._current_state
         self._context_obj["State"]["EnteredTime"] = datetime.datetime.now().isoformat()
         self._context_obj["State"]["RetryCount"] = 0
-        self._last_step_result = current_state_obj.execute(
-            self._current_state_data, self
-        )
-        if self._last_step_result.next_state is not None:
-            self._current_state = self._last_step_result.next_state
+
+        try:
+            self._last_step_result = current_state_obj.execute(
+                self._current_state_data, self
+            )
+            if self._last_step_result.next_state is not None:
+                self._current_state = self._last_step_result.next_state
+        except StatesException as e:
+            self._last_step_result.end_execution = True
+            self._last_step_result.failed = True
+            self._last_step_result.error = e.error
+            self._last_step_result.cause = e.cause
 
     def set_execution_input_data(self, data):
         """Set the initial input of the execution"""
@@ -46,7 +54,7 @@ class Execution:
             self._current_state_data = copy.deepcopy(data)
 
     def set_current_state_data(self, data):
-        """Set the current state data that will be the input of the next state"""
+        """Set the current state data that will bed the input of the next state"""
         self._current_state_data = data
 
     def set_current_state_name(self, name: str):

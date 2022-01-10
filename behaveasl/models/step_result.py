@@ -9,3 +9,5 @@ class StepResult:
     result_data: object = None
     end_execution: bool = False
     failed: bool = False
+    cause: str = None
+    error: str = None
