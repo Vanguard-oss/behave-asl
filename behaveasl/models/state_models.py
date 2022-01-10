@@ -136,7 +136,7 @@ class ChoiceState(AbstractStateModel):
         for choice in state_details["Choices"]:
             # Each Choice *must* have a "Next" field
             if 'Next' not in choice.keys():
-                raise StateParamException("Each Choice requires an associated Next field.")
+                raise StatesCompileException("Each Choice requires an associated Next field.")
 
             # TODO: deal with Boolean Choices like Or/And where there will be multiple conditions
             # They will be recognizable either by the "And"/"Or"/etc or by their list type
