@@ -150,7 +150,21 @@ class WaitState(AbstractStateModel):
         self._seconds_path = state_details.get("SecondsPath", None)
         self._timestamp_path = state_details.get("TimestampPath", None)
 
-        # TODO: make sure only one of the 4 fields is set
+        if (
+            not sum(
+                bool(x)
+                for x in [
+                    self._seconds,
+                    self._timestamp,
+                    self._seconds_path,
+                    self._timestamp_path,
+                ]
+            )
+            == 1
+        ):
+            raise StateParamException(
+                "Only one of Seconds, Timestamp, SecondsPath or TimestampPath may be set."
+            )
 
     def execute(self, state_input, execution):
         """The wait state delays the state machine from continuing for a specified time"""

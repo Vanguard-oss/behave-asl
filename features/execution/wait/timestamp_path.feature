@@ -18,9 +18,10 @@ Feature: The Wait type can use TimestampPath
     And the current state data is:
     """
     {
-        "Timestamp": "2022-01-07T23:10:00Z"
+        "Timestamp": ""
     }
     """
+    And the "Timestamp" parameter is a timestamp
     When the state machine executes
     Then the execution ended
     And the execution succeeded
