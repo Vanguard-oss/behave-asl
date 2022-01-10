@@ -15,8 +15,8 @@ Feature: The Fail state type is supported
     When the state machine executes
     Then the execution failed
     And the execution ended
-    And the step result data path "Error" is null
-    And the step result data path "Cause" is null
+    And the execution error was null
+    And the execution error cause was null
 
   Scenario: The Fail type works with multiple steps
     Given a state machine defined by:
@@ -56,7 +56,8 @@ Feature: The Fail state type is supported
     When the state machine executes
     Then the execution ended
     And the execution failed
-    And the step result data path "Error" matches "CustomError"
+    And the execution error was "CustomError"
+    And the execution error cause was null
 
   Scenario: The Fail type can provide a custom failure string
     Given a state machine defined by:
@@ -74,7 +75,8 @@ Feature: The Fail state type is supported
     When the state machine executes
     Then the execution ended
     And the execution failed
-    And the step result data path "Cause" matches "I am designed to fail"
+    And the execution error was null
+    And the execution error cause was "I am designed to fail"
 
   Scenario: The Fail type can provide a custom error and a custom failure string
     Given a state machine defined by:
@@ -93,5 +95,5 @@ Feature: The Fail state type is supported
     When the state machine executes
     Then the execution ended
     And the execution failed
-    And the step result data path "Error" matches "CustomError"
-    And the step result data path "Cause" matches "I am designed to fail"
+    And the execution error was "CustomError"
+    And the execution error cause was "I am designed to fail"

@@ -3,6 +3,7 @@ import json
 from behave import when
 
 from behaveasl import parser
+from behaveasl.steps.given_steps import create_state_machine
 
 
 @when(u"the parser runs")
@@ -10,6 +11,7 @@ def when_parser_runs(context):
     context.thrown = None
     try:
         context.definition_dict = parser.parse_text(context.definition_text)
+        create_state_machine(context)
     except Exception as e:
         context.thrown = e
 
