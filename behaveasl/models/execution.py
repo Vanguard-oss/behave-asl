@@ -3,17 +3,18 @@ import datetime
 
 from .state_machine import StateMachineModel
 from .step_result import StepResult
+from .task_mock import ResourceMockMap
 
 
 class Execution:
     """Logic for a State Machine execution"""
 
     def __init__(self, *, state_machine: StateMachineModel):
-        self._state_machine = state_machine
-        self._current_state = state_machine.get_initial_state_name()
-        self._current_state_data = {}
-        self._last_step_result = StepResult()
-        self._context_obj = {
+        self._state_machine: StateMachineModel = state_machine
+        self._current_state: str = state_machine.get_initial_state_name()
+        self._current_state_data: dict = {}
+        self._last_step_result: StepResult = StepResult()
+        self._context_obj: dict = {
             "Execution": {
                 "Id": "123",
                 "Input": {},
@@ -23,6 +24,8 @@ class Execution:
             "StateMachine": {"Id": "unittest"},
             "Task": {"Token": "abc123"},
         }
+        self._resource_response_mocks: ResourceMockMap = ResourceMockMap()
+        self._resource_expectations: ResourceMockMap = ResourceMockMap()
 
     def execute(self):
         """Execute a single step"""
@@ -51,9 +54,17 @@ class Execution:
         self._current_state = name
 
     @property
-    def last_step_result(self):
+    def last_step_result(self) -> StepResult:
         return self._last_step_result
 
     @property
-    def context(self):
+    def context(self) -> dict:
         return self._context_obj
+
+    @property
+    def resource_response_mocks(self) -> ResourceMockMap:
+        return self._resource_response_mocks
+
+    @property
+    def resource_expectations(self) -> ResourceMockMap:
+        return self._resource_expectations

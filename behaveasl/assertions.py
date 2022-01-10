@@ -4,7 +4,7 @@ from urllib.parse import unquote
 from diff_match_patch import diff_match_patch
 
 
-def assert_result_data_matches(expected: str, actual: dict):
+def assert_json_matches(expected: str, actual: dict):
     canonical_expected = json.dumps(json.loads(expected), indent=2, sort_keys=True)
     canonical_actual = json.dumps(actual, indent=2, sort_keys=True)
 

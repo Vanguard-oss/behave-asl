@@ -71,6 +71,173 @@ Feature: Example feature
     """
 ```
 
+## Given the resource "name" will return
+
+Tell the execution environment to mock out a resource to return a specific value.
+
+**Parameters**
+
+- name - the name or ARN of the resource to mock out
+
+**Text**
+Json object representing the resource response
+
+**Examples**
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    And the execution input is:
+    """
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Task",
+                "Resource": "Lambda",
+                "Parameters": {
+                    "Type": "Teapot"
+                },
+                "Next": "EndState"
+            },
+            "EndState": {
+                "Type": "Task",
+                "Resource": "Lambda",
+                "End": true
+            }
+        }
+    }
+    """
+    And the resource "Lambda" will be called with:
+    """
+    {
+        "Type": "Teapot"
+    }
+    """
+    And the resource "Lambda" will return:
+    """
+    {
+        "Size": "Little"
+    }
+    """
+    When the state machine executes
+```
+
+**Notes**
+
+- This must be paired with a `Given the resource "name" will be called with` step
+
+## Given the resource "name" will be called with any parameters and return
+
+Tell the execution environment to mock out a resource to return a specific value.
+This step will also tell the execution environment that it doesn't matter what
+parameters are used to call the resource.
+
+**Parameters**
+
+- name - the name or ARN of the resource to mock out
+
+**Text**
+Json object representing the resource response
+
+**Examples**
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    And the execution input is:
+    """
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Task",
+                "Resource": "Lambda",
+                "Parameters": {
+                    "Type": "Teapot"
+                },
+                "Next": "EndState"
+            },
+            "EndState": {
+                "Type": "Task",
+                "Resource": "Lambda",
+                "End": true
+            }
+        }
+    }
+    """
+    And the resource "Lambda" will be called with any parameters and return
+    """
+    {
+        "Size": "Little"
+    }
+    """
+    When the state machine executes
+```
+
+**Notes**
+
+- This step is standalone.  It cannot be paired with one of the other mock steps
+
+## Given the resource "name" will be called with
+
+Tell the execution environment that you expect the mocked resource to be called with specific parameters
+
+**Parameters**
+
+- name - the name or ARN of the resource to mock out
+
+**Text**
+Json object representing the parameters you expect the resource to be called with
+
+**Examples**
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    And the execution input is:
+    """
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Task",
+                "Resource": "Lambda",
+                "Parameters": {
+                    "Type": "Teapot"
+                },
+                "Next": "EndState"
+            },
+            "EndState": {
+                "Type": "Task",
+                "Resource": "Lambda",
+                "End": true
+            }
+        }
+    }
+    """
+    And the resource "Lambda" will be called with:
+    """
+    {
+        "Type": "Teapot"
+    }
+    """
+    And the resource "Lambda" will return:
+    """
+    {
+        "Size": "Little"
+    }
+    """
+    When the state machine executes
+```
+
+**Notes**
+
+- This must be paired with a `Given the resource "name" will return` step
+
 ______________________________________________________________________
 
 ## When the state machine executes

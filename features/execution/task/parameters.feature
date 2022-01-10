@@ -29,12 +29,29 @@ Feature: The Task type can have parameters set
         "Existing": "Value"
     }
     """
+    And the resource "Lambda" will be called with:
+    """
+    {
+        "Static": "Value"
+    }
+    """
+    And the resource "Lambda" will return:
+    """
+    {
+        "StaticResponse": "Value"
+    }
+    """
     When the state machine executes
     Then the next state is "EndState"
-    And the step result data path "$.output.Static" is a string
-    And the step result data path "$.output.Static" matches "Value"
-    And the step result data path "$.Existing" is a string
-    And the step result data path "$.Existing" matches "Value"
+    And the step result data is:
+    """
+    {
+        "output": {
+            "StaticResponse": "Value"
+        },
+        "Existing": "Value"
+    }
+    """
 
   Scenario: The Task type can set a parameter that is a JsonPath selector of the input
     Given a state machine defined by:
@@ -63,6 +80,18 @@ Feature: The Task type can have parameters set
     """
     {
         "Existing": "Value"
+    }
+    """
+    And the resource "Lambda" will be called with:
+    """
+    {
+        "Param": "Value"
+    }
+    """
+    And the resource "Lambda" will return:
+    """
+    {
+        "Param": "Value"
     }
     """
     When the state machine executes
@@ -99,6 +128,18 @@ Feature: The Task type can have parameters set
     """
     {
         "Existing": "Value"
+    }
+    """
+    And the resource "Lambda" will be called with:
+    """
+    {
+        "Param": "$.Existing"
+    }
+    """
+    And the resource "Lambda" will return:
+    """
+    {
+        "Param": "$.Existing"
     }
     """
     When the state machine executes

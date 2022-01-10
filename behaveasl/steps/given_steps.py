@@ -1,10 +1,15 @@
-from datetime import datetime, timezone, timedelta
 import json
+from datetime import datetime, timedelta, timezone
 
 from behave import given
 
 from behaveasl import parser
 from behaveasl.models.execution import Execution
+from behaveasl.models.task_mock import (
+    AnyParameters,
+    AssertParameters,
+    StaticResponse,
+)
 
 
 def create_state_machine(context):
@@ -34,6 +39,28 @@ def given_set_current_state_data(context):
 @given("the execution input is")
 def given_set_execution_input(context):
     context.execution.set_execution_input_data(json.loads(context.text))
+
+
+@given(u'the resource "{resource}" will return')
+def given_resource_will_return(context, resource):
+    context.execution.resource_response_mocks.add_mock(
+        resource, StaticResponse(json.loads(context.text))
+    )
+
+
+@given(u'the resource "{resource}" will be called with any parameters and return')
+def given_resource_any_param_will_return(context, resource):
+    context.execution.resource_response_mocks.add_mock(
+        resource, StaticResponse(json.loads(context.text))
+    )
+    context.execution.resource_expectations.add_mock(resource, AnyParameters())
+
+
+@given(u'the resource "{resource}" will be called with')
+def given_resource_expect_param(context, resource):
+    context.execution.resource_expectations.add_mock(
+        resource, AssertParameters(context.text)
+    )
 
 
 @given('the "{field}" parameter is a timestamp')
