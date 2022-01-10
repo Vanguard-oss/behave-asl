@@ -1,5 +1,6 @@
 class StatesException(Exception):
     """Base Exception that contains an error and a cause"""
+
     def __init__(self, error, cause):
         self._error = error
         self._cause = cause
@@ -16,6 +17,7 @@ class StatesException(Exception):
 
 class StatesRuntimeException(StatesException):
     """A runtime exception that can't be caught"""
+
     def __init__(self, cause):
         super(StatesRuntimeException, self).__init__("States.Runtime", cause)
 
