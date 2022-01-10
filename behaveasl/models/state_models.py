@@ -151,6 +151,8 @@ class ChoiceState(AbstractStateModel):
     def _apply_rules(self, choice):
         state_input = self._state_input
         # We'll use a dictionary to map the evaluation type to a Python comparator
+        # TODO: figure out how to pre-process the "Path" comparisons so they go through these same
+        # standard comparators
         evaluation_type_to_comparator = {
             # value if true if condition else value if false
             'StringEquals': lambda state_input, evaluation_value: True if state_input == evaluation_value else False,
