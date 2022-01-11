@@ -1,4 +1,8 @@
 Feature: The Fail state type is supported
+  As a developer, I would like to validate the Fail state type.
+  
+  These scenarios are a basic regression test that a minimal Fail state can be
+  executed.  Only the minimum required fields are used.
 
   Scenario: The Fail type can terminate the machine and mark the execution as a failure
     Given a state machine defined by:
