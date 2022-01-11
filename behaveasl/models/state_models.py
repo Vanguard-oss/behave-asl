@@ -190,35 +190,32 @@ class WaitState(AbstractStateModel):
 
         if self._seconds:
             sleep(self._seconds)
+            sr.waited_seconds = self._seconds
         elif self._timestamp:
-            diff = self._convert_timestamp_to_seconds(self._timestamp)
-            sleep(diff)
+            self._sleep_until(self._timestamp)
+            sr.waited_until_timestamp = self._timestamp
         elif self._seconds_path:
             parsed_seconds = replace_expression(
                 expr=self._seconds_path, input=state_input, context=execution.context
             )
             sleep(parsed_seconds)
+            sr.waited_seconds = parsed_seconds
         elif self._timestamp_path:
             parsed_timestamp = replace_expression(
                 expr=self._timestamp_path, input=state_input, context=execution.context
             )
-            diff = self._convert_timestamp_to_seconds(parsed_timestamp)
-            sleep(diff)
+            self._sleep_until(parsed_timestamp)
+            sr.waited_until_timestamp = parsed_timestamp
 
         return sr
 
-    def _convert_timestamp_to_seconds(self, timestamp: str) -> int:
-        current_ts = datetime.now(timezone.utc)
-        print(f"Current time: {current_ts}")
+    def _sleep_until(self, timestamp: str) -> int:
         if "Z" in timestamp:
             timestamp = timestamp.replace("Z", "+00:00")
         target_ts = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S%z")
 
-        if target_ts > current_ts:
-            diff = target_ts - current_ts
-        else:
-            raise ArithmeticError("Timestamp is not greater than the current time.")
-        return diff.total_seconds()
+        while datetime.now(timezone.utc) < target_ts:
+            sleep(1)
 
 
 class SucceedState(AbstractStateModel):

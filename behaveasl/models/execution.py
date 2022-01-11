@@ -54,7 +54,7 @@ class Execution:
             self._current_state_data = copy.deepcopy(data)
 
     def set_current_state_data(self, data):
-        """Set the current state data that will bed the input of the next state"""
+        """Set the current state data that will be the input of the next state"""
         self._current_state_data = data
 
     def set_current_state_name(self, name: str):

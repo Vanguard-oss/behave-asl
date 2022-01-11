@@ -2,6 +2,7 @@ import json
 from datetime import datetime, timedelta, timezone
 
 from behave import given
+from freezegun import freeze_time
 
 from behaveasl import parser
 from behaveasl.models.execution import Execution
@@ -18,7 +19,7 @@ def create_state_machine(context):
     context.execution = Execution(state_machine=context.state_machine)
 
 
-@given('a state machine defined in "{filename}"')
+@given(u'a state machine defined in "{filename}"')
 def given_load_definition_from_file(context, filename):
     with open(filename, "r") as f:
         context.definition_text = f.read()
@@ -26,7 +27,7 @@ def given_load_definition_from_file(context, filename):
     create_state_machine(context)
 
 
-@given('the state machine is current at the state "{name}"')
+@given(u'the state machine is current at the state "{name}"')
 def given_set_current_state(context, name):
     context.execution.set_current_state_name(name)
 
@@ -63,9 +64,6 @@ def given_resource_expect_param(context, resource):
     )
 
 
-@given('the "{field}" parameter is a timestamp')
-def give_timestamp_field(context, field):
-    current_ts = datetime.now(timezone.utc) + timedelta(seconds=1)
-    context.execution._current_state_data[field] = current_ts.strftime(
-        "%Y-%m-%dT%H:%M:%S%z"
-    )
+@given(u'the current timestamp is "{timestamp}"')
+def given_current_timestamp(context, timestamp):
+    freeze_time(timestamp, tick=True)

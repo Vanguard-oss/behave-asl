@@ -21,6 +21,7 @@ Feature: The Wait state type is supported
     """
     When the state machine executes
     Then the next state is "EndState"
+    And the last state waited for "1" seconds
 
   Scenario: The Wait type can end the execution
     Given a state machine defined by:
@@ -45,6 +46,7 @@ Feature: The Wait state type is supported
     When the state machine executes
     Then the execution ended
     And the execution succeeded
+    And the last state waited for "1" seconds
 
   Scenario: The Wait Type works with multiple steps
     Given a state machine defined by:
@@ -67,6 +69,8 @@ Feature: The Wait state type is supported
     """
     When the state machine executes
     Then the next state is "EndState"
+    And the last state waited for "1" seconds
     When the state machine executes
     Then the execution ended
     And the execution succeeded
+    And the last state waited for "1" seconds

@@ -130,3 +130,13 @@ def then_error_cause_was_null(context):
 @then(u'the execution error cause contained "{cause}"')
 def then_error_cause_contained(context, cause):
     assert cause in context.execution.last_step_result.cause
+
+
+@then(u'the last state waited for "{num}" seconds')
+def then_waited_seconds(context, num):
+    assert int(num) == int(context.execution.last_step_result.waited_seconds)
+
+
+@then(u'the last state waited until "{timestamp}"')
+def then_waited_until_timestamp(context, timestamp):
+    assert timestamp == context.execution.last_step_result.waited_until_timestamp

@@ -24,3 +24,4 @@ Feature: The Wait type can use SecondsPath
     When the state machine executes
     Then the execution ended
     And the execution succeeded
+    And the last state waited for "1" seconds

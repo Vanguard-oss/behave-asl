@@ -15,13 +15,14 @@ Feature: The Wait type can use TimestampPath
         }
     }
     """
+    And the current timestamp is "2022-01-10 12:00:00"
     And the current state data is:
     """
     {
-        "Timestamp": ""
+        "Timestamp": "2022-01-10T12:00:02+00:00"
     }
     """
-    And the "Timestamp" parameter is a timestamp
     When the state machine executes
     Then the execution ended
     And the execution succeeded
+    And the last state waited until "2022-01-10T12:00:02+00:00"
