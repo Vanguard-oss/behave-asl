@@ -140,6 +140,7 @@ class ChoiceState(AbstractStateModel):
 
             # TODO: deal with Boolean Choices like Or/And where there will be multiple conditions
             # They will be recognizable either by the "And"/"Or"/etc or by their list type
+            # If we have one of those, we need sub-Choices (recurse)
             
             # To get the evaluation type, we need to find the key that isn't 'Variable' or 'Next'
             # the remaining key should be the evaluation type and value
@@ -152,29 +153,24 @@ class ChoiceState(AbstractStateModel):
         # TODO: implement
         self._state_input = state_input
         sr = StepResult()
-        # Given the state input, we need to try to find a matching Choice(s)
+        current_data = copy.deepcopy(state_input) # TODO: determine if the data input to a Choice continues on
+        # Given the state input, we need to try to find matching Choice(s)
         # matching_choices = filter(self.apply_rules, self._choices) # Can probably do this with a filter ultimately
+        matching_rules = []
         for choice in self._choices:
-            choice_matches = self._apply_rules(choice=choice)
-        # TODO: what happens if 2 choices match?!?
+            # Call evaluate on the choice instance, which will return True or False
+            if choice.evaluate(state_input=self._state_input) == True:
+                matching_rules.append(Choice)
+        # TODO: what happens if 2+ choices match?!?
+        # If we only have 1 matching Choice, set the next_state from the choice.next_state property
+        if len(matching_rules) == 1:
+            self._next_state = choice.next_state
+        # If we have NO matching Choices, throw an error, set StepResult w/failed + cause + error
 
-    def _apply_rules(self, choice):
-        state_input = self._state_input
-        # We'll use a dictionary to map the evaluation type to a Python comparator
-        # TODO: figure out how to pre-process the "Path" comparisons so they go through these same
-        # standard comparators
-        evaluation_type_to_comparator = {
-            # value if true if condition else value if false
-            'StringEquals': lambda state_input, evaluation_value: True if state_input == evaluation_value else False,
-            'BooleanEquals': lambda state_input, evaluation_value: True if bool(state_input) == bool(evaluation_value) else False,
-            'IsBoolean': lambda state_input, evaluation_value: True if type(state_input) == bool else False,
-        }
-        # We'll always have a Variable - so try to find it in the input using json path
-        # Apply the comparisons
-        
-        # EOD 1/9/22: need to use jsonpath-ng to extract choice.variable from self._state_input
-        # And use the choice.evaluation_type to apply the lambda from the evaluation_type_to_comparator dictionary
-
+        if self._next_state is not None:
+            sr.next_state = self._next_state
+            
+        return sr
 
 class WaitState(AbstractStateModel):
     def __init__(self, *args, **kwargs):
