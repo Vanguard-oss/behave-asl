@@ -16,8 +16,7 @@ External contributor signs contributor license agreement, and issues a pull requ
 
 ## Requirements
 
-- The Python code shall be formatted with `black`
-- The Feature files shall be formatted with `reformat-gherkin`
+- Files should be formatted according to the [Development Guides](docs/devguide.md)
 - Google docstring format shall be used
 - The code shall pass all existing tests
 - New changes:

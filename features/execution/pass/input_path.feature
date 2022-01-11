@@ -108,7 +108,6 @@ Feature: The Pass type can have an input path that filters the input
     }
     """
 
-
   Scenario: The Pass type can set a parameter that is a JsonPath selector for an input that doesn't exist
     Given a state machine defined by:
     """
@@ -140,5 +139,3 @@ Feature: The Pass type can have an input path that filters the input
     Then the execution failed
     And the execution error was "States.Runtime"
     And the execution error cause contained "DoesNotExist"
-
-

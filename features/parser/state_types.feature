@@ -1,4 +1,8 @@
 Feature: Perform sanity checks against the parser
+  These scenarios verify that state machine parser doesn't crash for the
+  various state types.  The goal of this test suite is to provide a very
+  basic regression test suite.  If something low level goes wrong in the
+  parser code, then these tests should start failing.
 
   Scenario: State with Type=Pass
     Given a state machine defined by:

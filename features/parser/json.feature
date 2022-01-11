@@ -1,4 +1,7 @@
 Feature: Parse json definitions
+  As a developer, I want to be able to specify State Machines in JSON format.
+  
+  These scenarios verify that the json parser is working.
 
   Scenario: Correct Json
     Given a state machine defined by:

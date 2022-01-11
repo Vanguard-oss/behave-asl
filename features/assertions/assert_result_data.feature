@@ -1,4 +1,6 @@
 Feature: Result Data can be checked
+  Regression test the assertions that validate the task result data.  The task
+  result data can be parsed using JsonPath queries or a json comparison.
 
   Scenario: Json Path matches
     Given a simple state machine
