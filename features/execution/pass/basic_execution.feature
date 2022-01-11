@@ -1,4 +1,8 @@
 Feature: The Pass state type is supported
+  As a developer, I would like to validate the Pass state type.
+  
+  These scenarios are a basic regression test that a minimal Pass state can be
+  executed.  Only the minimum required fields are used.
 
   Scenario: The Pass type can set the next state
     Given a state machine defined by:

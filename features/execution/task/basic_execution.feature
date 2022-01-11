@@ -1,4 +1,8 @@
 Feature: The Task state type is supported
+  As a developer, I would like to validate the Task state type.
+  
+  These scenarios are a basic regression test that a minimal Task state can be
+  executed.  Only the minimum required fields are used.
 
   Scenario: The Task type can set the next state
     Given a state machine defined by:

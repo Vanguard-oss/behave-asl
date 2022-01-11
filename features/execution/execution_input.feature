@@ -1,4 +1,8 @@
 Feature: The Execution has it's own input data
+  As a developer, I want to provide mock input to a state machine
+  
+  These scenarios validate that the developer can provide json input to a mock
+  state machine execution.
 
   Scenario: When starting at the first state, the execution and state inputs match
     Given a state machine defined by:

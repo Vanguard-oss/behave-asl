@@ -1,4 +1,7 @@
 Feature: Parse yaml definitions
+  As a developer, I want to be able to specify State Machines in YAML format.
+  
+  These scenarios verify that the yaml parser is working.
 
   Scenario: Correct yaml
     Given a state machine defined by:

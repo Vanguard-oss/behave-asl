@@ -1,4 +1,5 @@
 Feature: The end of an execution can be verified
+  Regression test the end execution assertions.
 
   Scenario: Successful end
     Given a simple state machine
