@@ -151,7 +151,6 @@ class ChoiceState(AbstractStateModel):
         
     def execute(self, state_input, execution):
         # TODO: implement
-        self._state_input = state_input
         sr = StepResult()
         current_data = copy.deepcopy(state_input) # TODO: determine if the data input to a Choice continues on
         # Given the state input, we need to try to find matching Choice(s)
@@ -159,7 +158,7 @@ class ChoiceState(AbstractStateModel):
         matching_rules = []
         for choice in self._choices:
             # Call evaluate on the choice instance, which will return True or False
-            if choice.evaluate(state_input=self._state_input) == True:
+            if choice.evaluate(state_input=state_input) == True:
                 matching_rules.append(Choice)
         # TODO: what happens if 2+ choices match?!?
         # If we only have 1 matching Choice, set the next_state from the choice.next_state property

@@ -8,24 +8,23 @@ class Choice:
     
 
     def evaluate(self, state_input: dict):
-        self._state_input = state_input
         # TODO: before calling the method, if the comparator ends in "Path", do the replacement
         # need to use jsonpath-ng to extract choice.variable from self._state_input
-        self._actual_value = self.parse_variable_value_from_input()
+        actual_value = self.parse_variable_value_from_input(state_input=state_input)
         # TODO: If self._actual_value is None, raise a StatesRuntimeException (no value could be located)
         # TODO: depending on the value of the Choice's comparator, call the right method - compare actual_value with evaluation_value
         function_map = {
-            'StringEquals': self._string_equals
+            'StringEquals': self._string_equals(actual_value=actual_value)
         }
-        return function_map[self._evaluation_type]()
+        return function_map[self._evaluation_type]
 
-    def parse_variable_value_from_input(self):
+    def parse_variable_value_from_input(self, state_input):
         from behaveasl import jsonpath
         from behaveasl.models.exceptions import StatesRuntimeException
         # TODO: parse other versions of this
         if self._variable.startswith("$"):
             jpexpr = jsonpath.get_instance(self._variable)
-            results = jpexpr.find(self._state_input)
+            results = jpexpr.find(state_input)
             if len(results) == 1:
                 new_value = results[0].value
                 print(f"Matched '{self._variable}' [from state_input] with '{new_value}'")
@@ -79,9 +78,9 @@ class Choice:
     def _or_comparator(self):
         pass
 
-    def _string_equals(self):
+    def _string_equals(self, actual_value):
         # TODO: check type first
-        return self._actual_value == self._evaluation_value
+        return actual_value == self._evaluation_value
 
     def _string_greater_than(self):
         pass
