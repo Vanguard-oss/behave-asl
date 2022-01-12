@@ -1,7 +1,11 @@
 import json
+import logging
 from urllib.parse import unquote
 
 from diff_match_patch import diff_match_patch
+
+
+LOG = logging.getLogger("behave.assertions")
 
 
 def assert_json_matches(expected: str, actual: dict):
@@ -12,5 +16,5 @@ def assert_json_matches(expected: str, actual: dict):
         dmp = diff_match_patch()
         patches = dmp.patch_make(canonical_actual, canonical_expected)
         diff = dmp.patch_toText(patches)
-        print(unquote(diff))
+        LOG.warn(unquote(diff))
     assert canonical_expected == canonical_actual
