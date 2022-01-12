@@ -1,6 +1,4 @@
 import copy
-from datetime import datetime, timezone
-from time import sleep
 
 from behaveasl.expr_eval import replace_expression
 from behaveasl.models.abstract_phase import AbstractPhase
@@ -190,33 +188,21 @@ class WaitState(AbstractStateModel):
         sr.end_execution = self._is_end
 
         if self._seconds:
-            sleep(self._seconds)
             sr.waited_seconds = self._seconds
         elif self._timestamp:
-            self._sleep_until(self._timestamp)
             sr.waited_until_timestamp = self._timestamp
         elif self._seconds_path:
             parsed_seconds = replace_expression(
                 expr=self._seconds_path, input=state_input, context=execution.context
             )
-            sleep(parsed_seconds)
             sr.waited_seconds = parsed_seconds
         elif self._timestamp_path:
             parsed_timestamp = replace_expression(
                 expr=self._timestamp_path, input=state_input, context=execution.context
             )
-            self._sleep_until(parsed_timestamp)
             sr.waited_until_timestamp = parsed_timestamp
 
         return sr
-
-    def _sleep_until(self, timestamp: str) -> int:
-        if "Z" in timestamp:
-            timestamp = timestamp.replace("Z", "+00:00")
-        target_ts = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S%z")
-
-        while datetime.now(timezone.utc) < target_ts:
-            sleep(1)
 
 
 class SucceedState(AbstractStateModel):
@@ -293,6 +279,8 @@ class MapState(AbstractStateModel):
         self._phases = []
         self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
         self.phases.append(ItemsPathPhase(state_details.get("ItemsPath", "$")))
+        if "Parameters" in state_details:
+            self._phases.append(ParametersPhase(state_details["Parameters"]))
         if "ResultSelector" in state_details:
             self._phases.append(
                 ResultSelectorPhase(state_details.get("ResultSelector", "$"))
