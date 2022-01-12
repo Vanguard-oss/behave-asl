@@ -1,7 +1,6 @@
 import json
 
 from behave import given
-
 from behaveasl import parser
 from behaveasl.models.execution import Execution
 from behaveasl.models.task_mock import (
@@ -9,6 +8,7 @@ from behaveasl.models.task_mock import (
     AssertParameters,
     StaticResponse,
 )
+from freezegun import freeze_time
 
 
 def create_state_machine(context):

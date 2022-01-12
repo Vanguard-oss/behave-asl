@@ -1,4 +1,5 @@
 import copy
+import logging
 
 from behaveasl.expr_eval import replace_expression
 from behaveasl.models.abstract_phase import AbstractPhase
@@ -58,11 +59,12 @@ class PassState(AbstractStateModel):
 class TaskMockPhase(AbstractPhase):
     def __init__(self, state_details: dict):
         self._resource = state_details["Resource"]
+        self._log = logging.getLogger("behaveasl.ResultPathPhase")
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
         execution.resource_expectations.execute(self._resource, phase_input)
         resp = execution.resource_response_mocks.execute(self._resource, phase_input)
-        print(f"TaskMockPhase: '{self._resource}' returned '{resp}'")
+        self._log.debug(f"'{self._resource}' returned '{resp}'")
         return resp
 
 
