@@ -1,5 +1,6 @@
 import copy
 import datetime
+import logging
 
 from .exceptions import StatesException
 from .state_machine import StateMachineModel
@@ -27,6 +28,7 @@ class Execution:
         }
         self._resource_response_mocks: ResourceMockMap = ResourceMockMap()
         self._resource_expectations: ResourceMockMap = ResourceMockMap()
+        self._log = logging.getLogger("behaveasl.Execution")
 
     def execute(self):
         """Execute a single step"""
@@ -36,12 +38,19 @@ class Execution:
         self._context_obj["State"]["RetryCount"] = 0
 
         try:
+            self._log.info(
+                f"Executing '{self._current_state}' with input: '{self._current_state_data}'"
+            )
             self._last_step_result = current_state_obj.execute(
                 self._current_state_data, self
             )
             if self._last_step_result.next_state is not None:
                 self._current_state = self._last_step_result.next_state
+                self._current_state_data = self._last_step_result.result_data
         except StatesException as e:
+            self._log.exception(
+                f"Failed to execute state {self._current_state}, error={e.error}, cause={e.cause}"
+            )
             self._last_step_result.end_execution = True
             self._last_step_result.failed = True
             self._last_step_result.error = e.error

@@ -1,5 +1,10 @@
+import logging
+
 from behaveasl import jsonpath
 from behaveasl.models.exceptions import StatesRuntimeException
+
+
+LOG = logging.getLogger("behaveasl.expression_evaluation")
 
 
 def replace_expression(*, expr: str, input, context: dict):
@@ -9,7 +14,7 @@ def replace_expression(*, expr: str, input, context: dict):
         results = jpexpr.find(context)
         if len(results) == 1:
             new_value = results[0].value
-            print(
+            LOG.debug(
                 f"Replacing '{expr}' [from Context] with '{new_value}', context='{context}'"
             )
             return new_value
@@ -19,7 +24,7 @@ def replace_expression(*, expr: str, input, context: dict):
         results = jpexpr.find(input)
         if len(results) == 1:
             new_value = results[0].value
-            print(f"Replacing '{expr}' [from Input] with '{new_value}'")
+            LOG.debug(f"Replacing '{expr}' [from Input] with '{new_value}'")
             return new_value
         raise StatesRuntimeException(f"Invalid path {expr}: No results")
     raise StatesRuntimeException(f"Invalid expression {expr}: Nonsense")

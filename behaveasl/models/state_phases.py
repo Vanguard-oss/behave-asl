@@ -1,4 +1,5 @@
 import copy
+import logging
 
 from behaveasl import expr_eval, jsonpath
 from behaveasl.models.abstract_phase import AbstractPhase
@@ -10,6 +11,7 @@ class ResultPathPhase(AbstractPhase):
         super(ResultPathPhase, self).__init__(**kwargs)
         self._path = result_path
         self._expr = jsonpath.get_instance(result_path)
+        self._log = logging.getLogger("behaveasl.ResultPathPhase")
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
         # jsonpath-ng doesn't seem to handle the '$' copy the same way AWS does
@@ -18,8 +20,8 @@ class ResultPathPhase(AbstractPhase):
         else:
             phase_output = copy.deepcopy(state_input)
             self._expr.update_or_create(phase_output, phase_input)
-        print(
-            f"ResultPathPhase: Replaced '{state_input}' with '{phase_output}', path='{self._path}', input='{phase_input}'"
+        self._log.debug(
+            f"Replaced '{state_input}' with '{phase_output}', path='{self._path}', input='{phase_input}'"
         )
         return phase_output
 
@@ -28,6 +30,7 @@ class ParametersPhase(AbstractPhase):
     def __init__(self, parameters, **kwargs):
         super(ParametersPhase, self).__init__(**kwargs)
         self._parameters = parameters
+        self._log = logging.getLogger("behaveasl.ParametersPhase")
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
         phase_output = {}
@@ -66,7 +69,7 @@ class ParametersPhase(AbstractPhase):
 
                 else:
                     phase_output[k] = v
-            print(
+            self._log.debug(
                 f"ParametersPhase: Replaced '{phase_input}' with '{phase_output}', params='{self._parameters}'"
             )
         return phase_output
@@ -76,13 +79,14 @@ class OutputPathPhase(AbstractPhase):
     def __init__(self, output_path: str = "$", **kwargs):
         super(OutputPathPhase, self).__init__(**kwargs)
         self._path = output_path
+        self._log = logging.getLogger("behaveasl.OutputPathPhase")
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
         phase_output = expr_eval.replace_expression(
             expr=self._path, input=phase_input, context=execution.context
         )
-        print(
-            f"OutputPathPhase: Replaced '{phase_input}' with '{phase_output}', path='{self._path}'"
+        self._log.debug(
+            f"Replaced '{phase_input}' with '{phase_output}', path='{self._path}'"
         )
         return phase_output
 
@@ -91,13 +95,14 @@ class InputPathPhase(AbstractPhase):
     def __init__(self, input_path: str = "$", **kwargs):
         super(InputPathPhase, self).__init__(**kwargs)
         self._path = input_path
+        self._log = logging.getLogger("behaveasl.InputPathPhase")
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
         phase_output = expr_eval.replace_expression(
             expr=self._path, input=phase_input, context=execution.context
         )
-        print(
-            f"InputPathPhase: Replaced '{phase_input}' with '{phase_output}', path='{self._path}'"
+        self._log.debug(
+            f"Replaced '{phase_input}' with '{phase_output}', path='{self._path}'"
         )
         return phase_output
 
@@ -105,6 +110,7 @@ class InputPathPhase(AbstractPhase):
 class ResultSelectorPhase(AbstractPhase):
     def __init__(self, result_selector: dict):
         self._selector = result_selector
+        self._log = logging.getLogger("behaveasl.OutputPathPhase")
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
         phase_output = {}
@@ -142,7 +148,7 @@ class ResultSelectorPhase(AbstractPhase):
                     phase_output[k[0:-2]] = new_value
                 else:
                     phase_output[k] = v
-            print(
+            self._log.debug(
                 f"ResultSelectorPhase: Replaced '{phase_input}' with '{phase_output}', selector='{self._selector}'"
             )
         return phase_output
