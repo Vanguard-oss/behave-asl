@@ -32,6 +32,9 @@ Feature: The Choice state type is supported
     """
     When the state machine executes
     Then the next state is "EndState"
+    When the state machine executes
+    Then the execution ended
+    And the execution succeeded
 
   Scenario: The Choice type can use a default state
     Given a state machine defined by:
@@ -66,6 +69,9 @@ Feature: The Choice state type is supported
     """
     When the state machine executes
     Then the next state is "EndState"
+    When the state machine executes
+    Then the execution ended
+    And the execution succeeded
 
   # The Choice state type cannot have End: true, so it cannot end the execution itself
   Scenario: The Choice type chooses the correct next step given multiple Choices
