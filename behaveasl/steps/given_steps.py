@@ -8,7 +8,6 @@ from behaveasl.models.task_mock import (
     AssertParameters,
     StaticResponse,
 )
-from freezegun import freeze_time
 
 
 def create_state_machine(context):
