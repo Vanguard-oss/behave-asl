@@ -71,6 +71,7 @@ class TaskMockPhase(AbstractPhase):
 class TaskState(AbstractStateModel):
     def __init__(self, state_name: str, state_details: dict, **kwargs):
         self._phases = []
+        self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
         if "Parameters" in state_details:
             self._phases.append(ParametersPhase(state_details["Parameters"]))
         self._phases.append(TaskMockPhase(state_details))
@@ -241,19 +242,27 @@ class FailState(AbstractStateModel):
     """The Fail state terminates the machine and marks it as a failure"""
 
     def __init__(self, state_name: str, state_details: dict, **kwargs):
+        self._phases = []
+        self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
+        self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
+
         self._error = state_details.get("Error", None)
         self._cause = state_details.get("Cause", None)
 
     def execute(self, state_input, execution):
         """The fail state will optionally raise an error with a cause"""
-        res = StepResult()
-        res.end_execution = True
-        res.failed = True
-        res.error = self._error
-        res.cause = self._cause
-        res.result_data = None
+        sr = StepResult()
+        sr.end_execution = True
+        sr.failed = True
+        sr.error = self._error
+        sr.cause = self._cause
 
-        return res
+        current_data = copy.deepcopy(state_input)
+        for phase in self._phases:
+            current_data = phase.execute(state_input, current_data, sr, execution)
+        sr.result_data = current_data
+
+        return sr
 
 
 class ParallelState(AbstractStateModel):
@@ -271,16 +280,54 @@ class ParallelState(AbstractStateModel):
         pass
 
 
-class MapState(AbstractStateModel):
-    def __init__(self, *args, **kwargs):
-
+class ItemsPathPhase(AbstractPhase):
+    def __init__(self, state_details: dict):
         pass
 
-    # def __init__(self, state_name, state_details):
-    #     self.state_name = state_name
-    #     pass
+    def execute(self, state_input, phase_input, sr: StepResult, execution):
+        pass
+
+
+class MapState(AbstractStateModel):
+    def __init__(self, state_name, state_details, **kwargs):
+        self._phases = []
+        self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
+        self.phases.append(ItemsPathPhase(state_details.get("ItemsPath", "$")))
+        if "ResultSelector" in state_details:
+            self._phases.append(
+                ResultSelectorPhase(state_details.get("ResultSelector", "$"))
+            )
+        self._phases.append(ResultPathPhase(state_details.get("ResultPath", "$")))
+        self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
+
+        self._next_state = state_details.get("Next", None)
+        self._is_end = state_details.get("End", False)
+        self._comment = state_details.get("Comment", None)
+
+        self._iterator = state_details.get("Iterator", None)
+        self._max_concurrency = state_details.get("MaxConcurrency", None)
+        self._retry = state_details.get("Retry", None)
+        self._catch = state_details.get("Catch", None)
+
+        if self._iterator is None:
+            raise StatesCompileException("An Iterator field must be provided.")
+
+        if self._retry:
+            self._retry_list = []
+            for r in self._retry:
+                self._retry_list.append(Retry(r))
+
+        if self._catch:
+            self._catch_list = []
+            for c in self._catch:
+                self._catch_list.append(Catch(c))
 
     def execute(self, state_input, execution):
-        """The fail state will always raise an error with a cause"""
-        # TODO: implement
-        pass
+        """The map state can be used to run a set of steps for each element of an input array"""
+        sr = StepResult()
+        current_data = copy.deepcopy(state_input)
+        for phase in self._phases:
+            current_data = phase.execute(state_input, current_data, sr, execution)
+        sr.result_data = current_data
+
+        return sr
