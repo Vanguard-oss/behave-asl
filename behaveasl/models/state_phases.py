@@ -110,7 +110,7 @@ class InputPathPhase(AbstractPhase):
 class ResultSelectorPhase(AbstractPhase):
     def __init__(self, result_selector: dict):
         self._selector = result_selector
-        self._log = logging.getLogger("behaveasl.OutputPathPhase")
+        self._log = logging.getLogger("behaveasl.ResultSelectorPhase")
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
         phase_output = {}

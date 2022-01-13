@@ -7,6 +7,8 @@ from behaveasl.models.abstract_state import AbstractStateModel
 from behaveasl.models.catch import Catch
 from behaveasl.models.choice import Choice
 from behaveasl.models.exceptions import StatesCompileException
+
+from behaveasl.models.execution import Execution
 from behaveasl.models.retry import Retry
 from behaveasl.models.state_phases import (
     InputPathPhase,
@@ -270,17 +272,20 @@ class ParallelState(AbstractStateModel):
 
 class ItemsPathPhase(AbstractPhase):
     def __init__(self, state_details: dict):
-        pass
+        self._items_path = state_details.get("ItemsPath", "$")
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
-        pass
+        phase_output = replace_expression(
+            expr=self._items_path, input=phase_input, context=execution.context
+        )
+        return phase_output
 
 
 class MapState(AbstractStateModel):
     def __init__(self, state_name, state_details, **kwargs):
         self._phases = []
         self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
-        self.phases.append(ItemsPathPhase(state_details.get("ItemsPath", "$")))
+        self._phases.append(ItemsPathPhase(state_details))
         if "Parameters" in state_details:
             self._phases.append(ParametersPhase(state_details["Parameters"]))
         if "ResultSelector" in state_details:
@@ -316,8 +321,40 @@ class MapState(AbstractStateModel):
         """The map state can be used to run a set of steps for each element of an input array"""
         sr = StepResult()
         current_data = copy.deepcopy(state_input)
-        for phase in self._phases:
-            current_data = phase.execute(state_input, current_data, sr, execution)
+
+        for i in range(3):
+            print(f"Current {i} data: {current_data}")
+            # Execute input path, items path, and parameters
+            current_data = self._phases[i].execute(
+                state_input, current_data, sr, execution
+            )
+
+        map_ouput = []
+
+        for index, value in enumerate(current_data):
+            map_execution = Execution(state_machine=self._iterator)
+            # Map state has additional context data available
+            map_execution._context_obj["State"]["Item"] = {}
+            map_execution._context_obj["State"]["Item"]["Index"] = index
+            map_execution._context_obj["State"]["Item"]["Value"] = value
+            map_execution.set_execution_input_data(data=value)
+
+            while (
+                map_execution._last_step_result.end_execution != True
+                or map_execution._last_step_result.failed != True
+            ):
+                map_execution.execute()
+
+            map_ouput.append(map_execution.last_step_result)
+
+        current_data = map_ouput
+
+        for i in range(3, 6):
+            # Execute result selector, result path and output path
+            current_data = self._phases[i].execute(
+                state_input, current_data, sr, execution
+            )
+
         sr.result_data = current_data
 
         return sr
