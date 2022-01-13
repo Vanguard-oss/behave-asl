@@ -95,6 +95,8 @@ class Choice:
         pass
 
     def _string_matches(self):
+        # TODO: wildcard logic
+        # String comparison against patterns with one or more wildcards (“*”) can be performed with the StringMatches comparison operator. The wildcard character is escaped by using the standard \\ (Ex: “\\*”). No characters other than “*” have any special meaning during matching.
         pass
 
     def _timestamp_equals(self):
