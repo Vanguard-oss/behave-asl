@@ -176,7 +176,10 @@ class ChoiceState(AbstractStateModel):
         # If we only have 1 matching Choice, set the next_state from the choice.next_state property
         if len(matching_rules) == 1:
             self._next_state = choice.next_state
-        # If we have NO matching Choices, throw an error, set StepResult w/failed + cause + error
+        # If we have NO matching Choices, and we have a default, use it
+        if len(matching_rules) == 0 and self._default_next_state is not None:
+            self._next_state = self._default_next_state
+        # If we have NO matching Choices and no Default, throw an error, set StepResult w/failed + cause + error
 
         if self._next_state is not None:
             sr.next_state = self._next_state
