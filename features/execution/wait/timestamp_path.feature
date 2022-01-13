@@ -15,7 +15,6 @@ Feature: The Wait type can use TimestampPath
         }
     }
     """
-    And the current timestamp is "2022-01-10 12:00:00"
     And the current state data is:
     """
     {

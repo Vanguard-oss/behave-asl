@@ -147,7 +147,7 @@ def then_error_cause_contained(context, cause):
 
 @then('the last state waited for "{num}" seconds')
 def then_waited_seconds(context, num):
-    assert int(num) == int(context.execution.last_step_result.waited_seconds)
+    assert int(num) == context.execution.last_step_result.waited_seconds
 
 
 @then('the last state waited until "{timestamp}"')
