@@ -150,3 +150,46 @@ Feature: The Choice state type is supported
     """
     When the state machine executes
     Then the execution failed
+
+Scenario: The first matching Choice rule is returned if more than one match
+    Given a state machine defined by:
+    """
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Choice",
+                "Choices": [
+                    {
+                        "Variable": "$.thing",
+                        "BooleanEquals": true,
+                        "Next": "EndState"
+                    },
+                    {
+                        "Variable": "$.thing",
+                        "IsPresent": true,
+                        "Next": "StateThatWontBeExecuted"
+                    }
+                ]
+            },
+            "EndState": {
+                "Type": "Pass",
+                "Result": "end",
+                "End": true
+            },
+            "StateThatWontBeExecuted": {
+                "Type": "Pass",
+                "Result": "end",
+                "End": true
+            }
+        }
+    }
+    """
+    And the current state data is:
+    """
+    {
+        "thing": true
+    }
+    """
+    When the state machine executes
+    Then the next state is "EndState"
