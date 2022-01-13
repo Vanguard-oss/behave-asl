@@ -153,6 +153,12 @@ class ChoiceState(AbstractStateModel):
         # TODO: implement
         sr = StepResult()
         current_data = copy.deepcopy(state_input) # TODO: determine if the data input to a Choice continues on
+        
+        # TODO: determine if Choice states also apply the phases that other states do
+        # for phase in self._phases:
+        #     current_data = phase.execute(state_input, current_data, sr, execution)
+        # sr.result_data = current_data
+
         # Given the state input, we need to try to find matching Choice(s)
         # matching_choices = filter(self.apply_rules, self._choices) # Can probably do this with a filter ultimately
         matching_rules = []
