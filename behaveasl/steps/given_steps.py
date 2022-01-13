@@ -1,7 +1,7 @@
 import json
+from datetime import datetime, timedelta, timezone
 
 from behave import given
-
 from behaveasl import parser
 from behaveasl.models.execution import Execution
 from behaveasl.models.task_mock import (
@@ -9,6 +9,7 @@ from behaveasl.models.task_mock import (
     AssertParameters,
     StaticResponse,
 )
+from freezegun import freeze_time
 
 
 def create_state_machine(context):
@@ -30,12 +31,12 @@ def given_set_current_state(context, name):
     context.execution.set_current_state_name(name)
 
 
-@given(u"the current state data is")
+@given("the current state data is")
 def given_set_current_state_data(context):
     context.execution.set_current_state_data(json.loads(context.text))
 
 
-@given(u"the execution input is")
+@given("the execution input is")
 def given_set_execution_input(context):
     context.execution.set_execution_input_data(json.loads(context.text))
 
@@ -60,3 +61,8 @@ def given_resource_expect_param(context, resource):
     context.execution.resource_expectations.add_mock(
         resource, AssertParameters(context.text)
     )
+
+
+@given(u'the current timestamp is "{timestamp}"')
+def given_current_timestamp(context, timestamp):
+    freeze_time(timestamp, tick=True)
