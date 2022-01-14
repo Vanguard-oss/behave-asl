@@ -1,7 +1,7 @@
-Feature: Choice Rules and comparisons are supported by the Choice state type (Except for And/Not/Or)
+Feature: Choice Rules and comparisons that should match values in the input/are set to True are supported by the Choice state type (Except for And/Not/Or)
 
   # https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-choice-state.html#amazon-states-language-choice-state-rules
-  Scenario: The Choice type supports the BooleanEquals operator
+  Scenario: The Choice type supports the BooleanEquals operator when it is true
     Given a state machine defined by:
     """
     {
@@ -74,7 +74,7 @@ Feature: Choice Rules and comparisons are supported by the Choice state type (Ex
     Then the execution ended
     And the execution succeeded
 
-  Scenario: The Choice type supports the IsBoolean operator
+  Scenario: The Choice type supports the IsBoolean operator when it is true
     Given a state machine defined by:
     """
     {
@@ -110,7 +110,7 @@ Feature: Choice Rules and comparisons are supported by the Choice state type (Ex
     Then the execution ended
     And the execution succeeded
 
-  Scenario: The Choice type supports the IsNull operator
+  Scenario: The Choice type supports the IsNull operator when it is true
     Given a state machine defined by:
     """
     {
@@ -146,7 +146,43 @@ Feature: Choice Rules and comparisons are supported by the Choice state type (Ex
     Then the execution ended
     And the execution succeeded
 
-  Scenario: The Choice type supports the IsNumeric operator
+Scenario: The Choice type supports the IsNumeric operator when it is true and given an int
+    Given a state machine defined by:
+    """
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Choice",
+                "Choices": [
+                    {
+                        "Variable": "$.thing",
+                        "IsNumeric": true,
+                        "Next": "EndState"
+                    }
+                ]
+            },
+            "EndState": {
+                "Type": "Pass",
+                "Result": "end",
+                "End": true
+            }
+        }
+    }
+    """
+    And the current state data is:
+    """
+    {
+        "thing": 9
+    }
+    """
+    When the state machine executes
+    Then the next state is "EndState"
+    When the state machine executes
+    Then the execution ended
+    And the execution succeeded
+
+Scenario: The Choice type supports the IsNumeric operator  when it is true and given a float
     Given a state machine defined by:
     """
     {
@@ -182,6 +218,42 @@ Feature: Choice Rules and comparisons are supported by the Choice state type (Ex
     Then the execution ended
     And the execution succeeded
 
+  Scenario: The Choice type supports the IsNumeric operator when it is true and given a negative value
+    Given a state machine defined by:
+    """
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Choice",
+                "Choices": [
+                    {
+                        "Variable": "$.thing",
+                        "IsNumeric": true,
+                        "Next": "EndState"
+                    }
+                ]
+            },
+            "EndState": {
+                "Type": "Pass",
+                "Result": "end",
+                "End": true
+            }
+        }
+    }
+    """
+    And the current state data is:
+    """
+    {
+        "thing": -10
+    }
+    """
+    When the state machine executes
+    Then the next state is "EndState"
+    When the state machine executes
+    Then the execution ended
+    And the execution succeeded
+
   Scenario: The Choice type supports the IsPresent operator
     Given a state machine defined by:
     """
@@ -209,7 +281,7 @@ Feature: Choice Rules and comparisons are supported by the Choice state type (Ex
     And the current state data is:
     """
     {
-        "thing": true
+        "thing": "true"
     }
     """
     When the state machine executes
@@ -254,7 +326,7 @@ Feature: Choice Rules and comparisons are supported by the Choice state type (Ex
     Then the execution ended
     And the execution succeeded
 
-  Scenario: The Choice type supports the IsTimestamp operator
+  Scenario: The Choice type supports the IsTimestamp operator with no timezone
     Given a state machine defined by:
     """
     {
@@ -282,6 +354,42 @@ Feature: Choice Rules and comparisons are supported by the Choice state type (Ex
     """
     {
         "thing": "2001-01-01T12:00:00Z"
+    }
+    """
+    When the state machine executes
+    Then the next state is "EndState"
+    When the state machine executes
+    Then the execution ended
+    And the execution succeeded
+
+Scenario: The Choice type supports the IsTimestamp operator with timezone
+    Given a state machine defined by:
+    """
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Choice",
+                "Choices": [
+                    {
+                        "Variable": "$.thing",
+                        "IsTimestamp": true,
+                        "Next": "EndState"
+                    }
+                ]
+            },
+            "EndState": {
+                "Type": "Pass",
+                "Result": "end",
+                "End": true
+            }
+        }
+    }
+    """
+    And the current state data is:
+    """
+    {
+        "thing": "2001-01-01T12:00:00+04:00"
     }
     """
     When the state machine executes

@@ -100,15 +100,24 @@ class Choice:
             return True
 
     def _is_present(self, actual_value):
+        # TODO: this is a hard one to implement, because if you input JSON Path it
+        # upsets some of the existing logic, hmm
         # self._evaluation_value determines  whether we want the type or not
         pass
 
     def _is_string(self, actual_value):
         # self._evaluation_value determines  whether we want the type or not
-        pass
+        if self._evaluation_value is True and type(actual_value) is not str:
+            return False
+        elif self._evaluation_value is False and type(actual_value) is str:
+            return False
+        return True
 
     def _is_timestamp(self, actual_value):
+        # TODO: Timestamps must conform to ISO 8601, include an uppercase "T" to separate date and time, 
+        # and have an uppercase "Z" to denote that a numeric time zone isn't present
         # self._evaluation_value determines  whether we want the type or not
+        # TODO: we are going to need a really, really fancy regex here, I'm afraid - 
         pass
 
     def _not_comparator(self, actual_value): # Not is a reserved word in Python
