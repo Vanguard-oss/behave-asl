@@ -1,7 +1,7 @@
 Feature: Choice Rules and comparisons that should match values in the input/are set to True are supported by the Choice state type (Except for And/Not/Or)
 
   # https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-choice-state.html#amazon-states-language-choice-state-rules
-  Scenario: The Choice type supports the BooleanEquals operator when it is true
+  Scenario Outline: The Choice type supports the BooleanEquals operator
     Given a state machine defined by:
     """
     {
@@ -12,15 +12,17 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
                 "Choices": [
                     {
                         "Variable": "$.thing",
-                        "BooleanEquals": true,
-                        "Next": "EndState"
+                        "BooleanEquals": <comparator>,
+                        "Next": "MatchState"
                     }
-                ]
+                ],
+                "Default": "DefaultState"
             },
-            "EndState": {
-                "Type": "Pass",
-                "Result": "end",
-                "End": true
+            "MatchState": {
+                "Type": "Pass"
+            },
+            "DefaultState": {
+                "Type": Pass
             }
         }
     }
@@ -28,14 +30,19 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     And the current state data is:
     """
     {
-        "thing": true
+        "thing": <input_value>
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
+
+    Examples: Comparators
+      | comparator | input_value | matched_state |
+      | true       | true        | MatchState    |
+      | false      | false       | MatchState    |
+      | false      | true        | DefaultState  |
+      | true       | false       | DefaultState  |
+      | true       | "true"      | DefaultState  |
 
   Scenario: The Choice type supports the BooleanEqualsPath operator
     Given a state machine defined by:
@@ -146,7 +153,7 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     Then the execution ended
     And the execution succeeded
 
-Scenario: The Choice type supports the IsNumeric operator when it is true and given an int
+  Scenario: The Choice type supports the IsNumeric operator when it is true and given an int
     Given a state machine defined by:
     """
     {
@@ -182,7 +189,7 @@ Scenario: The Choice type supports the IsNumeric operator when it is true and gi
     Then the execution ended
     And the execution succeeded
 
-Scenario: The Choice type supports the IsNumeric operator  when it is true and given a float
+  Scenario: The Choice type supports the IsNumeric operator  when it is true and given a float
     Given a state machine defined by:
     """
     {
@@ -362,7 +369,7 @@ Scenario: The Choice type supports the IsNumeric operator  when it is true and g
     Then the execution ended
     And the execution succeeded
 
-Scenario: The Choice type supports the IsTimestamp operator with timezone
+  Scenario: The Choice type supports the IsTimestamp operator with timezone
     Given a state machine defined by:
     """
     {
@@ -398,6 +405,7 @@ Scenario: The Choice type supports the IsTimestamp operator with timezone
     Then the execution ended
     And the execution succeeded
 
+  Scenario: The Choice type supports the IsTimestamp operator without timezone
   Scenario: The Choice type supports the NumericEquals operator
     Given a state machine defined by:
     """
