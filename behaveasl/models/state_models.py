@@ -172,11 +172,11 @@ class ChoiceState(AbstractStateModel):
         for choice in self._choices:
             # Call evaluate on the choice instance, which will return True or False
             if choice.evaluate(state_input=state_input) == True:
-                matching_rules.append(Choice)
+                matching_rules.append(choice)
         # TODO: what happens if 2+ choices match?!?
         # If we only have 1 matching Choice, set the next_state from the choice.next_state property
         if len(matching_rules) == 1:
-            self._next_state = choice.next_state
+            self._next_state = matching_rules[0]._next_state
         # If we have NO matching Choices, and we have a default, use it
         if len(matching_rules) == 0 and self._default_next_state is not None:
             self._next_state = self._default_next_state
