@@ -135,6 +135,7 @@ class ChoiceState(AbstractStateModel):
     def __init__(self, state_name: str, state_details: dict, **kwargs):
         self.state_name = state_name
         self._choices = []
+        self._next_state = None
         # The set of Choices can also have a "Default" (if nothing matches) but is not required
         self._default_next_state=state_details.get("Default", None)
 
