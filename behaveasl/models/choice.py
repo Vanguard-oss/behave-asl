@@ -14,9 +14,38 @@ class Choice:
         # TODO: If self._actual_value is None, raise a StatesRuntimeException (no value could be located)
         # TODO: depending on the value of the Choice's comparator, call the right method - compare actual_value with evaluation_value
         function_map = {
-            'StringEquals': self._string_equals(actual_value=actual_value)
+            'BooleanEquals': self._boolean_equals,
+            'BooleanEqualsPath': self._boolean_equals,
+            'IsBoolean': self._is_boolean,
+            'IsNull': self._is_null,
+            'IsPresent': self._is_present,
+            'IsString': self._is_string,
+            'IsTimestamp': self._is_timestamp,
+            'NumericEquals': self._numeric_equals,
+            'NumericEqualsPath': self._numeric_equals,
+            'NumericGreaterThan': self._numeric_greater_than,
+            'NumericGreaterThanPath': self._numeric_greater_than,
+            'NumericLessThan': self._numeric_less_than,
+            'NumericLessthanPath': self._numeric_less_than,
+            'StringEquals': self._string_equals,
+            'StringEqualsPath': self._string_equals,
+            'StringGreaterThan': self._string_greater_than,
+            'StringGreaterThanPath': self._string_greater_than,
+            'StringLessThan': self._string_less_than,
+            'StringLessThanPath': self._string_less_than,
+            'StringMatches': self._string_matches,
+            'TimestampEquals': self._timestamp_equals,
+            'TimestampEqualsPath': self._timestamp_equals,
+            'TimestampGreaterThan': self._timestamp_greater_than,
+            'TimestampGreaterThanPath': self._timestamp_greater_than,
+            'TimestampGreaterThanEquals': self._timestamp_greater_than_equals,
+            'TimestampGreaterThanEqualsPath': self._timestamp_greater_than_equals,
+            'TimestampLessThan': self._timestamp_less_than,
+            'TimestampLessThanPath': self._timestamp_less_than,
+            'TimestampLessThanEquals': self._timestamp_less_than_equals,
+            'TimestampLessThanEqualsPath': self._timestamp_greater_than_equals,
         }
-        return function_map[self._evaluation_type]
+        return function_map[self._evaluation_type](actual_value=actual_value)
 
     def parse_variable_value_from_input(self, state_input):
         from behaveasl import jsonpath
@@ -33,86 +62,111 @@ class Choice:
                 return None        
 
     # Follow the order of comparators here: https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-choice-state.html
-    def _and_comparator(self): # And is a reserved word in Python
+    def _and_comparator(self, actual_value): # And is a reserved word in Python
         pass
 
-    def _boolean_equals(self):
+    def _boolean_equals(self, actual_value):
+        if type(actual_value) != bool:
+            return False
+        else:
+           return actual_value == self._evaluation_value 
+
+    def _is_boolean(self, actual_value):
+        # self._evaluation_value determines if we want a bool or not
+        if self._evaluation_value is True and type(actual_value) != bool:
+            return False
+        elif self._evaluation_value is False and type(actual_value) == bool:
+            return False
+        else:
+            return True
+        
+
+    def _is_null(self, actual_value):
+        # self._evaluation_value determines  whether we want the type or not
+        if self._evaluation_value is True and actual_value is not None:
+            return False
+        elif self._evaluation_value is False and actual_value is None:
+            return False
+        else:
+            return True
+
+    def _is_numeric(self, actual_value):
+        # self._evaluation_value determines whether we want the type or not
+        if self._evaluation_value is True and type(actual_value) not in [float, int]:
+            return False
+        elif self._evaluation_value is False and type(actual_value) in [float, int]:
+            return False
+        else:
+            return True
+
+    def _is_present(self, actual_value):
+        # self._evaluation_value determines  whether we want the type or not
         pass
 
-    def _is_boolean(self):
+    def _is_string(self, actual_value):
+        # self._evaluation_value determines  whether we want the type or not
         pass
 
-    def _is_null(self):
+    def _is_timestamp(self, actual_value):
+        # self._evaluation_value determines  whether we want the type or not
         pass
 
-    def _is_numeric(self):
+    def _not_comparator(self, actual_value): # Not is a reserved word in Python
         pass
 
-    def _is_present(self):
+    def _numeric_equals(self, actual_value):
         pass
 
-    def _is_string(self):
+    def _numeric_greater_than(self, actual_value):
         pass
 
-    def _is_timestamp(self):
+    def _numeric_greater_than_equals(self, actual_value):
         pass
 
-    def _not_comparator(self): # Not is a reserved word in Python
+    def _numeric_less_than(self, actual_value):
         pass
 
-    def _numeric_equals(self):
+    def _numeric_less_than_equals(self, actual_value):
         pass
 
-    def _numeric_greater_than(self):
-        pass
-
-    def _numeric_greater_than_equals(self):
-        pass
-
-    def _numeric_less_than(self):
-        pass
-
-    def _numeric_less_than_equals(self):
-        pass
-
-    def _or_comparator(self):
+    def _or_comparator(self, actual_value):
         pass
 
     def _string_equals(self, actual_value):
         # TODO: check type first
         return actual_value == self._evaluation_value
 
-    def _string_greater_than(self):
+    def _string_greater_than(self, actual_value):
         pass
 
-    def _string_greater_than_equals(self):
+    def _string_greater_than_equals(self, actual_value):
         pass
 
-    def _string_less_than(self):
+    def _string_less_than(self, actual_value):
         pass
 
-    def _string_less_than_equals(self):
+    def _string_less_than_equals(self, actual_value):
         pass
 
-    def _string_matches(self):
+    def _string_matches(self, actual_value):
         # TODO: wildcard logic
         # String comparison against patterns with one or more wildcards (“*”) can be performed with the StringMatches comparison operator. The wildcard character is escaped by using the standard \\ (Ex: “\\*”). No characters other than “*” have any special meaning during matching.
         pass
 
-    def _timestamp_equals(self):
+    def _timestamp_equals(self, actual_value):
         pass
 
-    def _timestamp_equals(self):
+    def _timestamp_equals(self, actual_value):
         pass
 
-    def _timestamp_greater_than(self):
+    def _timestamp_greater_than(self, actual_value):
         pass
 
-    def _timestamp_greater_than_equals(self):
+    def _timestamp_greater_than_equals(self, actual_value):
         pass
 
-    def _timestamp_less_than(self):
+    def _timestamp_less_than(self, actual_value):
         pass
 
-    def _timestamp_less_than_equals(self):
+    def _timestamp_less_than_equals(self, actual_value):
         pass
