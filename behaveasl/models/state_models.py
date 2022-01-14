@@ -178,10 +178,16 @@ class ChoiceState(AbstractStateModel):
         if len(matching_rules) == 1:
             self._next_state = matching_rules[0]._next_state
         # If we have NO matching Choices, and we have a default, use it
-        if len(matching_rules) == 0 and self._default_next_state is not None:
-            self._next_state = self._default_next_state
-        # If we have NO matching Choices and no Default, throw an error, set StepResult w/failed + cause + error
-
+        if len(matching_rules) == 0:
+            if self._default_next_state is not None:
+                self._next_state = self._default_next_state
+                # If we have NO matching Choices and no Default, throw an error, set StepResult w/failed + cause + error
+            else:
+                # Execution does not end because Choice states can't end an execution on their own
+                sr.failed = True
+                # TODO: set error and cause correctly
+                sr.error = 'No match found'
+                sr.cause = 'No match found'
         if self._next_state is not None:
             sr.next_state = self._next_state
             
