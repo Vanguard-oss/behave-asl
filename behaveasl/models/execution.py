@@ -72,7 +72,7 @@ class Execution:
     
     def create_sub_execution_from_definition(self, definition:dict):
         sub_state_machine = StateMachineModel(definition=definition)
-        sub_execution = self.__init__(state_machine=sub_state_machine)
+        sub_execution = Execution(state_machine=sub_state_machine)
         return sub_execution
 
 
