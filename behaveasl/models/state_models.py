@@ -8,7 +8,6 @@ from behaveasl.models.catch import Catch
 from behaveasl.models.choice import Choice
 from behaveasl.models.exceptions import StatesCompileException
 
-from behaveasl.models.execution import Execution
 from behaveasl.models.retry import Retry
 from behaveasl.models.state_phases import (
     InputPathPhase,
@@ -175,7 +174,7 @@ class WaitState(AbstractStateModel):
             )
             == 1
         ):
-            raise StateParamException(
+            raise StatesCompileException(
                 "Only one of Seconds, Timestamp, SecondsPath or TimestampPath may be set."
             )
 
@@ -332,7 +331,8 @@ class MapState(AbstractStateModel):
         map_ouput = []
 
         for index, value in enumerate(current_data):
-            map_execution = Execution(state_machine=self._iterator)
+            map_execution = execution.create_sub_execution_from_definition(definition=self._iterator)
+            # map_execution = Execution(state_machine=self._iterator)
             # Map state has additional context data available
             map_execution._context_obj["State"]["Item"] = {}
             map_execution._context_obj["State"]["Item"]["Index"] = index

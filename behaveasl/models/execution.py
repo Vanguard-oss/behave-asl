@@ -2,10 +2,10 @@ import copy
 import datetime
 import logging
 
-from .exceptions import StatesException
-from .state_machine import StateMachineModel
-from .step_result import StepResult
-from .task_mock import ResourceMockMap
+from behaveasl.models.exceptions import StatesException
+from behaveasl.models.state_machine import StateMachineModel
+from behaveasl.models.step_result import StepResult
+from behaveasl.models.task_mock import ResourceMockMap
 
 
 class Execution:
@@ -69,6 +69,12 @@ class Execution:
     def set_current_state_name(self, name: str):
         """Set the name of the current state of the execution"""
         self._current_state = name
+    
+    def create_sub_execution_from_definition(self, definition:dict):
+        sub_state_machine = StateMachineModel(definition=definition)
+        sub_execution = self.__init__(state_machine=sub_state_machine)
+        return sub_execution
+
 
     @property
     def last_step_result(self) -> StepResult:
