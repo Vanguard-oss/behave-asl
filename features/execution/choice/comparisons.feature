@@ -44,7 +44,7 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
       | true       | false       | DefaultState  |
       | true       | "true"      | DefaultState  |
 
-  Scenario: The Choice type supports the BooleanEqualsPath operator
+  Scenario Outline: The Choice type supports the BooleanEqualsPath operator
     Given a state machine defined by:
     """
     {
@@ -58,12 +58,14 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
                         "BooleanEqualsPath": "$.mybool",
                         "Next": "EndState"
                     }
-                ]
+                ],
+                "Default": "DefaultState"
             },
             "EndState": {
-                "Type": "Pass",
-                "Result": "end",
-                "End": true
+                "Type": "Pass"
+            },
+            "DefaultState": {
+                "Type": "Pass"
             }
         }
     }
@@ -71,17 +73,23 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     And the current state data is:
     """
     {
-        "thing": true,
-        "mybool": true
+        "thing": <value_1>,
+        "mybool": <value_2>
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the IsBoolean operator when it is true
+    Examples: Comparators
+      | value_1      | value_2 | matched_state |
+      | true         | true    | MatchState    |
+      | false        | false   | MatchState    |
+      | true         | false   | DefaultState  |
+      | false        | true    | DefaultState  |
+      | "not_a_bool" | false   | DefaultState  |
+      | "true"       | true    | DefaultState  |
+
+  Scenario Outline: The Choice type supports the IsBoolean operator
     Given a state machine defined by:
     """
     {
@@ -112,12 +120,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the IsNull operator when it is true
+  Scenario Outline: The Choice type supports the IsNull operator
     Given a state machine defined by:
     """
     {
@@ -148,12 +153,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the IsNumeric operator when it is true and given an int
+  Scenario Outline: The Choice type supports the IsNumeric operator
     Given a state machine defined by:
     """
     {
@@ -184,84 +186,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the IsNumeric operator  when it is true and given a float
-    Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "IsNumeric": true,
-                        "Next": "EndState"
-                    }
-                ]
-            },
-            "EndState": {
-                "Type": "Pass",
-                "Result": "end",
-                "End": true
-            }
-        }
-    }
-    """
-    And the current state data is:
-    """
-    {
-        "thing": 1.2
-    }
-    """
-    When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
-
-  Scenario: The Choice type supports the IsNumeric operator when it is true and given a negative value
-    Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "IsNumeric": true,
-                        "Next": "EndState"
-                    }
-                ]
-            },
-            "EndState": {
-                "Type": "Pass",
-                "Result": "end",
-                "End": true
-            }
-        }
-    }
-    """
-    And the current state data is:
-    """
-    {
-        "thing": -10
-    }
-    """
-    When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
-
-  Scenario: The Choice type supports the IsPresent operator
+  Scenario Outline: The Choice type supports the IsPresent operator
     Given a state machine defined by:
     """
     {
@@ -292,12 +219,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the IsString operator
+  Scenario Outline: The Choice type supports the IsString operator
     Given a state machine defined by:
     """
     {
@@ -328,12 +252,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the IsTimestamp operator with no timezone
+  Scenario Outline: The Choice type supports the IsTimestamp operator with no timezone
     Given a state machine defined by:
     """
     {
@@ -364,12 +285,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the IsTimestamp operator with timezone
+  Scenario Outline: The Choice type supports the IsTimestamp operator with timezone
     Given a state machine defined by:
     """
     {
@@ -400,13 +318,10 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the IsTimestamp operator without timezone
-  Scenario: The Choice type supports the NumericEquals operator
+  Scenario Outline: The Choice type supports the IsTimestamp operator without timezone
+  Scenario Outline: The Choice type supports the NumericEquals operator
     Given a state machine defined by:
     """
     {
@@ -437,12 +352,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the NumericEqualsPath operator
+  Scenario Outline: The Choice type supports the NumericEqualsPath operator
     Given a state machine defined by:
     """
     {
@@ -474,12 +386,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the NumericGreaterThan operator
+  Scenario Outline: The Choice type supports the NumericGreaterThan operator
     Given a state machine defined by:
     """
     {
@@ -510,12 +419,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the NumericGreaterThanPath operator
+  Scenario Outline: The Choice type supports the NumericGreaterThanPath operator
     Given a state machine defined by:
     """
     {
@@ -547,12 +453,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the NumericLessThan operator
+  Scenario Outline: The Choice type supports the NumericLessThan operator
     Given a state machine defined by:
     """
     {
@@ -583,12 +486,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the NumericLessThanPath operator
+  Scenario Outline: The Choice type supports the NumericLessThanPath operator
     Given a state machine defined by:
     """
     {
@@ -620,12 +520,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the StringEquals operator
+  Scenario Outline: The Choice type supports the StringEquals operator
     Given a state machine defined by:
     """
     {
@@ -656,12 +553,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: StringEquals supports comparing Timestamp fields as strings
+  Scenario Outline: StringEquals supports comparing Timestamp fields as strings
     Given a state machine defined by:
     """
     {
@@ -692,12 +586,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the StringEqualsPath operator
+  Scenario Outline: The Choice type supports the StringEqualsPath operator
     Given a state machine defined by:
     """
     {
@@ -729,12 +620,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the StringGreaterThan operator
+  Scenario Outline: The Choice type supports the StringGreaterThan operator
     Given a state machine defined by:
     """
     {
@@ -765,12 +653,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the StringGreaterThanPath operator
+  Scenario Outline: The Choice type supports the StringGreaterThanPath operator
     Given a state machine defined by:
     """
     {
@@ -802,12 +687,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the StringLessThan operator
+  Scenario Outline: The Choice type supports the StringLessThan operator
     Given a state machine defined by:
     """
     {
@@ -838,12 +720,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the StringLessThanPath operator
+  Scenario Outline: The Choice type supports the StringLessThanPath operator
     Given a state machine defined by:
     """
     {
@@ -875,12 +754,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the StringMatches operator
+  Scenario Outline: The Choice type supports the StringMatches operator
     Given a state machine defined by:
     """
     {
@@ -911,12 +787,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the TimestampEquals operator
+  Scenario Outline: The Choice type supports the TimestampEquals operator
     Given a state machine defined by:
     """
     {
@@ -947,12 +820,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the TimestampEqualsPath operator
+  Scenario Outline: The Choice type supports the TimestampEqualsPath operator
     Given a state machine defined by:
     """
     {
@@ -984,12 +854,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the TimestampGreaterThan operator
+  Scenario Outline: The Choice type supports the TimestampGreaterThan operator
     Given a state machine defined by:
     """
     {
@@ -1020,12 +887,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the TimestampGreaterThanPath operator
+  Scenario Outline: The Choice type supports the TimestampGreaterThanPath operator
     Given a state machine defined by:
     """
     {
@@ -1057,12 +921,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the TimestampGreaterThanEquals operator
+  Scenario Outline: The Choice type supports the TimestampGreaterThanEquals operator
     Given a state machine defined by:
     """
     {
@@ -1094,12 +955,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the TimestampGreaterThanEqualsPath operator
+  Scenario Outline: The Choice type supports the TimestampGreaterThanEqualsPath operator
     Given a state machine defined by:
     """
     {
@@ -1131,12 +989,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the TimestampLessThan operator
+  Scenario Outline: The Choice type supports the TimestampLessThan operator
     Given a state machine defined by:
     """
     {
@@ -1167,12 +1022,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the TimestampLessThanPath operator
+  Scenario Outline: The Choice type supports the TimestampLessThanPath operator
     Given a state machine defined by:
     """
     {
@@ -1204,12 +1056,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the TimestampLessThanEquals operator
+  Scenario Outline: The Choice type supports the TimestampLessThanEquals operator
     Given a state machine defined by:
     """
     {
@@ -1240,12 +1089,9 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
 
-  Scenario: The Choice type supports the TimestampLessThanEqualsPath operator
+  Scenario Outline: The Choice type supports the TimestampLessThanEqualsPath operator
     Given a state machine defined by:
     """
     {
@@ -1277,7 +1123,4 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "<matched_state>"
