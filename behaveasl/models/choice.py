@@ -3,7 +3,7 @@ class Choice:
         self._variable = variable
         self._evaluation_type = evaluation_type
         self._evaluation_value = evaluation_value
-        self.next_state = next_state
+        self._next_state = next_state
         self._choices = None # If this is set, we are using an "And"/"Or"/"Not" comparator
     
 
