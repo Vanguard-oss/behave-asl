@@ -19,10 +19,12 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
                 "Default": "DefaultState"
             },
             "MatchState": {
-                "Type": "Pass"
+                "Type": "Pass",
+                "End": true
             },
             "DefaultState": {
-                "Type": Pass
+                "Type": Pass,
+                "End": true
             }
         }
     }
@@ -38,11 +40,11 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
 
     Examples: Comparators
       | value_1 | value_2 | matched_state |
-      | true       | true        | MatchState    |
-      | false      | false       | MatchState    |
-      | false      | true        | DefaultState  |
-      | true       | false       | DefaultState  |
-      | true       | "true"      | DefaultState  |
+      | true    | true    | MatchState    |
+      | false   | false   | MatchState    |
+      | false   | true    | DefaultState  |
+      | true    | false   | DefaultState  |
+      | true    | "true"  | DefaultState  |
 
   Scenario Outline: The Choice type supports the BooleanEqualsPath operator
     Given a state machine defined by:
@@ -62,10 +64,12 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
                 "Default": "DefaultState"
             },
             "MatchState": {
-                "Type": "Pass"
+                "Type": "Pass",
+                "End": true
             },
             "DefaultState": {
-                "Type": "Pass"
+                "Type": "Pass",
+                "End": true
             }
         }
     }
@@ -107,10 +111,12 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
                 "Default": "DefaultState"
             },
             "MatchState": {
-                "Type": "Pass"
+                "Type": "Pass",
+                "End": true
             },
             "DefaultState": {
-                "Type": "Pass"
+                "Type": "Pass",
+                "End": true
             }
         }
     }
@@ -125,13 +131,13 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     Then the next state is "<matched_state>"
 
     Examples: Comparators
-    | value_1 | value_2 | matched_state |
-    | true | true | MatchState |
-    | true | false | MatchState |
-    | false | true | DefaultState |
-    | false | false | DefaultState |
-    | false | "not_a_bool" | MatchState |
-    | false | "true" | MatchState |
+      | value_1 | value_2      | matched_state |
+      | true    | true         | MatchState    |
+      | true    | false        | MatchState    |
+      | false   | true         | DefaultState  |
+      | false   | false        | DefaultState  |
+      | false   | "not_a_bool" | MatchState    |
+      | false   | "true"       | MatchState    |
 
   Scenario Outline: The Choice type supports the IsNull operator
     Given a state machine defined by:
@@ -152,7 +158,10 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -188,7 +197,10 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -224,7 +236,10 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -260,7 +275,10 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -296,7 +314,10 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -332,7 +353,10 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -368,7 +392,10 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -405,7 +432,10 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -441,7 +471,10 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -459,8 +492,8 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
 
     Examples: Comparators
 
-Scenario Outline: The Choice type supports the NumericGreaterThanEquals operator
-Given a state machine defined by:
+  Scenario Outline: The Choice type supports the NumericGreaterThanEquals operator
+    Given a state machine defined by:
     """
     {
         "StartAt": "FirstState",
@@ -478,7 +511,10 @@ Given a state machine defined by:
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -495,8 +531,8 @@ Given a state machine defined by:
 
     Examples: Comparators
 
-Scenario Outline: The Choice type supports the NumericGreaterThanEqualsPath
-Given a state machine defined by:
+  Scenario Outline: The Choice type supports the NumericGreaterThanEqualsPath
+    Given a state machine defined by:
     """
     {
         "StartAt": "FirstState",
@@ -514,7 +550,10 @@ Given a state machine defined by:
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -551,7 +590,10 @@ Given a state machine defined by:
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -579,7 +621,7 @@ Given a state machine defined by:
                 "Choices": [
                     {
                         "Variable": "$.thing",
-                        "NumericLessThanPath": "$.myvalue",
+                        "NumericLessThan": <value_1>,
                         "Next": "MatchState"
                     }
                 ],
@@ -587,7 +629,10 @@ Given a state machine defined by:
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -596,8 +641,85 @@ Given a state machine defined by:
     And the current state data is:
     """
     {
-        "thing": 10,
-        "myvalue": 15
+        "thing": <value_2>
+    }
+    """
+    When the state machine executes
+    Then the next state is "<matched_state>"
+
+    Examples: Comparators
+      Given a state machine defined by:
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "NumericLessThanPath": "$.myvalue",
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+            "MatchState": {
+                "Type": "Pass",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
+                "End": true
+            }
+          }
+      }
+      """
+      And the current state data is:
+      """
+      {
+          "thing": <value_1>,
+          "myvalue": <value_2>
+      }
+      """
+      When the state machine executes
+      Then the next state is "<matched_state>"
+
+
+    Examples: Comparators
+
+  Scenario Outline: The Choice type supports the NumericLessThanEquals operator
+    Given a state machine defined by:
+    """
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Choice",
+                "Choices": [
+                    {
+                        "Variable": "$.thing",
+                        "NumericLessThanEquals": <value_1>,
+                        "Next": "MatchState"
+                    }
+                ],
+                "Default": "DefaultState"
+            },
+            "MatchState": {
+                "Type": "Pass",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
+                "End": true
+            }
+        }
+    }
+    """
+    And the current state data is:
+    """
+    {
+        "thing": <value_2>
     }
     """
     When the state machine executes
@@ -605,9 +727,46 @@ Given a state machine defined by:
 
     Examples: Comparators
 
-Scenario Outline: The Choice type supports the NumericLessThanEquals operator
-Scenario Outline: The Choice type supports the NumericLessThanEqualsPath operator
-  
+  Scenario Outline: The Choice type supports the NumericLessThanEqualsPath operator
+    Given a state machine defined by:
+    """
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Choice",
+                "Choices": [
+                    {
+                        "Variable": "$.thing",
+                        "NumericLessThanEqualsPath": "$.myvalue",
+                        "Next": "MatchState"
+                    }
+                ],
+                "Default": "DefaultState"
+            },
+            "MatchState": {
+                "Type": "Pass",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
+                "End": true
+            }
+        }
+    }
+    """
+    And the current state data is:
+    """
+    {
+        "thing": <value_1>,
+        "myvalue": <value_2>
+    }
+    """
+    When the state machine executes
+    Then the next state is "<matched_state>"
+
+    Examples: Comparators
+
   Scenario Outline: The Choice type supports the StringEquals operator
     Given a state machine defined by:
     """
@@ -626,8 +785,11 @@ Scenario Outline: The Choice type supports the NumericLessThanEqualsPath operato
                 "Default": "DefaultState"
             },
             "MatchState": {
-                "Type": "Pass",
-                "Result": "end",
+                "Type": "Pass", 
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass", 
                 "End": true
             }
         }
@@ -663,7 +825,10 @@ Scenario Outline: The Choice type supports the NumericLessThanEqualsPath operato
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -700,7 +865,10 @@ Scenario Outline: The Choice type supports the NumericLessThanEqualsPath operato
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -736,7 +904,10 @@ Scenario Outline: The Choice type supports the NumericLessThanEqualsPath operato
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -745,8 +916,8 @@ Scenario Outline: The Choice type supports the NumericLessThanEqualsPath operato
     And the current state data is:
     """
     {
-        "thing": "so",
-        "otherthing": "at",
+        "thing": <value_1>,
+        "otherthing": <value_2>,
     }
     """
     When the state machine executes
@@ -756,7 +927,6 @@ Scenario Outline: The Choice type supports the NumericLessThanEqualsPath operato
 
   Scenario Outline: The Choice type supports the StringGreaterThanEquals operator
   Scenario Outline: The Choice type supports the StringGreaterThanEqualsPath operator
-
   Scenario Outline: The Choice type supports the StringLessThan operator
     Given a state machine defined by:
     """
@@ -768,7 +938,7 @@ Scenario Outline: The Choice type supports the NumericLessThanEqualsPath operato
                 "Choices": [
                     {
                         "Variable": "$.thing",
-                        "StringLessThan": "so",
+                        "StringLessThan": <value_1>,
                         "Next": "MatchState"
                     }
                 ],
@@ -776,7 +946,10 @@ Scenario Outline: The Choice type supports the NumericLessThanEqualsPath operato
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -785,7 +958,7 @@ Scenario Outline: The Choice type supports the NumericLessThanEqualsPath operato
     And the current state data is:
     """
     {
-        "thing": "at"
+        "thing": <value_2>
     }
     """
     When the state machine executes
@@ -812,7 +985,10 @@ Scenario Outline: The Choice type supports the NumericLessThanEqualsPath operato
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -821,8 +997,8 @@ Scenario Outline: The Choice type supports the NumericLessThanEqualsPath operato
     And the current state data is:
     """
     {
-        "thing": "at",
-        "otherthing": "so"
+        "thing": <value_1>,
+        "otherthing": <value_2>
     }
     """
     When the state machine executes
@@ -830,9 +1006,8 @@ Scenario Outline: The Choice type supports the NumericLessThanEqualsPath operato
 
     Examples: Comparators
 
-Scenario Outline: The Choice type supports the StringLessThanEquals operator
-Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
-
+  Scenario Outline: The Choice type supports the StringLessThanEquals operator
+  Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
   Scenario Outline: The Choice type supports the StringMatches operator
     Given a state machine defined by:
     """
@@ -844,7 +1019,7 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
                 "Choices": [
                     {
                         "Variable": "$.thing",
-                        "StringMatches": "blue",
+                        "StringMatches": <value_1>,
                         "Next": "MatchState"
                     }
                 ],
@@ -852,7 +1027,10 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -861,7 +1039,7 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
     And the current state data is:
     """
     {
-        "thing": "blue"
+        "thing": <value_2>
     }
     """
     When the state machine executes
@@ -880,7 +1058,7 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
                 "Choices": [
                     {
                         "Variable": "$.timestamp",
-                        "TimestampEquals": "2016-08-18T17:33:00Z",
+                        "TimestampEquals": <value_1>,
                         "Next": "MatchState"
                     }
                 ],
@@ -888,7 +1066,10 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -897,7 +1078,7 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
     And the current state data is:
     """
     {
-        "timestamp": "2016-08-18T17:33:00Z"
+        "timestamp": <value_2>
     }
     """
     When the state machine executes
@@ -924,7 +1105,10 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -933,8 +1117,8 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
     And the current state data is:
     """
     {
-        "timestamp": "2016-08-18T17:33:00Z",
-        "othertimestamp": "2016-08-18T17:33:00Z"
+        "timestamp": <value_1>,
+        "othertimestamp": <value_2>
     }
     """
     When the state machine executes
@@ -953,7 +1137,7 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
                 "Choices": [
                     {
                         "Variable": "$.timestamp",
-                        "TimestampGreaterThan": "2016-08-18T17:33:00Z"
+                        "TimestampGreaterThan": <value_1>
                         "Next": "MatchState"
                     }
                 ],
@@ -961,7 +1145,10 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -970,7 +1157,7 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
     And the current state data is:
     """
     {
-        "timestamp": "2017-08-18T17:33:00Z"
+        "timestamp": <value_2>
     }
     """
     When the state machine executes
@@ -997,7 +1184,10 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -1006,8 +1196,8 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
     And the current state data is:
     """
     {
-        "timestamp": "2017-08-18T17:33:00Z",
-        "othertimestamp": "2016-08-18T17:33:00Z"
+        "timestamp": <value_1>,
+        "othertimestamp": <value_2>
     }
     """
     When the state machine executes
@@ -1034,7 +1224,10 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -1043,8 +1236,8 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
     And the current state data is:
     """
     {
-        "timestamp": "2016-08-18T17:33:00Z",
-        "othertimestamp": "2016-08-18T17:33:00Z"
+        "timestamp": <value_1>,
+        "othertimestamp": <value_2>
     }
     """
     When the state machine executes
@@ -1071,7 +1264,10 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -1080,8 +1276,8 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
     And the current state data is:
     """
     {
-        "timestamp": "2017-08-18T17:33:00Z",
-        "othertimestamp": "2016-08-18T17:33:00Z"
+        "timestamp": <value_1>,
+        "othertimestamp": <value_2>
     }
     """
     When the state machine executes
@@ -1100,7 +1296,7 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
                 "Choices": [
                     {
                         "Variable": "$.timestamp",
-                        "TimestampLessThan": "2016-08-18T17:33:00Z",
+                        "TimestampLessThan": <value_1>,
                         "Next": "MatchState"
                     }
                 ],
@@ -1108,7 +1304,10 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -1117,7 +1316,7 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
     And the current state data is:
     """
     {
-        "timestamp": "2015-08-18T17:33:00Z"
+        "timestamp": <value_2>
     }
     """
     When the state machine executes
@@ -1144,7 +1343,10 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -1153,8 +1355,8 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
     And the current state data is:
     """
     {
-        "timestamp": "2015-08-18T17:33:00Z",
-        "othertimestamp": "2016-08-18T17:33:00Z"
+        "timestamp": <value_1>,
+        "othertimestamp": <value_2>
     }
     """
     When the state machine executes
@@ -1173,7 +1375,7 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
                 "Choices": [
                     {
                         "Variable": "$.timestamp",
-                        "TimestampLessThanEquals": "2016-08-18T17:33:00Z",
+                        "TimestampLessThanEquals": <value_1>,
                         "Next": "MatchState"
                     }
                 ],
@@ -1181,7 +1383,10 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -1190,7 +1395,7 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
     And the current state data is:
     """
     {
-        "timestamp": "2015-08-18T17:33:00Z"
+        "timestamp": <value_2>
     }
     """
     When the state machine executes
@@ -1217,7 +1422,10 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
             },
             "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -1226,8 +1434,8 @@ Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
     And the current state data is:
     """
     {
-        "timestamp": "2015-08-18T17:33:00Z",
-        "othertimestamp": "2016-08-18T17:33:00Z"
+        "timestamp": <value_1>,
+        "othertimestamp": <value_2>
     }
     """
     When the state machine executes
