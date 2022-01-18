@@ -115,7 +115,16 @@ is just a passthrough.
 
 | Function | Status |
 | --- | --- |
-| States.Array | No |
-| States.Format | No |
-| States.JsonToString | No |
-| States.StringToJson | No |
+| States.Array | Yes |
+| States.Format | Yes |
+| States.JsonToString | Yes |
+| States.StringToJson | Yes |
+
+## Intrinsic Argument Literal Types
+
+| Type | Status | Notes |
+| --- | --- | --- |
+| String | Yes | |
+| Boolean | No | |
+| Integer | Yes | |
+| Float | Yes | x.x format only |

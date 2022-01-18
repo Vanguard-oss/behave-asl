@@ -1,5 +1,6 @@
-import logging
 import ast
+import json
+import logging
 
 from behaveasl import jsonpath
 from behaveasl.models.exceptions import StatesRuntimeException
@@ -23,7 +24,61 @@ def states_format(args):
     return fmt.format(*args)
 
 
-STATES_INTRINSICS = {"States.Format": states_format}
+def states_string_to_json(args):
+    """Implementation of States.StringToJson
+
+    https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-intrinsic-functions.html
+
+    Args:
+        args (list): List of arguments for the intrinsic function
+
+    Returns:
+        str: Json object
+    """
+    input = args.pop(0)
+    return json.loads(input)
+
+
+def states_json_to_string(args):
+    """Implementation of States.StringToJson
+
+    https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-intrinsic-functions.html
+
+    Args:
+        args (list): List of arguments for the intrinsic function
+
+    Returns:
+        str: json string
+    """
+    input = args.pop(0)
+
+    # AWS does not put a space after the separator, so we have to tell Python
+    # to do the same
+    separators = (",", ":")
+
+    return json.dumps(input, separators=separators)
+
+
+def states_array(args):
+    """Implementation of States.Array
+
+    https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-intrinsic-functions.html
+
+    Args:
+        args (list): List of arguments for the intrinsic function
+
+    Returns:
+        list: array of values
+    """
+    return args
+
+
+STATES_INTRINSICS = {
+    "States.Format": states_format,
+    "States.StringToJson": states_string_to_json,
+    "States.JsonToString": states_json_to_string,
+    "States.Array": states_array,
+}
 
 
 def _tokenize_expression(expr: str):
@@ -54,7 +109,7 @@ def _tokenize_expression(expr: str):
                 # This JsonPath goes to the end of the expression
                 args.append(args_str)
                 args_str = ""
-                LOG.debug(f"Found final JsonPath token: [{next_token}]")
+                LOG.debug(f"Found final JsonPath token: [{args_str}]")
         elif args_str[0] == " ":
             # Skip any spaces that are not part of the string literal
             args_str = args_str[1:]
@@ -62,6 +117,16 @@ def _tokenize_expression(expr: str):
             # If we get here, then we are between arguments
             # We can skip the comma so we can get to the start of the next argument
             args_str = args_str[1:]
+        elif args_str[0].isdigit():
+            next_token = ""
+            # while len(args_str)>0 and args_str[0].isnumeric():
+            while len(args_str) > 0 and (args_str[0].isdecimal() or args_str[0] == "."):
+                next_token = next_token + args_str[0]
+                args_str = args_str[1:]
+            args.append(next_token)
+            LOG.debug(
+                f"Found next number literal token: [{next_token}], remainder=[{args_str}]"
+            )
         elif args_str[0] == "'":
             # we have to find the next comma that is not inside of a string literal
             next_token = ""
@@ -109,10 +174,12 @@ def _replace_jsonpath_expressions(*, args, input, context):
             # If it is surounded by quotes, try to replace backslashes the way AWS does
             arg = arg.replace("\n", "\\n")
             new_args.append(ast.literal_eval(arg).replace("'", "\\'"))
+        elif arg.isdigit():
+            new_args.append(int(arg))
+        elif arg[0].isdigit():
+            new_args.append(float(arg))
         else:
-            raise StatesRuntimeException(
-                f"Invalid path {expr}: Unparsable argument: {arg}"
-            )
+            raise StatesRuntimeException(f"Unparsable argument: {arg}")
     return new_args
 
 
