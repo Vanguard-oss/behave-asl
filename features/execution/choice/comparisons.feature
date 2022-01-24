@@ -785,11 +785,11 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
                 "Default": "DefaultState"
             },
             "MatchState": {
-                "Type": "Pass", 
+                "Type": "Pass",
                 "End": true
             },
             "DefaultState": {
-                "Type": "Pass", 
+                "Type": "Pass",
                 "End": true
             }
         }

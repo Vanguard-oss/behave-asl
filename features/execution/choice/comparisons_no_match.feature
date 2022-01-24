@@ -1,1 +1,0 @@
-Feature: Choice Rules and comparisons that should not match the criteria are supported by the Choice state type (Except for And/Not/Or)
