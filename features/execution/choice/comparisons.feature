@@ -426,8 +426,11 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
       | value_1 | value_2 | matched_state |
       | 9       | 9       | MatchState    |
       | 2.0     | 2.0     | MatchState    |
+      | 2     | 2.0     | MatchState    |
       | -3      | -3      | MatchState    |
       | "1"     | "1"     | DefaultState  |
+      | "1"     | 1     | DefaultState  |
+      | 1     | "1"     | DefaultState  |
       | 1       | 3       | DefaultState  |
       | 1.0     | 3.0     | DefaultState  |
       | -1      | -3      | DefaultState  |
@@ -726,7 +729,7 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
       | 2.0     | 3.0     | MatchState    |
       | -2.0    | -1.0    | MatchState    |
       | 1       | 2.0     | MatchState    |
-      | 2       | 2       | MatchState    |
+      | 2       | 2       | DefaultState  |
       | "1"     | "2"     | DefaultState  |
       | 2       | 1       | DefaultState  |
       | 3.0     | 2.0     | DefaultState  |
