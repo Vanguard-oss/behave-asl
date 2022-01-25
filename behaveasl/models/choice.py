@@ -176,25 +176,55 @@ class Choice:
         pass
 
     def _string_equals(self, actual_value):
-        # TODO: check type first
+        if self._check_type_is_string(value_to_check=actual_value) == False \
+            or self._check_type_is_string(value_to_check=self._evaluation_value) == False:
+            return False
         return actual_value == self._evaluation_value
+    
+    def _compare_strings(string1, string2) -> int:
+        ''' Will compare 2 strings using the same logic as Java's compareTo method
+        https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#compareTo-java.lang.String-
+        '''
+        for x in range(0, len(string1)):
+            string1_ord = ord(string1[x])
+            string2_ord = ord(string2[x])
 
     def _string_greater_than(self, actual_value):
+        if self._check_type_is_string(value_to_check=actual_value) == False \
+            or self._check_type_is_string(value_to_check=self._evaluation_value) == False:
+            return False
         pass
+        # TODO: implement
 
     def _string_greater_than_equals(self, actual_value):
+        if self._check_type_is_string(value_to_check=actual_value) == False \
+            or self._check_type_is_string(value_to_check=self._evaluation_value) == False:
+            return False
         pass
+    # TODO: implement
 
     def _string_less_than(self, actual_value):
+        if self._check_type_is_string(value_to_check=actual_value) == False \
+            or self._check_type_is_string(value_to_check=self._evaluation_value) == False:
+            return False
         pass
+    # TODO: implement
 
     def _string_less_than_equals(self, actual_value):
+        if self._check_type_is_string(value_to_check=actual_value) == False \
+            or self._check_type_is_string(value_to_check=self._evaluation_value) == False:
+            return False
         pass
+    # TODO: implement
 
     def _string_matches(self, actual_value):
         # TODO: wildcard logic
         # String comparison against patterns with one or more wildcards (“*”) can be performed with the StringMatches comparison operator. The wildcard character is escaped by using the standard \\ (Ex: “\\*”). No characters other than “*” have any special meaning during matching.
+        if self._check_type_is_string(value_to_check=actual_value) == False \
+            or self._check_type_is_string(value_to_check=self._evaluation_value) == False:
+            return False
         pass
+    # TODO: implement
 
     def _timestamp_equals(self, actual_value):
         pass
