@@ -87,3 +87,74 @@ Feature: The Map state type is supported
     When the state machine executes
     Then the execution ended
     And the execution succeeded
+
+Scenario: The Map type can use a resource mock
+    Given a state machine defined by:
+    """
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Map",
+                "Iterator": {
+                    "StartAt": "SubState",
+                    "States": {
+                        "SubState": {
+                            "Type": "Pass",
+                            "End": true
+                        },
+                        "SubState2": {
+                            "Type": "Pass",
+                            "End": true
+                        }
+                    }
+                },
+                "Next": "SecondState"
+            },
+            "SecondState": {
+                "Type": "Map",
+                "Iterator": {
+                    "StartAt": "SubState",
+                    "States": {
+                        "SubState": {
+                            "Type": "Pass",
+                            "End": true
+                        },
+                        "SubState2": {
+                            "Type": "Pass",
+                            "End": true
+                        }
+                    }
+                },
+            "EndState": {
+                "Type": "Pass",
+                "End": true
+            }
+        }
+    }
+    """
+    And the map state "FirstState" will be called with any parameters and return:
+    """
+    1
+    """
+    And the map state "SecondState" will be called with any parameters and return:
+    """
+    2
+    """
+    And the execution input is:
+    """
+    [
+        {
+            "who": "bob"
+        },
+        {
+            "who": "meg"
+        },
+        {
+            "who": "joe"
+        }
+    ]
+    """
+    When the state machine executes
+    Then the output of "FirstState" is "[1, 1, 1]"
+    And the output of "SecondState" is "[2, 2, 2]"

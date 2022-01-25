@@ -40,6 +40,7 @@ def given_set_execution_input(context):
 
 
 @given(u'the resource "{resource}" will return')
+@given(u'the map state "{resource} will return')
 def given_resource_will_return(context, resource):
     context.execution.resource_response_mocks.add_mock(
         resource, StaticResponse(json.loads(context.text))
@@ -47,6 +48,7 @@ def given_resource_will_return(context, resource):
 
 
 @given(u'the resource "{resource}" will be called with any parameters and return')
+@given(u'the map state "{resource}" will be called with any parameters and return')
 def given_resource_any_param_will_return(context, resource):
     context.execution.resource_response_mocks.add_mock(
         resource, StaticResponse(json.loads(context.text))
@@ -55,6 +57,7 @@ def given_resource_any_param_will_return(context, resource):
 
 
 @given(u'the resource "{resource}" will be called with')
+@given(u'the map state "{resource}" will be called with')
 def given_resource_expect_param(context, resource):
     context.execution.resource_expectations.add_mock(
         resource, AssertParameters(context.text)
