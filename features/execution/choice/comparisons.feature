@@ -1036,10 +1036,12 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
     Examples: Comparators
       | value_1  | value_2  | matched_state |
       | "b"      | "a"      | MatchState    |
+      | "apple"      | "app"      | MatchState    |
       | "foo"    | "foo"    | DefaultState  |
       | "caret^" | "caret^" | DefaultState  |
       | "1"      | "1"      | DefaultState  |
       | "baby"   | "apple"  | MatchState    |
+      | "apples" | "apple"  | MatchState    |
       | "2"      | "1"      | MatchState    |
       | "&"      | "!"      | MatchState    |
       | """      | " "      | MatchState    |
