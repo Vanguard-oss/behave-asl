@@ -69,3 +69,11 @@ class ResourceMockMap(AbstractMock):
             self._map[resource_name] = MockList()
 
         self._map[resource_name].add_mock(obj)
+
+
+class MockMapStateMachine(AbstractMock):
+    def __init__(self):
+        pass
+
+    def execute(self, resource_name: str, resource_input):
+        pass

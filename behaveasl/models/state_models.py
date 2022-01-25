@@ -60,7 +60,7 @@ class PassState(AbstractStateModel):
 class TaskMockPhase(AbstractPhase):
     def __init__(self, state_details: dict):
         self._resource = state_details["Resource"]
-        self._log = logging.getLogger("behaveasl.ResultPathPhase")
+        self._log = logging.getLogger("behaveasl.TaskMockPhase")
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
         execution.resource_expectations.execute(self._resource, phase_input)
@@ -280,6 +280,15 @@ class ItemsPathPhase(AbstractPhase):
         return phase_output
 
 
+class MapMockPhase(AbstractPhase):
+    def __init__(self, state_details: dict):
+        self._resource = state_details["Resource"]
+        self._log = logging.getLogger("behaveasl.MapMockPhase")
+
+    def execute(self, state_input, phase_input, sr: StepResult, execution):
+        return list(map(process_state(), list_of_states))
+
+
 class MapState(AbstractStateModel):
     def __init__(self, state_name, state_details, **kwargs):
         self._phases = []
@@ -320,41 +329,10 @@ class MapState(AbstractStateModel):
         """The map state can be used to run a set of steps for each element of an input array"""
         sr = StepResult()
         current_data = copy.deepcopy(state_input)
+        execution._context_obj["State"]["Item"] = {}
 
-        for i in range(3):
-            print(f"Current {i} data: {current_data}")
-            # Execute input path, items path, and parameters
-            current_data = self._phases[i].execute(
-                state_input, current_data, sr, execution
-            )
-
-        map_ouput = []
-
-        for index, value in enumerate(current_data):
-            map_execution = execution.create_sub_execution_from_definition(definition=self._iterator)
-            # map_execution = Execution(state_machine=self._iterator)
-            # Map state has additional context data available
-            map_execution._context_obj["State"]["Item"] = {}
-            map_execution._context_obj["State"]["Item"]["Index"] = index
-            map_execution._context_obj["State"]["Item"]["Value"] = value
-            map_execution.set_execution_input_data(data=value)
-
-            while (
-                map_execution._last_step_result.end_execution != True
-                or map_execution._last_step_result.failed != True
-            ):
-                map_execution.execute()
-
-            map_ouput.append(map_execution.last_step_result)
-
-        current_data = map_ouput
-
-        for i in range(3, 6):
-            # Execute result selector, result path and output path
-            current_data = self._phases[i].execute(
-                state_input, current_data, sr, execution
-            )
-
+        for phase in self._phases:
+            current_data = phase.execute(state_input, current_data, sr, execution)
         sr.result_data = current_data
 
         return sr

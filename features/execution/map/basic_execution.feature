@@ -13,11 +13,10 @@ Feature: The Map state type is supported
             "FirstState": {
                 "Type": "Map",
                 "Iterator": {
-                    "StartAt": "CallLambda",
+                    "StartAt": "SubState",
                     "States": {
-                        "CallLambda": {
-                            "Type": "Task",
-                            "Resource": "Lambda",
+                        "SubState": {
+                            "Type": "Pass",
                             "End": true
                         }
                     }
@@ -29,11 +28,6 @@ Feature: The Map state type is supported
                 "End": true
             }
         }
-    }
-    """
-    And the resource "Lambda" will be called with any parameters and return:
-    """
-    {
     }
     """
     And the execution input is:
@@ -62,11 +56,10 @@ Feature: The Map state type is supported
             "FirstState": {
                 "Type": "Map",
                 "Iterator": {
-                    "StartAt": "CallLambda",
+                    "StartAt": "SubState",
                     "States": {
-                        "CallLambda": {
-                            "Type": "Task",
-                            "Resource": "Lambda",
+                        "SubState": {
+                            "Type": "Pass",
                             "End": true
                         }
                     }
@@ -74,11 +67,6 @@ Feature: The Map state type is supported
                 "End": true
             }
         }
-    }
-    """
-    And the resource "Lambda" will be called with any parameters and return:
-    """
-    {
     }
     """
     And the execution input is:
