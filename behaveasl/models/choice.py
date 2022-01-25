@@ -18,6 +18,7 @@ class Choice:
             'BooleanEqualsPath': self._boolean_equals,
             'IsBoolean': self._is_boolean,
             'IsNull': self._is_null,
+            'IsNumeric': self._is_numeric,
             'IsPresent': self._is_present,
             'IsString': self._is_string,
             'IsTimestamp': self._is_timestamp,
