@@ -26,8 +26,12 @@ class Choice:
             'NumericEqualsPath': self._numeric_equals,
             'NumericGreaterThan': self._numeric_greater_than,
             'NumericGreaterThanPath': self._numeric_greater_than,
+            'NumericGreaterThanEquals': self._numeric_greater_than_equals,
+            'NumericGreaterThanEqualsPath': self._numeric_greater_than_equals,
             'NumericLessThan': self._numeric_less_than,
             'NumericLessthanPath': self._numeric_less_than,
+            'NumericLessThanEquals': self._numeric_less_than_equals,
+            'NumericLessThanEqualsPath': self._numeric_less_than_equals,
             'StringEquals': self._string_equals,
             'StringEqualsPath': self._string_equals,
             'StringGreaterThan': self._string_greater_than,
@@ -91,11 +95,24 @@ class Choice:
         else:
             return True
 
+    def _check_type_is_numeric(self, value_to_check):
+        ''' This helper function allows us to delegate this common check to a single spot'''
+        if type(value_to_check) not in [float, int]:
+            return False
+        else:
+            return True
+    
+    def _check_type_is_string(self, value_to_check):
+        if type(value_to_check) is not str:
+            return False
+        else:
+            return True
+
     def _is_numeric(self, actual_value):
         # self._evaluation_value determines whether we want the type or not
-        if self._evaluation_value is True and type(actual_value) not in [float, int]:
+        if self._evaluation_value is True and self._check_type_is_numeric(actual_value) == False:
             return False
-        elif self._evaluation_value is False and type(actual_value) in [float, int]:
+        elif self._evaluation_value is False and self._check_type_is_numeric(actual_value) == True:
             return False
         else:
             return True
@@ -108,9 +125,9 @@ class Choice:
 
     def _is_string(self, actual_value):
         # self._evaluation_value determines  whether we want the type or not
-        if self._evaluation_value is True and type(actual_value) is not str:
+        if self._evaluation_value is True and self._check_type_is_string(actual_value) == False:
             return False
-        elif self._evaluation_value is False and type(actual_value) is str:
+        elif self._evaluation_value is False and self._check_type_is_string(actual_value) == True:
             return False
         return True
 
@@ -125,19 +142,35 @@ class Choice:
         pass
 
     def _numeric_equals(self, actual_value):
-        pass
+        # If either value is not a numeric type, return False
+        if self._check_type_is_numeric(value_to_check=actual_value) == False \
+            or self._check_type_is_numeric(value_to_check=self._evaluation_value) == False: # delegate to the existing function
+            return False
+        return self._evaluation_value == actual_value
 
     def _numeric_greater_than(self, actual_value):
-        pass
+        if self._check_type_is_numeric(value_to_check=actual_value) == False \
+            or self._check_type_is_numeric(value_to_check=self._evaluation_value) == False: # delegate to the existing function
+            return False
+        return self._evaluation_value > actual_value
 
     def _numeric_greater_than_equals(self, actual_value):
-        pass
+        if self._check_type_is_numeric(value_to_check=actual_value) == False \
+            or self._check_type_is_numeric(value_to_check=self._evaluation_value) == False: # delegate to the existing function
+            return False
+        return self._evaluation_value >= actual_value
 
     def _numeric_less_than(self, actual_value):
-        pass
+        if self._check_type_is_numeric(value_to_check=actual_value) == False \
+            or self._check_type_is_numeric(value_to_check=self._evaluation_value) == False: # delegate to the existing function
+            return False
+        return self._evaluation_value < actual_value
 
     def _numeric_less_than_equals(self, actual_value):
-        pass
+        if self._check_type_is_numeric(value_to_check=actual_value) == False \
+            or self._check_type_is_numeric(value_to_check=self._evaluation_value) == False: # delegate to the existing function
+            return False
+        return self._evaluation_value <= actual_value
 
     def _or_comparator(self, actual_value):
         pass
