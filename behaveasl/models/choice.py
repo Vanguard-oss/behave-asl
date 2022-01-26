@@ -181,27 +181,56 @@ class Choice:
             return False
         return actual_value == self._evaluation_value
     
-    def _compare_strings(string1, string2) -> int:
-        ''' Will compare 2 strings using the same logic as Java's compareTo method
-        https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#compareTo-java.lang.String-
+    def _compare_strings(self, compare_string, another_string) -> int:
+        ''' 
+        If positive, string follows another string. If negative, string precedes another_string.
+        Will compare 2 strings using the same logic as Java's compareTo method
+        https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#compareTo-java.lang.String
         '''
-        for x in range(0, len(string1)):
-            string1_ord = ord(string1[x])
-            string2_ord = ord(string2[x])
+        # Determine which string is longer - we will iterate over the shorter string
+        # If they are the same up to that point, the longer string is greater
+        if compare_string == another_string:
+            return 0
+        # If the left hand part of the string is the same, the longer string comes
+        # after the shorter
+        min_length = len(compare_string) if len(compare_string) < len(another_string) else len(another_string)
+        if compare_string[:min_length] == another_string[:min_length]:
+            if len(compare_string) > len(another_string): 
+                return 1
+            else:
+                return -1
+
+        for x in range(0, min_length):
+            string_ord = ord(compare_string[x])
+            another_string_ord = ord(another_string[x])
+            if string_ord == another_string_ord:
+                pass
+            else:
+                # If string follows another_string, result will be positive
+                # If string precedes another_string, result will be negative
+                return string_ord - another_string_ord
 
     def _string_greater_than(self, actual_value):
         if self._check_type_is_string(value_to_check=actual_value) == False \
             or self._check_type_is_string(value_to_check=self._evaluation_value) == False:
             return False
-        pass
-        # TODO: implement
+        # If positive, actual_value is after (greater than) self._evaluation_value.
+        # If negative, actual_value follows (is lesser than) self._evaluation_value
+        if self._compare_strings(compare_string=self._evaluation_value, another_string=actual_value) > 0:
+            return True
+        else:
+            return False
 
     def _string_greater_than_equals(self, actual_value):
         if self._check_type_is_string(value_to_check=actual_value) == False \
             or self._check_type_is_string(value_to_check=self._evaluation_value) == False:
             return False
-        pass
-    # TODO: implement
+        # If positive, self._evaluation_value follows actual_value.
+        # If negative, self._evaluation_value precedes actual_value
+        if self._compare_strings(compare_string=actual_value, another_string=self._evaluation_value) <= 0:
+            return True
+        else:
+            return False
 
     def _string_less_than(self, actual_value):
         if self._check_type_is_string(value_to_check=actual_value) == False \
