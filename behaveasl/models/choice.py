@@ -36,8 +36,12 @@ class Choice:
             'StringEqualsPath': self._string_equals,
             'StringGreaterThan': self._string_greater_than,
             'StringGreaterThanPath': self._string_greater_than,
+            'StringGreaterThanEquals': self._string_greater_than_equals,
+            'StringGreaterThanEqualsPath': self._string_greater_than_equals,
             'StringLessThan': self._string_less_than,
             'StringLessThanPath': self._string_less_than,
+            'StringLessThanEquals': self._string_less_than_equals,
+            'StringLessThanEqualsPath': self._string_less_than_equals,
             'StringMatches': self._string_matches,
             'TimestampEquals': self._timestamp_equals,
             'TimestampEqualsPath': self._timestamp_equals,
@@ -225,9 +229,9 @@ class Choice:
         if self._check_type_is_string(value_to_check=actual_value) == False \
             or self._check_type_is_string(value_to_check=self._evaluation_value) == False:
             return False
-        # If positive, self._evaluation_value follows actual_value.
-        # If negative, self._evaluation_value precedes actual_value
-        if self._compare_strings(compare_string=actual_value, another_string=self._evaluation_value) <= 0:
+        # If positive, actual_value is after (greater than) self._evaluation_value.
+        # If negative, actual_value follows (is lesser than) self._evaluation_value
+        if self._compare_strings(compare_string=self._evaluation_value, another_string=actual_value) >= 0:
             return True
         else:
             return False
@@ -236,15 +240,23 @@ class Choice:
         if self._check_type_is_string(value_to_check=actual_value) == False \
             or self._check_type_is_string(value_to_check=self._evaluation_value) == False:
             return False
-        pass
-    # TODO: implement
+        # If positive, actual_value is after (greater than) self._evaluation_value.
+        # If negative, actual_value follows (is lesser than) self._evaluation_value
+        if self._compare_strings(compare_string=self._evaluation_value, another_string=actual_value) < 0:
+            return True
+        else:
+            return False
 
     def _string_less_than_equals(self, actual_value):
         if self._check_type_is_string(value_to_check=actual_value) == False \
             or self._check_type_is_string(value_to_check=self._evaluation_value) == False:
             return False
-        pass
-    # TODO: implement
+        # If positive, actual_value is after (greater than) self._evaluation_value.
+        # If negative, actual_value follows (is lesser than) self._evaluation_value
+        if self._compare_strings(compare_string=self._evaluation_value, another_string=actual_value) <= 0:
+            return True
+        else:
+            return False
 
     def _string_matches(self, actual_value):
         # TODO: wildcard logic
