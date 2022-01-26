@@ -426,11 +426,11 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
       | value_1 | value_2 | matched_state |
       | 9       | 9       | MatchState    |
       | 2.0     | 2.0     | MatchState    |
-      | 2     | 2.0     | MatchState    |
+      | 2       | 2.0     | MatchState    |
       | -3      | -3      | MatchState    |
       | "1"     | "1"     | DefaultState  |
-      | "1"     | 1     | DefaultState  |
-      | 1     | "1"     | DefaultState  |
+      | "1"     | 1       | DefaultState  |
+      | 1       | "1"     | DefaultState  |
       | 1       | 3       | DefaultState  |
       | 1.0     | 3.0     | DefaultState  |
       | -1      | -3      | DefaultState  |
@@ -1035,19 +1035,21 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
 
     Examples: Comparators
       | value_1  | value_2  | matched_state |
+      | "\""      | " "      | MatchState    |
+      | "&"      | "!"      | MatchState    |
+      | "apple"  | "app"    | MatchState    |
+      | "apples" | "apple"  | MatchState    |
+      | "a"      | "A"      | MatchState    |
       | "b"      | "a"      | MatchState    |
-      | "apple"      | "app"      | MatchState    |
+      | "babble" | "app"    | MatchState    |
+      | "baby"   | "apple"  | MatchState    |
       | "foo"    | "foo"    | DefaultState  |
       | "caret^" | "caret^" | DefaultState  |
       | "1"      | "1"      | DefaultState  |
       | "baby"   | "apple"  | MatchState    |
-      | "apples" | "apple"  | MatchState    |
       | "2"      | "1"      | MatchState    |
-      | "&"      | "!"      | MatchState    |
-      | """      | " "      | MatchState    |
       | 1        | "foo"    | DefaultState  |
       | null     | "bar"    | DefaultState  |
-      | "A"      | "a"      | MatchState    |
 
   Scenario Outline: The Choice type supports the StringGreaterThanPath operator
     Given a state machine defined by:
