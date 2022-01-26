@@ -1,3 +1,5 @@
+import fnmatch
+
 class Choice:
     def __init__(self, variable, evaluation_type, evaluation_value, next_state):
         self._variable = variable
@@ -259,13 +261,11 @@ class Choice:
             return False
 
     def _string_matches(self, actual_value):
-        # TODO: wildcard logic
         # String comparison against patterns with one or more wildcards (“*”) can be performed with the StringMatches comparison operator. The wildcard character is escaped by using the standard \\ (Ex: “\\*”). No characters other than “*” have any special meaning during matching.
         if self._check_type_is_string(value_to_check=actual_value) == False \
             or self._check_type_is_string(value_to_check=self._evaluation_value) == False:
             return False
-        pass
-    # TODO: implement
+        return fnmatch.fnmatch(self._evaluation_value, actual_value)
 
     def _timestamp_equals(self, actual_value):
         pass
