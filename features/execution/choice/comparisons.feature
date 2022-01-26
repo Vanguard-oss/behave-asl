@@ -1142,17 +1142,17 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
 
     Examples: Comparators
       | value_1  | value_2  | matched_state |
+      | "baby"   | "apple"  | MatchState    |
+      | "2"      | "1"      | MatchState    |
       | "b"      | "a"      | MatchState    |
       | "foo"    | "foo"    | MatchState    |
       | "caret^" | "caret^" | MatchState    |
       | "1"      | "1"      | MatchState    |
-      | "baby"   | "apple"  | MatchState    |
-      | "2"      | "1"      | MatchState    |
       | "&"      | "!"      | MatchState    |
-      | """      | " "      | MatchState    |
+      | "\""      | " "      | MatchState    |
       | 1        | "foo"    | DefaultState  |
       | null     | "bar"    | DefaultState  |
-      | "A"      | "a"      | MatchState    |
+      | "a"      | "A"      | MatchState    |
 
   Scenario Outline: The Choice type supports the StringGreaterThanEqualsPath operator
     Given a state machine defined by:
@@ -1253,10 +1253,10 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
       | "apple"  | "baby"   | MatchState    |
       | "1"      | "2"      | MatchState    |
       | "!"      | "&"      | MatchState    |
-      | " "      | """      | MatchState    |
+      | " "      | "\""      | MatchState    |
       | "foo"    | 1        | DefaultState  |
       | "bar"    | null     | DefaultState  |
-      | "a"      | "A"      | MatchState    |
+      | "A"      | "a"      | MatchState    |
 
   Scenario Outline: The Choice type supports the StringLessThanPath operator
     Given a state machine defined by:
@@ -1305,10 +1305,10 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
       | "apple"  | "baby"   | MatchState    |
       | "1"      | "2"      | MatchState    |
       | "!"      | "&"      | MatchState    |
-      | " "      | """      | MatchState    |
+      | " "      | "\""      | MatchState    |
       | "foo"    | 1        | DefaultState  |
       | "bar"    | null     | DefaultState  |
-      | "a"      | "A"      | MatchState    |
+      | "A"      | "a"      | MatchState    |
 
   Scenario Outline: The Choice type supports the StringLessThanEquals operator
     Given a state machine defined by:
@@ -1356,10 +1356,10 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
       | "apple"  | "baby"   | MatchState    |
       | "1"      | "2"      | MatchState    |
       | "!"      | "&"      | MatchState    |
-      | " "      | """      | MatchState    |
+      | " "      | "\""      | MatchState    |
       | "foo"    | 1        | DefaultState  |
       | "bar"    | null     | DefaultState  |
-      | "a"      | "A"      | MatchState    |
+      | "A"      | "a"      | MatchState    |
 
   Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
     Given a state machine defined by:
