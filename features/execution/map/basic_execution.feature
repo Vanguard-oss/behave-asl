@@ -97,35 +97,16 @@ Scenario: The Map type can use a resource mock
             "FirstState": {
                 "Type": "Map",
                 "Iterator": {
-                    "StartAt": "SubState",
+                    "StartAt": "Validate",
                     "States": {
-                        "SubState": {
-                            "Type": "Pass",
-                            "End": true
-                        },
-                        "SubState2": {
-                            "Type": "Pass",
+                        "Validate": {
+                            "Type": "Task",
+	                        "Resource": "arn:aws:lambda:us-east-1:123456789012:function:ship-val",
                             "End": true
                         }
-                    }
                 },
-                "Next": "SecondState"
+                "Next": "EndState"
             },
-            "SecondState": {
-                "Type": "Map",
-                "Iterator": {
-                    "StartAt": "SubState",
-                    "States": {
-                        "SubState": {
-                            "Type": "Pass",
-                            "End": true
-                        },
-                        "SubState2": {
-                            "Type": "Pass",
-                            "End": true
-                        }
-                    }
-                },
             "EndState": {
                 "Type": "Pass",
                 "End": true
@@ -136,82 +117,27 @@ Scenario: The Map type can use a resource mock
     And the map state "FirstState" will be called with:
     """
     [
-        {
-            "name": "bob"
-        },
-        {
-            "name": "meg"
-        },
-        {
-            "name": "joe"
-        }
+      { "prod": "R31", "dest-code": 9511, "quantity": 1344 },
+      { "prod": "S39", "dest-code": 9511, "quantity": 40 },
+      { "prod": "R31", "dest-code": 9833, "quantity": 12 },
+      { "prod": "R40", "dest-code": 9860, "quantity": 887 },
+      { "prod": "R40", "dest-code": 9511, "quantity": 1220 }
     ]
     """
-    And the map state "FirstState" will return:
-    """
-    [ 
-        "engineer", 
-        "admin", 
-        "marketing" 
-    ]
-    """
-    And the map state "SecondState" will be called with:
-    """
-    [
-        {
-            "name": "bob",
-            "position": "engineer"
-        },
-        {
-            "name": "meg",
-            "position": "admin"
-        },
-        {
-            "name": "joe",
-            "position: "marketing"
-        }
-    ]
-    """
-    And the map state "SecondState" will return:
-    """
-    [ 2, 2, 3 ]
+    And the map state "FirstState" will return "blue" when invoked with the input "{ "prod": "R31", "dest-code": 9511, "quantity": 1344 }"
+    And the map state "FirstState" will return "green" when invoked with the input "{ "prod": "S39", "dest-code": 9511, "quantity": 40 }"
+    And the map state "FirstState" will return "red" when invoked with the input "{ "prod": "R31", "dest-code": 9833, "quantity": 12 }"
+    And the map state "FirstState" will return "unknown" when invoked with any other parameters
     """
     When the state machine executes
     Then the output of "FirstState" is 
     """
     [
-        {
-            "name": "bob",
-            "position": "engineer"
-        },
-        {
-            "name": "meg",
-            "position": "admin"
-        },
-        {
-            "name": "joe",
-            "position: "marketing"
-        }
+      { "prod": "R31", "dest-code": 9511, "quantity": 1344, "color": "blue" },
+      { "prod": "S39", "dest-code": 9511, "quantity": 40, "color": "green" },
+      { "prod": "R31", "dest-code": 9833, "quantity": 12, "color": "red" },
+      { "prod": "R40", "dest-code": 9860, "quantity": 887, "color": "unknown" },
+      { "prod": "R40", "dest-code": 9511, "quantity": 1220, "color": "unknown" }
     ]
     """
-    When the state machine executes
-    Then the output of "SecondState" is 
-    """
-    [
-        {
-            "name": "bob",
-            "position": "engineer",
-            "grade": 2
-        },
-        {
-            "name": "meg",
-            "position": "admin",
-            "grade": 2
-        },
-        {
-            "name": "joe",
-            "position: "marketing",
-            "grade": 3
-        }
-    ]
-    """
+
