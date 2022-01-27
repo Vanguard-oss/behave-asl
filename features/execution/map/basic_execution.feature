@@ -106,6 +106,7 @@ Scenario: The Map type can use a resource mock
                         }
                 },
                 "Next": "EndState"
+                }
             },
             "EndState": {
                 "Type": "Pass",
@@ -124,13 +125,18 @@ Scenario: The Map type can use a resource mock
       { "prod": "R40", "dest-code": 9511, "quantity": 1220 }
     ]
     """
-    And the map state "FirstState" will return "blue" when invoked with the input "{ "prod": "R31", "dest-code": 9511, "quantity": 1344 }"
-    And the map state "FirstState" will return "green" when invoked with the input "{ "prod": "S39", "dest-code": 9511, "quantity": 40 }"
-    And the map state "FirstState" will return "red" when invoked with the input "{ "prod": "R31", "dest-code": 9833, "quantity": 12 }"
-    And the map state "FirstState" will return "unknown" when invoked with any other parameters
+    And the map state "FirstState" will return the following values for given inputs:
     """
+    {
+        "{ "prod": "R31", "dest-code": 9511, "quantity": 1344 }": "blue",
+        "{ "prod": "S39", "dest-code": 9511, "quantity": 40 }": "green",
+        "{ "prod": "R31", "dest-code": 9833, "quantity": 12 }": "red",
+
+    }
+    """
+    And the map state "FirstState" will return "unknown" when invoked with any unknown parameters
     When the state machine executes
-    Then the output of "FirstState" is 
+    Then the json output of "FirstState" is
     """
     [
       { "prod": "R31", "dest-code": 9511, "quantity": 1344, "color": "blue" },

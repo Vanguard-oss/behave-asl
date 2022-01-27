@@ -157,3 +157,8 @@ def then_waited_until_timestamp(context, timestamp):
 @then(u'the output of "{state_name}" is "{expected_output}"')
 def then_output_is(context, state_name, expected_output):
     assert context.execution.last_step_result.result_data == expected_output
+
+@then(u'the json output of "{state_name}" is') # this will precede an array/json response
+def then_output_is_json(context, state_name):
+    ### TODO: serialize the expected json output from context.text
+    pass
