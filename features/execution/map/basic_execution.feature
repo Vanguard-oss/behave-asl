@@ -133,28 +133,85 @@ Scenario: The Map type can use a resource mock
         }
     }
     """
-    And the map state "FirstState" will be called with any parameters and return:
-    """
-    1
-    """
-    And the map state "SecondState" will be called with any parameters and return:
-    """
-    2
-    """
-    And the execution input is:
+    And the map state "FirstState" will be called with:
     """
     [
         {
-            "who": "bob"
+            "name": "bob"
         },
         {
-            "who": "meg"
+            "name": "meg"
         },
         {
-            "who": "joe"
+            "name": "joe"
+        }
+    ]
+    """
+    And the map state "FirstState" will return:
+    """
+    [ 
+        "engineer", 
+        "admin", 
+        "marketing" 
+    ]
+    """
+    And the map state "SecondState" will be called with:
+    """
+    [
+        {
+            "name": "bob",
+            "position": "engineer"
+        },
+        {
+            "name": "meg",
+            "position": "admin"
+        },
+        {
+            "name": "joe",
+            "position: "marketing"
+        }
+    ]
+    """
+    And the map state "SecondState" will return:
+    """
+    [ 2, 2, 3 ]
+    """
+    When the state machine executes
+    Then the output of "FirstState" is 
+    """
+    [
+        {
+            "name": "bob",
+            "position": "engineer"
+        },
+        {
+            "name": "meg",
+            "position": "admin"
+        },
+        {
+            "name": "joe",
+            "position: "marketing"
         }
     ]
     """
     When the state machine executes
-    Then the output of "FirstState" is "[1, 1, 1]"
-    And the output of "SecondState" is "[2, 2, 2]"
+    Then the output of "SecondState" is 
+    """
+    [
+        {
+            "name": "bob",
+            "position": "engineer",
+            "grade": 2
+        },
+        {
+            "name": "meg",
+            "position": "admin",
+            "grade": 2
+        },
+        {
+            "name": "joe",
+            "position: "marketing",
+            "grade": 3
+        }
+    ]
+    """
