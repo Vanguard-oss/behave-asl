@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 
 class Choice:
     def __init__(self, variable, evaluation_type, evaluation_value, next_state):
@@ -113,6 +114,35 @@ class Choice:
             return False
         else:
             return True
+    
+    def _convert_to_dt(self, value):
+        ts_format_wo_ms = '%Y-%m-%dT%H:%M:%S%z'
+        ts_format_with_ms = '%Y-%m-%dT%H:%M:%S.%f%z'
+        try:
+            ts = datetime.strptime(value, ts_format_wo_ms)
+            return ts
+        except ValueError:
+            try:
+                ts = datetime.strptime(value, ts_format_with_ms)
+                return ts
+            except ValueError:
+                return None
+    
+    def _check_type_is_timestamp(self, value):
+        # Timestamps must conform to RFC3339 ISO 8601, include an uppercase "T" to separate date and time, 
+        # and have an uppercase "Z" to denote that a numeric time zone isn't present
+        # Example: 2001-01-01T12:00:00Z
+        ts_format_wo_ms = '%Y-%m-%dT%H:%M:%S%z'
+        ts_format_with_ms = '%Y-%m-%dT%H:%M:%S.%f%z'
+        try:
+            ts = datetime.strptime(value, ts_format_wo_ms)
+        except ValueError:
+            try:
+                ts = datetime.strptime(value, ts_format_with_ms)
+            except ValueError:
+                return False
+        return True
+
 
     def _is_numeric(self, actual_value):
         # self._evaluation_value determines whether we want the type or not
@@ -138,11 +168,12 @@ class Choice:
         return True
 
     def _is_timestamp(self, actual_value):
-        # TODO: Timestamps must conform to ISO 8601, include an uppercase "T" to separate date and time, 
-        # and have an uppercase "Z" to denote that a numeric time zone isn't present
-        # self._evaluation_value determines  whether we want the type or not
-        # TODO: we are going to need a really, really fancy regex here, I'm afraid - 
-        pass
+        if self._evaluation_value is True and self._check_type_is_timestamp(actual_value) == False:
+            return False
+        elif self._evaluation_value is False and self._check_type_is_timestamp(actual_value) == True:
+            return False
+        return True
+        
 
     def _not_comparator(self, actual_value): # Not is a reserved word in Python
         pass
@@ -282,20 +313,48 @@ class Choice:
                 return False
             return True
 
-    def _timestamp_equals(self, actual_value):
-        pass
 
     def _timestamp_equals(self, actual_value):
-        pass
+        if self._check_type_is_timestamp(value=actual_value) == False \
+            or self._check_type_is_timestamp(value=self._evaluation_value) == False:
+            return False
+        # Convert to dt
+        evaluation_value_dt = self._convert_to_dt(value=self._evaluation_value)
+        actual_value_dt = self._convert_to_dt(value=actual_value)
+        return evaluation_value_dt == actual_value_dt
 
     def _timestamp_greater_than(self, actual_value):
-        pass
+        if self._check_type_is_timestamp(value=actual_value) == False \
+            or self._check_type_is_timestamp(value=self._evaluation_value) == False:
+            return False
+        # Convert to dt
+        evaluation_value_dt = self._convert_to_dt(value=self._evaluation_value)
+        actual_value_dt = self._convert_to_dt(value=actual_value)
+        return evaluation_value_dt < actual_value_dt
 
     def _timestamp_greater_than_equals(self, actual_value):
-        pass
+        if self._check_type_is_timestamp(value=actual_value) == False \
+            or self._check_type_is_timestamp(value=self._evaluation_value) == False:
+            return False
+        # Convert to dt
+        evaluation_value_dt = self._convert_to_dt(value=self._evaluation_value)
+        actual_value_dt = self._convert_to_dt(value=actual_value)
+        return evaluation_value_dt <= actual_value_dt
 
     def _timestamp_less_than(self, actual_value):
-        pass
+        if self._check_type_is_timestamp(value=actual_value) == False \
+            or self._check_type_is_timestamp(value=self._evaluation_value) == False:
+            return False
+        # Convert to dt
+        evaluation_value_dt = self._convert_to_dt(value=self._evaluation_value)
+        actual_value_dt = self._convert_to_dt(value=actual_value)
+        return evaluation_value_dt > actual_value_dt
 
     def _timestamp_less_than_equals(self, actual_value):
-        pass
+        if self._check_type_is_timestamp(value=actual_value) == False \
+            or self._check_type_is_timestamp(value=self._evaluation_value) == False:
+            return False
+        # Convert to dt
+        evaluation_value_dt = self._convert_to_dt(value=self._evaluation_value)
+        actual_value_dt = self._convert_to_dt(value=actual_value)
+        return evaluation_value_dt >= actual_value_dt
