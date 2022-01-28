@@ -1,4 +1,4 @@
-import fnmatch
+import re
 
 class Choice:
     def __init__(self, variable, evaluation_type, evaluation_value, next_state):
@@ -265,7 +265,22 @@ class Choice:
         if self._check_type_is_string(value_to_check=actual_value) == False \
             or self._check_type_is_string(value_to_check=self._evaluation_value) == False:
             return False
-        return fnmatch.fnmatch(self._evaluation_value, actual_value)
+        # Non-wildcard matching
+        if '*' not in self._evaluation_value:
+            return self._evaluation_value == actual_value
+        # Wildcard matching
+        else:
+            # Replace any periods in self._evaluation_value with \. in the string (period literals)
+            regex_string = self._evaluation_value.replace('.', r'\.')
+            # Replace any * with . in the string
+            regex_string = regex_string.replace('*', '.*')
+            # Turn it into a regex pattern
+            prog = re.compile(regex_string)
+            # Look for a match
+            match = prog.match(actual_value)
+            if match is None:
+                return False
+            return True
 
     def _timestamp_equals(self, actual_value):
         pass

@@ -1452,20 +1452,20 @@ Feature: Choice Rules and comparisons that should match values in the input/are 
 
     Examples: Comparators
       | value_1     | value_2              | matched_state |
+      | "caret^"    | "caret^"             | MatchState    |
+      | "apple"     | "apples"             | DefaultState  |
       | "log-*.txt" | "log-2022-01-24.txt" | MatchState    |
+      | "Foo"       | "foo"                | DefaultState  |
       | "log-*.txt" | "log-2022-01-24"     | DefaultState  |
       | "a"         | "a"                  | MatchState    |
       | "Zebra"     | "Zebra"              | MatchState    |
       | "foo"       | "foo"                | MatchState    |
-      | "caret^"    | "caret^"             | MatchState    |
       | "1"         | "1"                  | MatchState    |
-      | "apple"     | "apples"             | DefaultState  |
       | "1"         | "2"                  | DefaultState  |
       | "!"         | "&"                  | DefaultState  |
       | " "         | " "                  | MatchState    |
       | "foo"       | 1                    | DefaultState  |
       | "bar"       | null                 | DefaultState  |
-      | "Foo"       | "foo"                | DefaultState  |
 
   Scenario Outline: The Choice type supports the TimestampEquals operator
     Given a state machine defined by:
