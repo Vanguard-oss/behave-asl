@@ -1,5 +1,6 @@
 import re
 from datetime import datetime
+from behaveasl.models.state_phases import Path
 
 class Choice:
     def __init__(self, variable, evaluation_type, evaluation_value, next_state):
@@ -10,10 +11,12 @@ class Choice:
         self._choices = None # If this is set, we are using an "And"/"Or"/"Not" comparator
     
 
-    def evaluate(self, state_input: dict):
+    def evaluate(self, state_input, sr, execution):
         # TODO: before calling the method, if the comparator ends in "Path", do the replacement
         # need to use jsonpath-ng to extract choice.variable from self._state_input
-        actual_value = self.parse_variable_value_from_input(state_input=state_input)
+        variable_path = Path(result_path=self._variable)
+        actual_value = variable_path.execute(state_input=state_input, phase_input=state_input, sr=sr, execution=execution)
+
         # TODO: If self._actual_value is None, raise a StatesRuntimeException (no value could be located)
         # TODO: depending on the value of the Choice's comparator, call the right method - compare actual_value with evaluation_value
         function_map = {
@@ -57,24 +60,16 @@ class Choice:
             'TimestampLessThanEquals': self._timestamp_less_than_equals,
             'TimestampLessThanEqualsPath': self._timestamp_greater_than_equals,
         }
-        return function_map[self._evaluation_type](actual_value=actual_value)
+        return function_map[self._evaluation_type](actual_value=actual_value)     
 
-    def parse_variable_value_from_input(self, state_input):
-        from behaveasl import jsonpath
-        from behaveasl.models.exceptions import StatesRuntimeException
-        # TODO: parse other versions of this
-        if self._variable.startswith("$"):
-            jpexpr = jsonpath.get_instance(self._variable)
-            results = jpexpr.find(state_input)
-            if len(results) == 1:
-                new_value = results[0].value
-                print(f"Matched '{self._variable}' [from state_input] with '{new_value}'")
-                return new_value
-            else:
-                return None        
-
-    # Follow the order of comparators here: https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-choice-state.html
+    # Roughly follow the order of comparators here: https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-choice-state.html
     def _and_comparator(self, actual_value): # And is a reserved word in Python
+        pass
+
+    def _not_comparator(self, actual_value): # Not is a reserved word in Python
+        pass
+
+    def _or_comparator(self, actual_value):
         pass
 
     def _boolean_equals(self, actual_value):
@@ -173,10 +168,7 @@ class Choice:
         elif self._evaluation_value is False and self._check_type_is_timestamp(actual_value) == True:
             return False
         return True
-        
 
-    def _not_comparator(self, actual_value): # Not is a reserved word in Python
-        pass
 
     def _numeric_equals(self, actual_value):
         # If either value is not a numeric type, return False
@@ -208,9 +200,6 @@ class Choice:
             or self._check_type_is_numeric(value_to_check=self._evaluation_value) == False: # delegate to the existing function
             return False
         return self._evaluation_value <= actual_value
-
-    def _or_comparator(self, actual_value):
-        pass
 
     def _string_equals(self, actual_value):
         if self._check_type_is_string(value_to_check=actual_value) == False \
@@ -312,7 +301,6 @@ class Choice:
             if match is None:
                 return False
             return True
-
 
     def _timestamp_equals(self, actual_value):
         if self._check_type_is_timestamp(value=actual_value) == False \
