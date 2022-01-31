@@ -61,11 +61,22 @@ def given_resource_expect_param(context, resource):
         resource, AssertParameters(context.text)
     )
 
-@given(u'the map state "{map_state_name}" will return the following values for given inputs')
-def given_map_state_will_return(context, map_state_name):
-    # TODO: serialize response dict out of context.text and add 
-    pass
 
-@given(u'the map state "{name}" will return "{mock_return}" when invoked with any unknown parameters')
-def given_map_state_unknown_params(context, name, mock_return):
-    pass
+@given(
+    u'the map state "{state_name}" will return the following values for given inputs'
+)
+def given_map_state_will_return(context, state_name):
+    # TODO: serialize response dict out of context.text and add
+    context.execution.resource_response_mocks.add_mock(
+        state_name, StaticResponse(json.loads(context.text))
+    )
+
+
+@given(
+    u'the map state "{state_name}" will return "{mock_return}" when invoked with any unknown parameters'
+)
+def given_map_state_unknown_params(context, state_name, mock_return):
+    for obj in context.execution.resource_expectations._map[state_name]._list:
+        print(obj.execute())
+    # context.execution.resource_response_mocks.add_mock(state_name, mock_return)
+    # context.execution.resource_expectations.add_mock(state_name, mock_return)

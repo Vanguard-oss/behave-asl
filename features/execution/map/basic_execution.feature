@@ -128,10 +128,9 @@ Scenario: The Map type can use a resource mock
     And the map state "FirstState" will return the following values for given inputs:
     """
     {
-        "{ "prod": "R31", "dest-code": 9511, "quantity": 1344 }": "blue",
-        "{ "prod": "S39", "dest-code": 9511, "quantity": 40 }": "green",
-        "{ "prod": "R31", "dest-code": 9833, "quantity": 12 }": "red",
-
+      "{ 'prod': 'R31', 'dest-code': 9511, 'quantity': 1344 }": "blue",
+      "{ 'prod': 'S39', 'dest-code': 9511, 'quantity': 40 }": "green",
+      "{ 'prod': 'R31', 'dest-code': 9833, 'quantity': 12 }": "red"
     }
     """
     And the map state "FirstState" will return "unknown" when invoked with any unknown parameters
