@@ -97,7 +97,7 @@ Feature: The Choice state type is supported
                 "Default": "EndState"
             },
             "BlueState": {
-                "Type": "Pass"
+                "Type": "Pass",
                 "Result": "end",
                 "End": true
             },

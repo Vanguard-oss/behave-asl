@@ -32,7 +32,7 @@ Scenario Outline: The Choice type supports nested operators for both Variable an
     """
     {
         "first": {
-            "thing": <value_1>,
+            "thing": <value_1>
         },
         "second": {
             "mybool": <value_2>
@@ -84,7 +84,7 @@ Scenario Outline: The Choice type supports json arrays
     """
     {
         "first": {
-            "thing": <value_1>,
+            "thing": <value_1>
         },
         "second": {
             "mybool": <value_2>
