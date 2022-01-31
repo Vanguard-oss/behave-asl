@@ -1,4 +1,4 @@
-Feature: Choice Rules and comparisons that should match values in the input/are set to True are supported by the Choice state type (Except for And/Not/Or)
+Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   # https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-choice-state.html#amazon-states-language-choice-state-rules
   Scenario Outline: The Choice type supports the BooleanEquals operator
