@@ -11,5 +11,5 @@ class StepResult:
     failed: bool = False
     cause: str = None
     error: str = None
-    waited_seconds: str = None
+    waited_seconds: int = None
     waited_until_timestamp: str = None
