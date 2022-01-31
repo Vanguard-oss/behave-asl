@@ -10,6 +10,55 @@
 | Comment | Yes |
 | InputPath | No|
 | OutputPath | No |
+| Choices | Partial |
+| Default | Yes |
+
+#### Comparison Operators
+
+| Operator | Status |
+| -------- | ------ |
+| And | No |
+| BooleanEquals | Yes |
+| BooleanEqualsPath | Yes |
+| IsBoolean | Yes |
+| IsNull | Yes |
+| IsNumeric | Yes |
+| IsPresent | No |
+| IsString | Yes |
+| IsTimestamp | Yes |
+| Not | No |
+| NumericEquals | Yes |
+| NumericEqualsPath | Yes |
+| NumericGreaterThan | Yes |
+| NumericGreaterThanPath | Yes |
+| NumericGreaterThanEquals | Yes |
+| NumericGreaterThanEqualsPath | Yes |
+| NumericLessThan | Yes |
+| NumericLessThanPath | Yes |
+| NumericLessThanEquals | Yes |
+| NumericLessThanEqualsPath | Yes |
+| Or | No |
+| StringEquals | Yes |
+| StringEqualsPath | Yes |
+| StringGreaterThan | Yes |
+| StringGreaterThanPath | No |
+| StringGreaterThanEquals | Yes |
+| StringGreaterThanEqualsPath | No |
+| StringLessThan | Yes |
+| StringLessThanPath | No |
+| StringLessThanEquals | Yes |
+| StringLessThanEqualsPath | No |
+| StringMatches | Yes |
+| TimestampEquals | Yes |
+| TimestampEqualsPath | No |
+| TimestampGreaterThan | Yes |
+| TimestampGreaterThanPath | No |
+| TimestampGreaterThanEquals | Yes |
+| TimestampGreaterThanEqualsPath | No |
+| TimestampLessThan | Yes |
+| TimestampLessThanPath | No |
+| TimestampLessThanEquals | Yes |
+| TimestampLessThanEqualsPath | No |
 
 ### Fail
 
