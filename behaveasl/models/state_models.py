@@ -168,17 +168,14 @@ class ChoiceState(AbstractStateModel):
 
         # Given the state input, we need to try to find matching Choice(s)
         # matching_choices = filter(self.apply_rules, self._choices) # Can probably do this with a filter ultimately
-        matching_rules = []
         for choice in self._choices:
             # Call evaluate on the choice instance, which will return True or False
-            if choice.evaluate(state_input=state_input) == True:
-                matching_rules.append(choice)
-        # TODO: what happens if 2+ choices match?!?
-        # If we only have 1 matching Choice, set the next_state from the choice.next_state property
-        if len(matching_rules) == 1:
-            self._next_state = matching_rules[0]._next_state
-        # If we have NO matching Choices, and we have a default, use it
-        if len(matching_rules) == 0:
+            if choice.evaluate(state_input=state_input, sr=sr, execution=execution) == True:
+                # If 2 choices match, we choose the first one
+                self._next_state = choice._next_state
+                break
+        # If we still have not found a matching choice, and we have a default, use it
+        if self._next_state is None:
             if self._default_next_state is not None:
                 self._next_state = self._default_next_state
                 # If we have NO matching Choices and no Default, throw an error, set StepResult w/failed + cause + error
