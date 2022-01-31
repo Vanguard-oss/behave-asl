@@ -77,8 +77,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "thing": <value_1>,
-        "mybool": <value_2>
+        "thing": <value_2>,
+        "mybool": <value_1>
     }
     """
     When the state machine executes
@@ -466,8 +466,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "thing": <value_1>,
-        "myvalue": <value_2>
+        "thing": <value_2>,
+        "myvalue": <value_1>
     }
     """
     When the state machine executes
@@ -562,8 +562,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "thing": <value_1>,
-        "myvalue": <value_2>
+        "thing": <value_2>,
+        "myvalue": <value_1>
     }
     """
     When the state machine executes
@@ -664,8 +664,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "thing": <value_1>,
-        "myvalue": <value_2>
+        "thing": <value_2>,
+        "myvalue": <value_1>
     }
     """
     When the state machine executes
@@ -867,8 +867,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "thing": <value_1>,
-        "myvalue": <value_2>
+        "thing": <value_2>,
+        "myvalue": <value_1>
     }
     """
     When the state machine executes
@@ -973,8 +973,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "thing": <value_1>,
-        "otherthing": <value_2>
+        "thing": <value_2>,
+        "otherthing": <value_1>
     }
     """
     When the state machine executes
@@ -1082,8 +1082,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "thing": <value_1>,
-        "otherthing": <value_2>,
+        "thing": <value_2>,
+        "otherthing": <value_1>,
     }
     """
     When the state machine executes
@@ -1186,8 +1186,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     """
     {
 
-        "thing": <value_1>,
-        "otherthing": <value_2>
+        "thing": <value_2>,
+        "otherthing": <value_1>
     }
     """
     When the state machine executes
@@ -1289,8 +1289,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "thing": <value_1>,
-        "otherthing": <value_2>
+        "thing": <value_2>,
+        "otherthing": <value_1>
     }
     """
     When the state machine executes
@@ -1547,8 +1547,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "timestamp": <value_1>,
-        "othertimestamp": <value_2>
+        "timestamp": <value_2>,
+        "othertimestamp": <value_1>
     }
     """
     When the state machine executes
@@ -1763,8 +1763,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "timestamp": <value_1>,
-        "othertimestamp": <value_2>
+        "timestamp": <value_2>,
+        "othertimestamp": <value_1>
     }
     """
     When the state machine executes
@@ -1874,8 +1874,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "timestamp": <value_1>,
-        "othertimestamp": <value_2>
+        "timestamp": <value_2>,
+        "othertimestamp": <value_1>
     }
     """
     When the state machine executes
@@ -1985,8 +1985,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "timestamp": <value_1>,
-        "othertimestamp": <value_2>
+        "timestamp": <value_2>,
+        "othertimestamp": <value_1>
     }
     """
     When the state machine executes
