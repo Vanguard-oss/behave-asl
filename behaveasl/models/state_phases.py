@@ -5,6 +5,25 @@ from behaveasl import expr_eval, jsonpath
 from behaveasl.models.abstract_phase import AbstractPhase
 from behaveasl.models.step_result import StepResult
 
+class Path(AbstractPhase):
+    def __init__(self, result_path: str = "$", **kwargs):
+        super(Path, self).__init__(**kwargs)
+        self._path = result_path
+        self._expr = jsonpath.get_instance(result_path)
+        self._log = logging.getLogger("behaveasl.Path")
+    
+    def execute(self, state_input, phase_input, sr: StepResult, execution):
+        if self._path.startswith("$."):
+            jpexpr = jsonpath.get_instance(self._path)
+            results = jpexpr.find(state_input)
+            if len(results) == 1:
+                new_value = results[0].value
+                print(f"Matched '{self._path}' [from state_input] with '{new_value}'")
+                return new_value
+            else:
+                return None  
+        # TODO: determine if we need to deal with nesting or if json-ng 
+        # can just handle this locator
 
 class ResultPathPhase(AbstractPhase):
     def __init__(self, result_path: str = "$", **kwargs):
