@@ -12,11 +12,14 @@ class Choice:
     
 
     def evaluate(self, state_input, sr, execution):
-        # TODO: before calling the method, if the comparator ends in "Path", do the replacement
-        # need to use jsonpath-ng to extract choice.variable from self._state_input
         variable_path = Path(result_path=self._variable)
         actual_value = variable_path.execute(state_input=state_input, phase_input=state_input, sr=sr, execution=execution)
-
+        # TODO: before calling the method, if the comparator ends in "Path", use the self._evaluation_value
+        # as the Path to evalute against the state_input
+        if self._evaluation_type[-4:] == 'Path': 
+            evaluation_path = Path(result_path=self._evaluation_value)
+            self._evaluation_value = evaluation_path.execute(state_input=state_input, phase_input=state_input, sr=sr, execution=execution)
+            
         # TODO: If self._actual_value is None, raise a StatesRuntimeException (no value could be located)
         # TODO: depending on the value of the Choice's comparator, call the right method - compare actual_value with evaluation_value
         function_map = {
