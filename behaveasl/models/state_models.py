@@ -290,42 +290,21 @@ class MapMockPhase(AbstractPhase):
         self._execution = execution
         return list(map(self.execute_single, phase_input))
 
-    def execute_single(self, input, **kwargs):
-        # Don't know what params go in, phase_input OR state_input
-        # TODO: in context.execution.resource_response_mocks find the mathcing key for input
-        # If key is not found, look for unknown
-        # Return the value in the _map response
-        # INPUT:
-        # [
-        #     { "prod": "R31", "dest-code": 9511, "quantity": 1344 },
-        #     { "prod": "S39", "dest-code": 9511, "quantity": 40 },
-        #     { "prod": "R31", "dest-code": 9833, "quantity": 12 },
-        #     { "prod": "R40", "dest-code": 9860, "quantity": 887 },
-        #     { "prod": "R40", "dest-code": 9511, "quantity": 1220 }
-        # ]
-        matched = False
-        merged_output = input
-        for k, v in self._execution.resource_response_mocks._map.items():
-            if "{" in k:
-                key_dict = json.loads(k)
-            else:
-                key_dict = k
-            if input == key_dict:
-                matched = True
-                value_to_add = v._response
-
-        if not matched:
-            unknown_response = self._execution.resource_response_mocks._map.get(
-                "unknown"
+    def execute_single(self, input):
+        input_dict = json.dumps(input)
+        if input_dict in list(
+            map(
+                lambda k: str(k).replace("{ ", "{").replace(" }", "}"),
+                self._execution.resource_response_mocks._map.keys(),
             )
-            if unknown_response:
-                value_to_add = unknown_response._response
-            else:
-                return merged_output
-
-        merged_output["color"] = value_to_add
-
-        return merged_output
+        ):
+            return self._execution.resource_response_mocks._map[
+                input_dict.replace("{", "{ ").replace("}", " }")
+            ]._response
+        elif "unknown" in self._execution.resource_response_mocks._map.keys():
+            return self._execution.resource_response_mocks._map["unknown"]._response
+        else:
+            raise KeyError
 
 
 class MapState(AbstractStateModel):

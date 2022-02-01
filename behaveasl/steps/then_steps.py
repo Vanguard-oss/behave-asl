@@ -165,4 +165,5 @@ def then_output_is(context, state_name, expected_output):
     'the json output of "{state_name}" is'
 )  # this will precede an array/json response
 def then_output_is_json(context, state_name):
+    print(context.execution.last_step_result.result_data, json.loads(context.text))
     assert context.execution.last_step_result.result_data == json.loads(context.text)

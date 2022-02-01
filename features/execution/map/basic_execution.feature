@@ -44,6 +44,7 @@ Feature: The Map state type is supported
         }
     ]
     """
+    And the map state "FirstState" will return "unknown" when invoked with any unknown parameters
     When the state machine executes
     Then the next state is "EndState"
 
@@ -83,6 +84,7 @@ Feature: The Map state type is supported
         }
     ]
     """
+    And the map state "FirstState" will return "unknown" when invoked with any unknown parameters
     And the state machine is current at the state "FirstState"
     When the state machine executes
     Then the execution ended
@@ -142,11 +144,11 @@ Scenario: The Map type can use a map mock
     Then the json output of "FirstState" is
     """
     [
-      { "prod": "R31", "dest-code": 9511, "quantity": 1344, "color": "blue" },
-      { "prod": "S39", "dest-code": 9511, "quantity": 40, "color": "green" },
-      { "prod": "R31", "dest-code": 9833, "quantity": 12, "color": "red" },
-      { "prod": "R40", "dest-code": 9860, "quantity": 887, "color": "unknown" },
-      { "prod": "R40", "dest-code": 9511, "quantity": 1220, "color": "unknown" }
+      "blue",
+      "green",
+      "red",
+      "unknown",
+      "unknown"
     ]
     """
 
