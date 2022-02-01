@@ -41,24 +41,24 @@
 | StringEquals | Yes |
 | StringEqualsPath | Yes |
 | StringGreaterThan | Yes |
-| StringGreaterThanPath | No |
+| StringGreaterThanPath | Yes |
 | StringGreaterThanEquals | Yes |
-| StringGreaterThanEqualsPath | No |
+| StringGreaterThanEqualsPath | Yes |
 | StringLessThan | Yes |
-| StringLessThanPath | No |
+| StringLessThanPath | Yes |
 | StringLessThanEquals | Yes |
-| StringLessThanEqualsPath | No |
+| StringLessThanEqualsPath | Yes |
 | StringMatches | Yes |
 | TimestampEquals | Yes |
-| TimestampEqualsPath | No |
+| TimestampEqualsPath | Yes |
 | TimestampGreaterThan | Yes |
-| TimestampGreaterThanPath | No |
+| TimestampGreaterThanPath | Yes |
 | TimestampGreaterThanEquals | Yes |
-| TimestampGreaterThanEqualsPath | No |
+| TimestampGreaterThanEqualsPath | Yes |
 | TimestampLessThan | Yes |
-| TimestampLessThanPath | No |
+| TimestampLessThanPath | Yes |
 | TimestampLessThanEquals | Yes |
-| TimestampLessThanEqualsPath | No |
+| TimestampLessThanEqualsPath | Yes |
 
 ### Fail
 

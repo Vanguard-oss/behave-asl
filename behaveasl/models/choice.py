@@ -13,13 +13,14 @@ class Choice:
 
     def evaluate(self, state_input, sr, execution):
         variable_path = Path(result_path=self._variable)
-        actual_value = variable_path.execute(state_input=state_input, phase_input=state_input, sr=sr, execution=execution)
         # TODO: before calling the method, if the comparator ends in "Path", use the self._evaluation_value
         # as the Path to evalute against the state_input
         if self._evaluation_type[-4:] == 'Path': 
             evaluation_path = Path(result_path=self._evaluation_value)
-            self._evaluation_value = evaluation_path.execute(state_input=state_input, phase_input=state_input, sr=sr, execution=execution)
-            
+            actual_value = evaluation_path.execute(state_input=state_input, phase_input=state_input, sr=sr, execution=execution)
+            self._evaluation_value = variable_path.execute(state_input=state_input, phase_input=state_input, sr=sr, execution=execution)
+        else:
+            actual_value = variable_path.execute(state_input=state_input, phase_input=state_input, sr=sr, execution=execution)
         # TODO: If self._actual_value is None, raise a StatesRuntimeException (no value could be located)
         # TODO: depending on the value of the Choice's comparator, call the right method - compare actual_value with evaluation_value
         function_map = {
@@ -38,7 +39,7 @@ class Choice:
             'NumericGreaterThanEquals': self._numeric_greater_than_equals,
             'NumericGreaterThanEqualsPath': self._numeric_greater_than_equals,
             'NumericLessThan': self._numeric_less_than,
-            'NumericLessthanPath': self._numeric_less_than,
+            'NumericLessThanPath': self._numeric_less_than,
             'NumericLessThanEquals': self._numeric_less_than_equals,
             'NumericLessThanEqualsPath': self._numeric_less_than_equals,
             'StringEquals': self._string_equals,
@@ -61,7 +62,7 @@ class Choice:
             'TimestampLessThan': self._timestamp_less_than,
             'TimestampLessThanPath': self._timestamp_less_than,
             'TimestampLessThanEquals': self._timestamp_less_than_equals,
-            'TimestampLessThanEqualsPath': self._timestamp_greater_than_equals,
+            'TimestampLessThanEqualsPath': self._timestamp_less_than_equals,
         }
         return function_map[self._evaluation_type](actual_value=actual_value)     
 
@@ -321,7 +322,7 @@ class Choice:
         # Convert to dt
         evaluation_value_dt = self._convert_to_dt(value=self._evaluation_value)
         actual_value_dt = self._convert_to_dt(value=actual_value)
-        return evaluation_value_dt < actual_value_dt
+        return evaluation_value_dt > actual_value_dt
 
     def _timestamp_greater_than_equals(self, actual_value):
         if self._check_type_is_timestamp(value=actual_value) == False \
@@ -330,7 +331,7 @@ class Choice:
         # Convert to dt
         evaluation_value_dt = self._convert_to_dt(value=self._evaluation_value)
         actual_value_dt = self._convert_to_dt(value=actual_value)
-        return evaluation_value_dt <= actual_value_dt
+        return evaluation_value_dt >= actual_value_dt
 
     def _timestamp_less_than(self, actual_value):
         if self._check_type_is_timestamp(value=actual_value) == False \
@@ -339,7 +340,7 @@ class Choice:
         # Convert to dt
         evaluation_value_dt = self._convert_to_dt(value=self._evaluation_value)
         actual_value_dt = self._convert_to_dt(value=actual_value)
-        return evaluation_value_dt > actual_value_dt
+        return evaluation_value_dt < actual_value_dt
 
     def _timestamp_less_than_equals(self, actual_value):
         if self._check_type_is_timestamp(value=actual_value) == False \
@@ -348,4 +349,4 @@ class Choice:
         # Convert to dt
         evaluation_value_dt = self._convert_to_dt(value=self._evaluation_value)
         actual_value_dt = self._convert_to_dt(value=actual_value)
-        return evaluation_value_dt >= actual_value_dt
+        return evaluation_value_dt <= actual_value_dt
