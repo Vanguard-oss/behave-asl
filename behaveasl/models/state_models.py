@@ -315,9 +315,13 @@ class MapMockPhase(AbstractPhase):
                 value_to_add = v._response
 
         if not matched:
-            value_to_add = self._execution.resource_response_mocks._map[
+            unknown_response = self._execution.resource_response_mocks._map.get(
                 "unknown"
-            ]._response
+            )
+            if unknown_response:
+                value_to_add = unknown_response._response
+            else:
+                return merged_output
 
         merged_output["color"] = value_to_add
 
@@ -369,5 +373,9 @@ class MapState(AbstractStateModel):
         for phase in self._phases:
             current_data = phase.execute(state_input, current_data, sr, execution)
         sr.result_data = current_data
+
+        if self._next_state is not None:
+            sr.next_state = self._next_state
+        sr.end_execution = self._is_end
 
         return sr
