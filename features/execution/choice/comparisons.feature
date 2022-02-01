@@ -1082,8 +1082,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "thing": <value_2>,
-        "otherthing": <value_1>,
+        "otherthing": <value_2>,
+        "thing": <value_1>,
     }
     """
     When the state machine executes
