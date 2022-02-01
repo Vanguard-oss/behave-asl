@@ -1082,8 +1082,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "otherthing": <value_2>,
-        "thing": <value_1>,
+        "otherthing": <value_1>,
+        "thing": <value_2>
     }
     """
     When the state machine executes
@@ -1091,17 +1091,17 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
     Examples: Comparators
       | value_1  | value_2  | matched_state |
-#      | "b"      | "a"      | MatchState    |
-#      | "foo"    | "foo"    | DefaultState  |
-#      | "caret^" | "caret^" | DefaultState  |
-#      | "1"      | "1"      | DefaultState  |
-#      | "baby"   | "apple"  | MatchState    |
-#      | "2"      | "1"      | MatchState    |
-#      | "&"      | "!"      | MatchState    |
-#      | """      | " "      | MatchState    |
-#      | 1        | "foo"    | DefaultState  |
-#      | null     | "bar"    | DefaultState  |
-#      | "A"      | "a"      | MatchState    |
+      | "\""      | " "      | MatchState    |
+      | "a"      | "A"      | MatchState    |
+      | "b"      | "a"      | MatchState    |
+      | "baby"   | "apple"  | MatchState    |
+      | "2"      | "1"      | MatchState    |
+      | "&"      | "!"      | MatchState    |
+      | "foo"    | "foo"    | DefaultState  |
+      | "caret^" | "caret^" | DefaultState  |
+      | "1"      | "1"      | DefaultState  |
+      | 1        | "foo"    | DefaultState  |
+      | null     | "bar"    | DefaultState  |
 
   Scenario Outline: The Choice type supports the StringGreaterThanEquals operator
     Given a state machine defined by:
