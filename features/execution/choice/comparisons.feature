@@ -277,13 +277,13 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     Then the next state is "<matched_state>"
 
     Examples: Comparators
-      | value_1 | value_2                 | matched_state |
-#      | true    | { "thing": "here" }     | MatchState    |
-#      | false   | { "notathing": "here" } | MatchState    |
-#      | false   | { "thing": "here" }     | DefaultState  |
-#      | true    | { "notathing": "here" } | DefaultState  |
-#      | true    | {}                      | DefaultState  |
+      | value_1 | value_2 | matched_state |
 
+  # | true    | { "thing": "here" }     | MatchState    |
+  # | false   | { "notathing": "here" } | MatchState    |
+  # | false   | { "thing": "here" }     | DefaultState  |
+  # | true    | { "notathing": "here" } | DefaultState  |
+  # | true    | {}                      | DefaultState  |
   Scenario Outline: The Choice type supports the IsString operator
     Given a state machine defined by:
     """
@@ -562,8 +562,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "thing": <value_2>,
-        "myvalue": <value_1>
+        "thing": <value_1>,
+        "myvalue": <value_2>
     }
     """
     When the state machine executes
@@ -664,8 +664,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "thing": <value_2>,
-        "myvalue": <value_1>
+        "thing": <value_1>,
+        "myvalue": <value_2>
     }
     """
     When the state machine executes
@@ -746,7 +746,7 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
                 "Choices": [
                     {
                         "Variable": "$.thing",
-                        "NumericLessThan": <value_1>,
+                        "NumericLessThanPath": "$.otherthing",
                         "Next": "MatchState"
                     }
                 ],
@@ -766,7 +766,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "thing": <value_2>
+        "thing": <value_1>,
+        "otherthing": <value_2>
     }
     """
     When the state machine executes
@@ -847,7 +848,7 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
                 "Choices": [
                     {
                         "Variable": "$.thing",
-                        "NumericLessThanEqualsPath": "$.myvalue",
+                        "NumericLessThanEqualsPath": "$.otherthing",
                         "Next": "MatchState"
                     }
                 ],
@@ -867,8 +868,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "thing": <value_2>,
-        "myvalue": <value_1>
+        "thing": <value_1>,
+        "otherthing": <value_2>
     }
     """
     When the state machine executes
@@ -1082,8 +1083,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "otherthing": <value_1>,
-        "thing": <value_2>
+        "thing": <value_1>,
+        "otherthing": <value_2>
     }
     """
     When the state machine executes
@@ -1091,7 +1092,7 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
     Examples: Comparators
       | value_1  | value_2  | matched_state |
-      | "\""      | " "      | MatchState    |
+      | "\""     | " "      | MatchState    |
       | "a"      | "A"      | MatchState    |
       | "b"      | "a"      | MatchState    |
       | "baby"   | "apple"  | MatchState    |
@@ -1186,8 +1187,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     """
     {
 
-        "thing": <value_2>,
-        "otherthing": <value_1>
+        "thing": <value_1>,
+        "otherthing": <value_2>
     }
     """
     When the state machine executes
@@ -1195,17 +1196,17 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
     Examples: Comparators
       | value_1  | value_2  | matched_state |
-#      | "b"      | "a"      | MatchState    |
-#      | "foo"    | "foo"    | MatchState    |
-#      | "caret^" | "caret^" | MatchState    |
-#      | "1"      | "1"      | MatchState    |
-#      | "baby"   | "apple"  | MatchState    |
-#      | "2"      | "1"      | MatchState    |
-#      | "&"      | "!"      | MatchState    |
-#      | """      | " "      | MatchState    |
-#      | 1        | "foo"    | DefaultState  |
-#      | null     | "bar"    | DefaultState  |
-#      | "A"      | "a"      | MatchState    |
+      | "b"      | "a"      | MatchState    |
+      | "baby"   | "apple"  | MatchState    |
+      | "2"      | "1"      | MatchState    |
+      | "&"      | "!"      | MatchState    |
+      | "\""     | " "      | MatchState    |
+      | "foo"    | "foo"    | MatchState    |
+      | "caret^" | "caret^" | MatchState    |
+      | "1"      | "1"      | MatchState    |
+      | 1        | "foo"    | DefaultState  |
+      | null     | "bar"    | DefaultState  |
+      | "a"      | "A"      | MatchState    |
 
   Scenario Outline: The Choice type supports the StringLessThan operator
     Given a state machine defined by:
@@ -1289,8 +1290,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "thing": <value_2>,
-        "otherthing": <value_1>
+        "thing": <value_1>,
+        "otherthing": <value_2>
     }
     """
     When the state machine executes
@@ -1298,17 +1299,17 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
     Examples: Comparators
       | value_1  | value_2  | matched_state |
-#      | "a"      | "b"      | MatchState    |
-#      | "foo"    | "foo"    | DefaultState  |
-#      | "caret^" | "caret^" | DefaultState  |
-#      | "1"      | "1"      | DefaultState  |
-#      | "apple"  | "baby"   | MatchState    |
-#      | "1"      | "2"      | MatchState    |
-#      | "!"      | "&"      | MatchState    |
-#      | " "      | "\""     | MatchState    |
-#      | "foo"    | 1        | DefaultState  |
-#      | "bar"    | null     | DefaultState  |
-#      | "A"      | "a"      | MatchState    |
+      | "a"      | "b"      | MatchState    |
+      | "foo"    | "foo"    | DefaultState  |
+      | "caret^" | "caret^" | DefaultState  |
+      | "1"      | "1"      | DefaultState  |
+      | "apple"  | "baby"   | MatchState    |
+      | "1"      | "2"      | MatchState    |
+      | "!"      | "&"      | MatchState    |
+      | " "      | "\""     | MatchState    |
+      | "foo"    | 1        | DefaultState  |
+      | "bar"    | null     | DefaultState  |
+      | "A"      | "a"      | MatchState    |
 
   Scenario Outline: The Choice type supports the StringLessThanEquals operator
     Given a state machine defined by:
@@ -1401,17 +1402,17 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
     Examples: Comparators
       | value_1  | value_2  | matched_state |
-#      | "a"      | "b"      | MatchState    |
-#      | "foo"    | "foo"    | MatchState    |
-#      | "caret^" | "caret^" | MatchState    |
-#      | "1"      | "1"      | MatchState    |
-#      | "apple"  | "baby"   | MatchState    |
-#      | "1"      | "2"      | MatchState    |
-#      | "!"      | "&"      | MatchState    |
-#      | " "      | """      | MatchState    |
-#      | "foo"    | 1        | DefaultState  |
-#      | "bar"    | null     | DefaultState  |
-#      | "a"      | "A"      | MatchState    |
+      | "bar"    | null     | DefaultState  |
+      | "a"      | "b"      | MatchState    |
+      | "foo"    | "foo"    | MatchState    |
+      | "caret^" | "caret^" | MatchState    |
+      | "1"      | "1"      | MatchState    |
+      | "apple"  | "baby"   | MatchState    |
+      | "1"      | "2"      | MatchState    |
+      | "!"      | "&"      | MatchState    |
+      | " "      | "\""     | MatchState    |
+      | "foo"    | 1        | DefaultState  |
+      | "A"      | "a"      | MatchState    |
 
   Scenario Outline: The Choice type supports the StringMatches operator
     Given a state machine defined by:
@@ -1605,21 +1606,21 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
     Examples: Comparators
       | value_1                        | value_2                        | matched_state |
-      | "2001-01-01T11:00:00Z"         | "2001-01-01T12:00:00Z"         | MatchState    |
-      | "2001-01-01T11:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | MatchState    |
-      | "2001-01-01T07:00:00Z"         | "2001-01-01T12:00:00+04:00"    | MatchState    |
+      | "2001-01-01T12:00:00Z"         | "2001-01-01T11:00:00Z"         | MatchState    |
+      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T11:00:00+04:00"    | MatchState    |
+      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T07:00:00Z"         | MatchState    |
       | "2001-01-01T12:00:00Z"         | "2001-01-01T12:00:00Z"         | DefaultState  |
       | "2001-01-01T12:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | DefaultState  |
-      | "2001-01-01T08:00:00Z"         | "2001-01-01T12:00:00+04:00"    | DefaultState  |
+      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T08:00:00Z"         | DefaultState  |
       | "2019-02-31T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
       | "2020-02-29T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | DefaultState  |
       | "2019-02-29T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
-      | "2019-10-12T07:20:50.50+00:00" | "2019-10-12T07:20:50.52+00:00" | MatchState    |
-      | "2019-10-12 07:20:40.52Z"      | "2019-10-12 07:20:50.52Z"      | DefaultState  |
-      | "2001-01-01T11:00:00Z+04:00"   | "2001-01-01T12:00:00Z+04:00"   | DefaultState  |
-      | "2019-02-22T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
-      | "2020-02-28T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | MatchState    |
-      | "2019-02-28T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
+      | "2019-10-12T07:20:50.52+00:00" | "2019-10-12T07:20:50.50+00:00" | MatchState    |
+      | "2019-10-12 07:20:50.52Z"      | "2019-10-12 07:20:40.52Z"      | DefaultState  |
+      | "2001-01-01T12:00:00Z+04:00"   | "2001-01-01T11:00:00Z+04:00"   | DefaultState  |
+      | "2019-02-31T07:20:50.52+00:00" | "2019-02-22T07:20:50.52+00:00" | DefaultState  |
+      | "2020-02-29T07:20:50.52+00:00" | "2020-02-28T07:20:50.52+00:00" | MatchState    |
+      | "2019-02-29T07:20:50.52+00:00" | "2019-02-28T07:20:50.52+00:00" | DefaultState  |
 
   Scenario Outline: The Choice type supports the TimestampGreaterThanPath operator
     Given a state machine defined by:
@@ -1661,21 +1662,21 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
     Examples: Comparators
       | value_1                        | value_2                        | matched_state |
-#      | "2001-01-01T11:00:00Z"         | "2001-01-01T12:00:00Z"         | MatchState    |
-#      | "2001-01-01T11:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | MatchState    |
-#      | "2001-01-01T07:00:00Z"         | "2001-01-01T12:00:00+04:00"    | MatchState    |
-#      | "2001-01-01T12:00:00Z"         | "2001-01-01T12:00:00Z"         | DefaultState  |
-#      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | DefaultState  |
-#      | "2001-01-01T08:00:00Z"         | "2001-01-01T12:00:00+04:00"    | DefaultState  |
-#      | "2019-02-31T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
-#      | "2020-02-29T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | DefaultState  |
-#      | "2019-02-29T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
-#      | "2019-10-12T07:20:50.50+00:00" | "2019-10-12T07:20:50.52+00:00" | MatchState    |
-#      | "2019-10-12 07:20:40.52Z"      | "2019-10-12 07:20:50.52Z"      | DefaultState  |
-#      | "2001-01-01T11:00:00Z+04:00"   | "2001-01-01T12:00:00Z+04:00"   | DefaultState  |
-#      | "2019-02-22T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
-#      | "2020-02-28T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | MatchState    |
-#      | "2019-02-28T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
+      | "2001-01-01T12:00:00Z"         | "2001-01-01T11:00:00Z"         | MatchState    |
+      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T11:00:00+04:00"    | MatchState    |
+      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T07:00:00Z"         | MatchState    |
+      | "2001-01-01T12:00:00Z"         | "2001-01-01T12:00:00Z"         | DefaultState  |
+      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | DefaultState  |
+      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T08:00:00Z"         | DefaultState  |
+      | "2019-02-31T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
+      | "2020-02-29T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | DefaultState  |
+      | "2019-02-29T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
+      | "2019-10-12T07:20:50.52+00:00" | "2019-10-12T07:20:50.50+00:00" | MatchState    |
+      | "2019-10-12 07:20:50.52Z"      | "2019-10-12 07:20:40.52Z"      | DefaultState  |
+      | "2001-01-01T12:00:00Z+04:00"   | "2001-01-01T11:00:00Z+04:00"   | DefaultState  |
+      | "2019-02-31T07:20:50.52+00:00" | "2019-02-22T07:20:50.52+00:00" | DefaultState  |
+      | "2020-02-29T07:20:50.52+00:00" | "2020-02-28T07:20:50.52+00:00" | MatchState    |
+      | "2019-02-29T07:20:50.52+00:00" | "2019-02-28T07:20:50.52+00:00" | DefaultState  |
 
   Scenario Outline: The Choice type supports the TimestampGreaterThanEquals operator
     Given a state machine defined by:
@@ -1689,228 +1690,6 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
                     {
                         "Variable": "$.timestamp",
                         "TimestampGreaterThanEquals": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
-    And the current state data is:
-    """
-    {
-        "timestamp": <value_2>
-    }
-    """
-    When the state machine executes
-    Then the next state is "<matched_state>"
-
-    Examples: Comparators
-      | value_1                        | value_2                        | matched_state |
-      | "2001-01-01T11:00:00Z"         | "2001-01-01T12:00:00Z"         | MatchState    |
-      | "2001-01-01T11:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | MatchState    |
-      | "2001-01-01T07:00:00Z"         | "2001-01-01T12:00:00+04:00"    | MatchState    |
-      | "2001-01-01T12:00:00Z"         | "2001-01-01T12:00:00Z"         | MatchState    |
-      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | MatchState    |
-      | "2001-01-01T08:00:00Z"         | "2001-01-01T12:00:00+04:00"    | MatchState    |
-      | "2019-02-31T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
-      | "2020-02-29T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | MatchState    |
-      | "2019-02-29T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
-      | "2019-10-12T07:20:50.50+00:00" | "2019-10-12T07:20:50.52+00:00" | MatchState    |
-      | "2019-10-12 07:20:40.52Z"      | "2019-10-12 07:20:50.52Z"      | DefaultState  |
-      | "2001-01-01T11:00:00Z+04:00"   | "2001-01-01T12:00:00Z+04:00"   | DefaultState  |
-      | "2019-02-22T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
-      | "2020-02-28T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | MatchState    |
-      | "2019-02-28T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
-
-  Scenario Outline: The Choice type supports the TimestampGreaterThanEqualsPath operator
-    Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "TimestampGreaterThanEqualsPath": "$.othertimestamp",
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
-    And the current state data is:
-    """
-    {
-        "timestamp": <value_2>,
-        "othertimestamp": <value_1>
-    }
-    """
-    When the state machine executes
-    Then the next state is "<matched_state>"
-
-    Examples: Comparators
-      | value_1                        | value_2                        | matched_state |
-#      | "2001-01-01T11:00:00Z"         | "2001-01-01T12:00:00Z"         | MatchState    |
-#      | "2001-01-01T11:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | MatchState    |
-#      | "2001-01-01T07:00:00Z"         | "2001-01-01T12:00:00+04:00"    | MatchState    |
-#      | "2001-01-01T12:00:00Z"         | "2001-01-01T12:00:00Z"         | MatchState    |
-#      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | MatchState    |
-#      | "2001-01-01T08:00:00Z"         | "2001-01-01T12:00:00+04:00"    | MatchState    |
-#      | "2019-02-31T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
-#      | "2020-02-29T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | MatchState    |
-#      | "2019-02-29T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
-#      | "2019-10-12T07:20:50.50+00:00" | "2019-10-12T07:20:50.52+00:00" | MatchState    |
-#      | "2019-10-12 07:20:40.52Z"      | "2019-10-12 07:20:50.52Z"      | DefaultState  |
-#      | "2001-01-01T11:00:00Z+04:00"   | "2001-01-01T12:00:00Z+04:00"   | DefaultState  |
-#      | "2019-02-22T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
-#      | "2020-02-28T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | MatchState    |
-#      | "2019-02-28T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
-
-  Scenario Outline: The Choice type supports the TimestampLessThan operator
-    Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.timestamp",
-                        "TimestampLessThan": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
-    And the current state data is:
-    """
-    {
-        "timestamp": <value_2>
-    }
-    """
-    When the state machine executes
-    Then the next state is "<matched_state>"
-
-    Examples: Comparators
-      | value_1                        | value_2                        | matched_state |
-      | "2001-01-01T12:00:00Z"         | "2001-01-01T11:00:00Z"         | MatchState    |
-      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T11:00:00+04:00"    | MatchState    |
-      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T07:00:00Z"         | MatchState    |
-      | "2001-01-01T12:00:00Z"         | "2001-01-01T12:00:00Z"         | DefaultState  |
-      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | DefaultState  |
-      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T08:00:00Z"         | DefaultState  |
-      | "2019-02-31T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
-      | "2020-02-29T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | DefaultState  |
-      | "2019-02-29T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
-      | "2019-10-12T07:20:50.52+00:00" | "2019-10-12T07:20:50.50+00:00" | MatchState    |
-      | "2019-10-12 07:20:50.52Z"      | "2019-10-12 07:20:40.52Z"      | DefaultState  |
-      | "2001-01-01T12:00:00Z+04:00"   | "2001-01-01T11:00:00Z+04:00"   | DefaultState  |
-      | "2019-02-31T07:20:50.52+00:00" | "2019-02-22T07:20:50.52+00:00" | DefaultState  |
-      | "2020-02-29T07:20:50.52+00:00" | "2020-02-28T07:20:50.52+00:00" | MatchState    |
-      | "2019-02-29T07:20:50.52+00:00" | "2019-02-28T07:20:50.52+00:00" | DefaultState  |
-
-  Scenario Outline: The Choice type supports the TimestampLessThanPath operator
-    Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.timestamp",
-                        "TimestampLessThanPath": "$.othertimestamp",
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
-    And the current state data is:
-    """
-    {
-        "timestamp": <value_2>,
-        "othertimestamp": <value_1>
-    }
-    """
-    When the state machine executes
-    Then the next state is "<matched_state>"
-
-    Examples: Comparators
-      | value_1                        | value_2                        | matched_state |
-      | "2001-01-01T12:00:00Z"         | "2001-01-01T11:00:00Z"         | MatchState    |
-      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T11:00:00+04:00"    | MatchState    |
-      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T07:00:00Z"         | MatchState    |
-      | "2001-01-01T12:00:00Z"         | "2001-01-01T12:00:00Z"         | DefaultState  |
-      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | DefaultState  |
-      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T08:00:00Z"         | DefaultState  |
-      | "2019-02-31T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
-      | "2020-02-29T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | DefaultState  |
-      | "2019-02-29T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
-      | "2019-10-12T07:20:50.52+00:00" | "2019-10-12T07:20:50.50+00:00" | MatchState    |
-      | "2019-10-12 07:20:50.52Z"      | "2019-10-12 07:20:40.52Z"      | DefaultState  |
-      | "2001-01-01T12:00:00Z+04:00"   | "2001-01-01T11:00:00Z+04:00"   | DefaultState  |
-      | "2019-02-31T07:20:50.52+00:00" | "2019-02-22T07:20:50.52+00:00" | DefaultState  |
-      | "2020-02-29T07:20:50.52+00:00" | "2020-02-28T07:20:50.52+00:00" | MatchState    |
-      | "2019-02-29T07:20:50.52+00:00" | "2019-02-28T07:20:50.52+00:00" | DefaultState  |
-
-  Scenario Outline: The Choice type supports the TimestampLessThanEquals operator
-    Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.timestamp",
-                        "TimestampLessThanEquals": <value_1>,
                         "Next": "MatchState"
                     }
                 ],
@@ -1954,6 +1733,228 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
       | "2020-02-29T07:20:50.52+00:00" | "2020-02-28T07:20:50.52+00:00" | MatchState    |
       | "2019-02-29T07:20:50.52+00:00" | "2019-02-28T07:20:50.52+00:00" | DefaultState  |
 
+  Scenario Outline: The Choice type supports the TimestampGreaterThanEqualsPath operator
+    Given a state machine defined by:
+    """
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Choice",
+                "Choices": [
+                    {
+                        "Variable": "$.timestamp",
+                        "TimestampGreaterThanEqualsPath": "$.othertimestamp",
+                        "Next": "MatchState"
+                    }
+                ],
+                "Default": "DefaultState"
+            },
+            "MatchState": {
+                "Type": "Pass",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
+                "End": true
+            }
+        }
+    }
+    """
+    And the current state data is:
+    """
+    {
+        "timestamp": <value_1>,
+        "othertimestamp": <value_2>
+    }
+    """
+    When the state machine executes
+    Then the next state is "<matched_state>"
+
+    Examples: Comparators
+      | value_1                        | value_2                        | matched_state |
+      | "2001-01-01T12:00:00Z"         | "2001-01-01T11:00:00Z"         | MatchState    |
+      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T11:00:00+04:00"    | MatchState    |
+      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T07:00:00Z"         | MatchState    |
+      | "2001-01-01T12:00:00Z"         | "2001-01-01T12:00:00Z"         | MatchState    |
+      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | MatchState    |
+      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T08:00:00Z"         | MatchState    |
+      | "2019-02-31T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
+      | "2020-02-29T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | MatchState    |
+      | "2019-02-29T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
+      | "2019-10-12T07:20:50.52+00:00" | "2019-10-12T07:20:50.50+00:00" | MatchState    |
+      | "2019-10-12 07:20:50.52Z"      | "2019-10-12 07:20:40.52Z"      | DefaultState  |
+      | "2001-01-01T12:00:00Z+04:00"   | "2001-01-01T11:00:00Z+04:00"   | DefaultState  |
+      | "2019-02-31T07:20:50.52+00:00" | "2019-02-22T07:20:50.52+00:00" | DefaultState  |
+      | "2020-02-29T07:20:50.52+00:00" | "2020-02-28T07:20:50.52+00:00" | MatchState    |
+      | "2019-02-29T07:20:50.52+00:00" | "2019-02-28T07:20:50.52+00:00" | DefaultState  |
+
+  Scenario Outline: The Choice type supports the TimestampLessThan operator
+    Given a state machine defined by:
+    """
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Choice",
+                "Choices": [
+                    {
+                        "Variable": "$.timestamp",
+                        "TimestampLessThan": <value_1>,
+                        "Next": "MatchState"
+                    }
+                ],
+                "Default": "DefaultState"
+            },
+            "MatchState": {
+                "Type": "Pass",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
+                "End": true
+            }
+        }
+    }
+    """
+    And the current state data is:
+    """
+    {
+        "timestamp": <value_2>
+    }
+    """
+    When the state machine executes
+    Then the next state is "<matched_state>"
+
+    Examples: Comparators
+      | value_1                        | value_2                        | matched_state |
+      | "2001-01-01T11:00:00Z"         | "2001-01-01T12:00:00Z"         | MatchState    |
+      | "2001-01-01T11:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | MatchState    |
+      | "2001-01-01T07:00:00Z"         | "2001-01-01T12:00:00+04:00"    | MatchState    |
+      | "2001-01-01T12:00:00Z"         | "2001-01-01T12:00:00Z"         | DefaultState  |
+      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | DefaultState  |
+      | "2001-01-01T08:00:00Z"         | "2001-01-01T12:00:00+04:00"    | DefaultState  |
+      | "2019-02-31T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
+      | "2020-02-29T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | DefaultState  |
+      | "2019-02-29T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
+      | "2019-10-12T07:20:50.50+00:00" | "2019-10-12T07:20:50.52+00:00" | MatchState    |
+      | "2019-10-12 07:20:40.52Z"      | "2019-10-12 07:20:50.52Z"      | DefaultState  |
+      | "2001-01-01T11:00:00Z+04:00"   | "2001-01-01T12:00:00Z+04:00"   | DefaultState  |
+      | "2019-02-22T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
+      | "2020-02-28T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | MatchState    |
+      | "2019-02-28T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
+
+  Scenario Outline: The Choice type supports the TimestampLessThanPath operator
+    Given a state machine defined by:
+    """
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Choice",
+                "Choices": [
+                    {
+                        "Variable": "$.timestamp",
+                        "TimestampLessThanPath": "$.othertimestamp",
+                        "Next": "MatchState"
+                    }
+                ],
+                "Default": "DefaultState"
+            },
+            "MatchState": {
+                "Type": "Pass",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
+                "End": true
+            }
+        }
+    }
+    """
+    And the current state data is:
+    """
+    {
+        "timestamp": <value_1>,
+        "othertimestamp": <value_2>
+    }
+    """
+    When the state machine executes
+    Then the next state is "<matched_state>"
+
+    Examples: Comparators
+      | value_1                        | value_2                        | matched_state |
+      | "2001-01-01T11:00:00Z"         | "2001-01-01T12:00:00Z"         | MatchState    |
+      | "2001-01-01T11:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | MatchState    |
+      | "2001-01-01T07:00:00Z"         | "2001-01-01T12:00:00+04:00"    | MatchState    |
+      | "2001-01-01T12:00:00Z"         | "2001-01-01T12:00:00Z"         | DefaultState  |
+      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | DefaultState  |
+      | "2001-01-01T08:00:00Z"         | "2001-01-01T12:00:00+04:00"    | DefaultState  |
+      | "2019-02-31T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
+      | "2020-02-29T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | DefaultState  |
+      | "2019-02-29T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
+      | "2019-10-12T07:20:50.50+00:00" | "2019-10-12T07:20:50.52+00:00" | MatchState    |
+      | "2019-10-12 07:20:40.52Z"      | "2019-10-12 07:20:50.52Z"      | DefaultState  |
+      | "2001-01-01T11:00:00Z+04:00"   | "2001-01-01T12:00:00Z+04:00"   | DefaultState  |
+      | "2019-02-22T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
+      | "2020-02-28T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | MatchState    |
+      | "2019-02-28T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
+
+  Scenario Outline: The Choice type supports the TimestampLessThanEquals operator
+    Given a state machine defined by:
+    """
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Choice",
+                "Choices": [
+                    {
+                        "Variable": "$.timestamp",
+                        "TimestampLessThanEquals": <value_1>,
+                        "Next": "MatchState"
+                    }
+                ],
+                "Default": "DefaultState"
+            },
+            "MatchState": {
+                "Type": "Pass",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
+                "End": true
+            }
+        }
+    }
+    """
+    And the current state data is:
+    """
+    {
+        "timestamp": <value_2>
+    }
+    """
+    When the state machine executes
+    Then the next state is "<matched_state>"
+
+    Examples: Comparators
+      | value_1                        | value_2                        | matched_state |
+      | "2001-01-01T11:00:00Z"         | "2001-01-01T12:00:00Z"         | MatchState    |
+      | "2001-01-01T11:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | MatchState    |
+      | "2001-01-01T07:00:00Z"         | "2001-01-01T12:00:00+04:00"    | MatchState    |
+      | "2001-01-01T12:00:00Z"         | "2001-01-01T12:00:00Z"         | MatchState    |
+      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | MatchState    |
+      | "2001-01-01T08:00:00Z"         | "2001-01-01T12:00:00+04:00"    | MatchState    |
+      | "2019-02-31T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
+      | "2020-02-29T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | MatchState    |
+      | "2019-02-29T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
+      | "2019-10-12T07:20:50.50+00:00" | "2019-10-12T07:20:50.52+00:00" | MatchState    |
+      | "2019-10-12 07:20:40.52Z"      | "2019-10-12 07:20:50.52Z"      | DefaultState  |
+      | "2001-01-01T11:00:00Z+04:00"   | "2001-01-01T12:00:00Z+04:00"   | DefaultState  |
+      | "2019-02-22T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
+      | "2020-02-28T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | MatchState    |
+      | "2019-02-28T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
+
   Scenario Outline: The Choice type supports the TimestampLessThanEqualsPath operator
     Given a state machine defined by:
     """
@@ -1964,7 +1965,7 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
                 "Type": "Choice",
                 "Choices": [
                     {
-                        "Variable": "$.thing",
+                        "Variable": "$.timestamp",
                         "TimestampLessThanEqualsPath": "$.othertimestamp",
                         "Next": "MatchState"
                     }
@@ -1985,8 +1986,8 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     And the current state data is:
     """
     {
-        "timestamp": <value_2>,
-        "othertimestamp": <value_1>
+        "timestamp": <value_1>,
+        "othertimestamp": <value_2>
     }
     """
     When the state machine executes
@@ -1994,18 +1995,18 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
     Examples: Comparators
       | value_1                        | value_2                        | matched_state |
-#      | "2001-01-01T12:00:00Z"         | "2001-01-01T11:00:00Z"         | MatchState    |
-#      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T11:00:00+04:00"    | MatchState    |
-#      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T07:00:00Z"         | MatchState    |
-#      | "2001-01-01T12:00:00Z"         | "2001-01-01T12:00:00Z"         | MatchState    |
-#      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | MatchState    |
-#      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T08:00:00Z"         | MatchState    |
-#      | "2019-02-31T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
-#      | "2020-02-29T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | MatchState    |
-#      | "2019-02-29T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
-#      | "2019-10-12T07:20:50.52+00:00" | "2019-10-12T07:20:50.50+00:00" | MatchState    |
-#      | "2019-10-12 07:20:50.52Z"      | "2019-10-12 07:20:40.52Z"      | DefaultState  |
-#      | "2001-01-01T12:00:00Z+04:00"   | "2001-01-01T11:00:00Z+04:00"   | DefaultState  |
-#      | "2019-02-31T07:20:50.52+00:00" | "2019-02-22T07:20:50.52+00:00" | DefaultState  |
-#      | "2020-02-29T07:20:50.52+00:00" | "2020-02-28T07:20:50.52+00:00" | MatchState    |
-#      | "2019-02-29T07:20:50.52+00:00" | "2019-02-28T07:20:50.52+00:00" | DefaultState  |
+      | "2001-01-01T11:00:00Z"         | "2001-01-01T12:00:00Z"         | MatchState    |
+      | "2001-01-01T11:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | MatchState    |
+      | "2001-01-01T07:00:00Z"         | "2001-01-01T12:00:00+04:00"    | MatchState    |
+      | "2001-01-01T12:00:00Z"         | "2001-01-01T12:00:00Z"         | MatchState    |
+      | "2001-01-01T12:00:00+04:00"    | "2001-01-01T12:00:00+04:00"    | MatchState    |
+      | "2001-01-01T08:00:00Z"         | "2001-01-01T12:00:00+04:00"    | MatchState    |
+      | "2019-02-31T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
+      | "2020-02-29T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | MatchState    |
+      | "2019-02-29T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
+      | "2019-10-12T07:20:50.50+00:00" | "2019-10-12T07:20:50.52+00:00" | MatchState    |
+      | "2019-10-12 07:20:40.52Z"      | "2019-10-12 07:20:50.52Z"      | DefaultState  |
+      | "2001-01-01T11:00:00Z+04:00"   | "2001-01-01T12:00:00Z+04:00"   | DefaultState  |
+      | "2019-02-22T07:20:50.52+00:00" | "2019-02-31T07:20:50.52+00:00" | DefaultState  |
+      | "2020-02-28T07:20:50.52+00:00" | "2020-02-29T07:20:50.52+00:00" | MatchState    |
+      | "2019-02-28T07:20:50.52+00:00" | "2019-02-29T07:20:50.52+00:00" | DefaultState  |
