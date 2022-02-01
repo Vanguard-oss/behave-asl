@@ -41,42 +41,42 @@ def given_set_execution_input(context):
 
 @given(u'the resource "{resource}" will return')
 def given_resource_will_return(context, resource):
-    context.execution.resource_response_mocks.add_mock(
+    context.execution.resource_response_mocks.add_mock_list(
         resource, StaticResponse(json.loads(context.text))
     )
 
 
 @given(u'the resource "{resource}" will be called with any parameters and return')
 def given_resource_any_param_will_return(context, resource):
-    context.execution.resource_response_mocks.add_mock(
+    context.execution.resource_response_mocks.add_mock_list(
         resource, StaticResponse(json.loads(context.text))
     )
-    context.execution.resource_expectations.add_mock(resource, AnyParameters())
+    context.execution.resource_expectations.add_mock_list(resource, AnyParameters())
 
 
 @given(u'the resource "{resource}" will be called with')
 @given(u'the map state "{resource}" will be called with')
 def given_resource_expect_param(context, resource):
-    context.execution.resource_expectations.add_mock(
+    context.execution.resource_expectations.add_mock_list(
         resource, AssertParameters(context.text)
     )
 
 
-@given(
-    u'the map state "{state_name}" will return the following values for given inputs'
-)
-def given_map_state_will_return(context, state_name):
+@given(u'the map state "{resource}" will return "{value}" for input')
+def given_map_state_will_return(context, resource, value):
     # TODO: serialize response dict out of context.text and add
     context.execution.resource_response_mocks.add_mock(
-        state_name, StaticResponse(json.loads(context.text))
+        # k, v
+        context.text,
+        StaticResponse(value),
     )
 
 
 @given(
-    u'the map state "{state_name}" will return "{mock_return}" when invoked with any unknown parameters'
+    u'the map state "{resource}" will return "{mock_return}" when invoked with any unknown parameters'
 )
-def given_map_state_unknown_params(context, state_name, mock_return):
-    for obj in context.execution.resource_expectations._map[state_name]._list:
-        print(obj.execute())
-    # context.execution.resource_response_mocks.add_mock(state_name, mock_return)
-    # context.execution.resource_expectations.add_mock(state_name, mock_return)
+def given_map_state_unknown_params(context, resource, mock_return):
+    context.execution.resource_response_mocks.add_mock(
+        "unknown", StaticResponse(mock_return)
+    )
+    # print(context.execution.resource_response_mocks._map.items())

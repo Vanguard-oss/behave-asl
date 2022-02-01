@@ -88,7 +88,7 @@ Feature: The Map state type is supported
     Then the execution ended
     And the execution succeeded
 
-Scenario: The Map type can use a resource mock
+Scenario: The Map type can use a map mock
     Given a state machine defined by:
     """
     {
@@ -104,9 +104,9 @@ Scenario: The Map type can use a resource mock
 	                        "Resource": "arn:aws:lambda:us-east-1:123456789012:function:ship-val",
                             "End": true
                         }
+                    }
                 },
                 "Next": "EndState"
-                }
             },
             "EndState": {
                 "Type": "Pass",
@@ -115,7 +115,7 @@ Scenario: The Map type can use a resource mock
         }
     }
     """
-    And the map state "FirstState" will be called with:
+    And the execution input is:
     """
     [
       { "prod": "R31", "dest-code": 9511, "quantity": 1344 },
@@ -125,13 +125,17 @@ Scenario: The Map type can use a resource mock
       { "prod": "R40", "dest-code": 9511, "quantity": 1220 }
     ]
     """
-    And the map state "FirstState" will return the following values for given inputs:
+    And the map state "FirstState" will return "blue" for input:
     """
-    {
-      "{ 'prod': 'R31', 'dest-code': 9511, 'quantity': 1344 }": "blue",
-      "{ 'prod': 'S39', 'dest-code': 9511, 'quantity': 40 }": "green",
-      "{ 'prod': 'R31', 'dest-code': 9833, 'quantity': 12 }": "red"
-    }
+    { "prod": "R31", "dest-code": 9511, "quantity": 1344 }
+    """
+    And the map state "FirstState" will return "green" for input:
+    """
+    { "prod": "S39", "dest-code": 9511, "quantity": 40 }
+    """
+    And the map state "FirstState" will return "red" for input:
+    """
+    { "prod": "R31", "dest-code": 9833, "quantity": 12 }
     """
     And the map state "FirstState" will return "unknown" when invoked with any unknown parameters
     When the state machine executes

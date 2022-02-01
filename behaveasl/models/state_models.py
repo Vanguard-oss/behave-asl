@@ -1,5 +1,6 @@
 import copy
 import logging
+import json
 
 from behaveasl.expr_eval import replace_expression
 from behaveasl.models.abstract_phase import AbstractPhase
@@ -281,21 +282,60 @@ class ItemsPathPhase(AbstractPhase):
 
 
 class MapMockPhase(AbstractPhase):
-    def __init__(self, state_details: dict):
-        self._resource = state_details["Resource"]
+    def __init__(self, state_name, state_details: dict):
         self._log = logging.getLogger("behaveasl.MapMockPhase")
+        self._state_name = state_name
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
-        return list(map(process_state(), list_of_states))
+        self._execution = execution
+        return list(map(self.execute_single, phase_input))
+
+    def execute_single(self, input, **kwargs):
+        # Don't know what params go in, phase_input OR state_input
+        # TODO: in context.execution.resource_response_mocks find the mathcing key for input
+        # If key is not found, look for unknown
+        # Return the value in the _map response
+        # INPUT:
+        # [
+        #     { "prod": "R31", "dest-code": 9511, "quantity": 1344 },
+        #     { "prod": "S39", "dest-code": 9511, "quantity": 40 },
+        #     { "prod": "R31", "dest-code": 9833, "quantity": 12 },
+        #     { "prod": "R40", "dest-code": 9860, "quantity": 887 },
+        #     { "prod": "R40", "dest-code": 9511, "quantity": 1220 }
+        # ]
+        matched = False
+        merged_output = input
+        for k, v in self._execution.resource_response_mocks._map.items():
+            if "{" in k:
+                key_dict = json.loads(k)
+            else:
+                key_dict = k
+            if input == key_dict:
+                matched = True
+                value_to_add = v._response
+
+        if not matched:
+            value_to_add = self._execution.resource_response_mocks._map[
+                "unknown"
+            ]._response
+
+        merged_output["color"] = value_to_add
+
+        return merged_output
 
 
 class MapState(AbstractStateModel):
     def __init__(self, state_name, state_details, **kwargs):
+        self._iterator = state_details.get("Iterator", None)
+        if self._iterator is None:
+            raise StatesCompileException("An Iterator field must be provided.")
+
         self._phases = []
         self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
         self._phases.append(ItemsPathPhase(state_details))
         if "Parameters" in state_details:
             self._phases.append(ParametersPhase(state_details["Parameters"]))
+        self._phases.append(MapMockPhase(state_name, state_details))
         if "ResultSelector" in state_details:
             self._phases.append(
                 ResultSelectorPhase(state_details.get("ResultSelector", "$"))
@@ -307,13 +347,9 @@ class MapState(AbstractStateModel):
         self._is_end = state_details.get("End", False)
         self._comment = state_details.get("Comment", None)
 
-        self._iterator = state_details.get("Iterator", None)
         self._max_concurrency = state_details.get("MaxConcurrency", None)
         self._retry = state_details.get("Retry", None)
         self._catch = state_details.get("Catch", None)
-
-        if self._iterator is None:
-            raise StatesCompileException("An Iterator field must be provided.")
 
         if self._retry:
             self._retry_list = []
@@ -329,7 +365,6 @@ class MapState(AbstractStateModel):
         """The map state can be used to run a set of steps for each element of an input array"""
         sr = StepResult()
         current_data = copy.deepcopy(state_input)
-        execution._context_obj["State"]["Item"] = {}
 
         for phase in self._phases:
             current_data = phase.execute(state_input, current_data, sr, execution)

@@ -66,14 +66,11 @@ class ResourceMockMap(AbstractMock):
     def add_mock(self, resource_name, obj):
         """Add a mock for a specific resource"""
         if resource_name not in self._map:
+            self._map[resource_name] = obj
+
+    def add_mock_list(self, resource_name, obj):
+        """Add a mock for a specific resource"""
+        if resource_name not in self._map:
             self._map[resource_name] = MockList()
 
         self._map[resource_name].add_mock(obj)
-
-
-class MockMapStateMachine(AbstractMock):
-    def __init__(self):
-        pass
-
-    def execute(self, resource_name: str, resource_input):
-        pass

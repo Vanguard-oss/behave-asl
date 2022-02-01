@@ -5,7 +5,7 @@ import logging
 from behaveasl.models.exceptions import StatesException
 from behaveasl.models.state_machine import StateMachineModel
 from behaveasl.models.step_result import StepResult
-from behaveasl.models.task_mock import ResourceMockMap, MockMapStateMachine
+from behaveasl.models.task_mock import ResourceMockMap
 
 
 class Execution:
@@ -28,10 +28,6 @@ class Execution:
         }
         self._resource_response_mocks: ResourceMockMap = ResourceMockMap()
         self._resource_expectations: ResourceMockMap = ResourceMockMap()
-        self._sub_state_machine_mocks: MockMapStateMachine = MockMapStateMachine()
-        self._sub_state_machine_expectations: MockMapStateMachine = (
-            MockMapStateMachine()
-        )
         self._log = logging.getLogger("behaveasl.Execution")
 
     def execute(self):
