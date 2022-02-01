@@ -64,10 +64,8 @@ def given_resource_expect_param(context, resource):
 
 @given(u'the map state "{resource}" will return "{value}" for input')
 def given_map_state_will_return(context, resource, value):
-    # TODO: serialize response dict out of context.text and add
     context.execution.resource_response_mocks.add_mock(
-        # k, v
-        context.text,
+        json.dumps(json.loads(context.text), sort_keys=True),
         StaticResponse(value),
     )
 

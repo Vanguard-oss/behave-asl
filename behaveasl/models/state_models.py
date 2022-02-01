@@ -291,16 +291,9 @@ class MapMockPhase(AbstractPhase):
         return list(map(self.execute_single, phase_input))
 
     def execute_single(self, input):
-        input_dict = json.dumps(input)
-        if input_dict in list(
-            map(
-                lambda k: str(k).replace("{ ", "{").replace(" }", "}"),
-                self._execution.resource_response_mocks._map.keys(),
-            )
-        ):
-            return self._execution.resource_response_mocks._map[
-                input_dict.replace("{", "{ ").replace("}", " }")
-            ]._response
+        input_dict = json.dumps(input, sort_keys=True)
+        if input_dict in self._execution.resource_response_mocks._map.keys():
+            return self._execution.resource_response_mocks._map[input_dict]._response
         elif "unknown" in self._execution.resource_response_mocks._map.keys():
             return self._execution.resource_response_mocks._map["unknown"]._response
         else:
