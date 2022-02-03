@@ -2,10 +2,10 @@ import copy
 import datetime
 import logging
 
-from .exceptions import StatesException
-from .state_machine import StateMachineModel
-from .step_result import StepResult
-from .task_mock import ResourceMockMap
+from behaveasl.models.exceptions import StatesException
+from behaveasl.models.state_machine import StateMachineModel
+from behaveasl.models.step_result import StepResult
+from behaveasl.models.task_mock import ResourceMockMap
 
 
 class Execution:
