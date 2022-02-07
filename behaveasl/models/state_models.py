@@ -1,3 +1,4 @@
+from cmath import phase
 import copy
 import logging
 import json
@@ -275,6 +276,7 @@ class ItemsPathPhase(AbstractPhase):
         self._items_path = state_details.get("ItemsPath", "$")
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
+        print(f"ItemsPath: {phase_input}")
         phase_output = replace_expression(
             expr=self._items_path, input=phase_input, context=execution.context
         )
@@ -285,15 +287,36 @@ class MapMockPhase(AbstractPhase):
     def __init__(self, state_name, state_details: dict):
         self._log = logging.getLogger("behaveasl.MapMockPhase")
         self._state_name = state_name
+        self._state_details = state_details
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
+        self._state_input = state_input
+        self._phase_input = phase_input
+        self._sr = sr
         self._execution = execution
-        return list(map(self.execute_single, phase_input))
+        return list(map(self.execute_single, enumerate(phase_input)))
 
     def execute_single(self, input):
-        input_dict = json.dumps(input, sort_keys=True)
-        if input_dict in self._execution.resource_response_mocks._map.keys():
-            return self._execution.resource_response_mocks._map[input_dict]._response
+        # https://docs.aws.amazon.com/step-functions/latest/dg/input-output-contextobject.html#contextobject-map
+        self._execution.context["Map"]["Item"]["Index"] = input[0]
+        self._execution.context["Map"]["Item"]["Value"] = input[1]
+        iteration_value = input[1]
+
+        if "Parameters" in self._state_details:
+            inp = InputPathPhase(self._state_details.get("InputPath", "$"))
+            inp_phase_output = inp.execute(
+                self._state_input, self._state_input, self._sr, self._execution
+            )
+
+            param = ParametersPhase(self._state_details["Parameters"])
+
+            iteration_value = param.execute(
+                self._state_input, inp_phase_output, self._sr, self._execution
+            )
+
+        mock_key = json.dumps(iteration_value, sort_keys=True)
+        if mock_key in self._execution.resource_response_mocks._map.keys():
+            return self._execution.resource_response_mocks._map[mock_key]._response
         elif "unknown" in self._execution.resource_response_mocks._map.keys():
             return self._execution.resource_response_mocks._map["unknown"]._response
         else:
@@ -309,8 +332,6 @@ class MapState(AbstractStateModel):
         self._phases = []
         self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
         self._phases.append(ItemsPathPhase(state_details))
-        if "Parameters" in state_details:
-            self._phases.append(ParametersPhase(state_details["Parameters"]))
         self._phases.append(MapMockPhase(state_name, state_details))
         if "ResultSelector" in state_details:
             self._phases.append(

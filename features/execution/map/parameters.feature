@@ -10,7 +10,6 @@ Scenario: The Map type can use an Parameters
                 "Type": "Map",
                 "InputPath": "$.detail",
                 "ItemsPath": "$.shipped",
-                "ResultPath": "$.detail.shipped",
                 "Parameters": {
                     "parcel.$": "$$.Map.Item.Value",
                     "courier.$": "$.delivery-partner"
@@ -52,15 +51,36 @@ Scenario: The Map type can use an Parameters
     """
     And the map state "FirstState" will return "blue" for input:
     """
-    { "prod": "R31", "dest-code": 9511, "quantity": 1344 }
+    {
+        "parcel": {
+            "prod": "R31",
+            "dest-code": 9511,
+            "quantity": 1344
+        },
+        "courier": "UQS"
+    }
     """
     And the map state "FirstState" will return "green" for input:
     """
-    { "prod": "S39", "dest-code": 9511, "quantity": 40 }
+    {
+        "parcel": {
+            "prod": "S39",
+            "dest-code": 9511,
+            "quantity": 40
+        },
+        "courier": "UQS"
+    }
     """
     And the map state "FirstState" will return "red" for input:
     """
-    { "prod": "R31", "dest-code": 9833, "quantity": 12 }
+    {
+        "parcel": {
+            "prod": "R31",
+            "dest-code": 9833,
+            "quantity": 12
+        },
+        "courier": "UQS"
+    }
     """
     And the map state "FirstState" will return "unknown" when invoked with any unknown parameters
     When the state machine executes
