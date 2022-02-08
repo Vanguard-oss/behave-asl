@@ -78,4 +78,3 @@ def given_map_state_unknown_params(context, resource, mock_return):
     context.execution.resource_response_mocks.add_mock(
         "unknown", StaticResponse(mock_return)
     )
-    # print(context.execution.resource_response_mocks._map.items())

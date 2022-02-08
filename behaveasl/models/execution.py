@@ -28,6 +28,9 @@ class Execution:
         }
         self._resource_response_mocks: ResourceMockMap = ResourceMockMap()
         self._resource_expectations: ResourceMockMap = ResourceMockMap()
+        if "Map" in str(self._state_machine.get_state(self._current_state)):
+            self._context_obj["Map"] = {}
+            self._context_obj["Map"]["Item"] = {"Index": "", "Value": ""}
         self._log = logging.getLogger("behaveasl.Execution")
 
     def execute(self):
