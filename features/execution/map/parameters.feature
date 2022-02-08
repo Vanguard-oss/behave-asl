@@ -1,6 +1,6 @@
 Feature: The Map state supports the Parameters phase
 
-Scenario: The Map type can use an Parameters
+Scenario: The Map type can use Parameters
     Given a state machine defined by:
     """
     {

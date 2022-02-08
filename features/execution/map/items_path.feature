@@ -1,6 +1,6 @@
 Feature: The Map state supports the ItemsPath phase
 
-Scenario: The Map type can use an ItemsPath
+Scenario: The Map type can use an ItemsPath to provide a list to the map state
     Given a state machine defined by:
     """
     {

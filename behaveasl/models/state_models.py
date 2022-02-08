@@ -276,7 +276,6 @@ class ItemsPathPhase(AbstractPhase):
         self._items_path = state_details.get("ItemsPath", "$")
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
-        print(f"ItemsPath: {phase_input}")
         phase_output = replace_expression(
             expr=self._items_path, input=phase_input, context=execution.context
         )
