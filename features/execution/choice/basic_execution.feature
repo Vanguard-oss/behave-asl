@@ -151,7 +151,7 @@ Feature: The Choice state type is supported
     When the state machine executes
     Then the execution failed
 
-Scenario: The first matching Choice rule is returned if more than one match
+  Scenario: The first matching Choice rule is returned if more than one match
     Given a state machine defined by:
     """
     {

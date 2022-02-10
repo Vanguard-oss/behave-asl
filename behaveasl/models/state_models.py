@@ -136,30 +136,42 @@ class ChoiceState(AbstractStateModel):
         self._choices = []
         self._next_state = None
         # The set of Choices can also have a "Default" (if nothing matches) but is not required
-        self._default_next_state=state_details.get("Default", None)
+        self._default_next_state = state_details.get("Default", None)
 
         # For choice in choice_list, create an instance of Choice and add it to the list
         for choice in state_details["Choices"]:
             # Each Choice *must* have a "Next" field
-            if 'Next' not in choice.keys():
-                raise StatesCompileException("Each Choice requires an associated Next field.")
+            if "Next" not in choice.keys():
+                raise StatesCompileException(
+                    "Each Choice requires an associated Next field."
+                )
 
             # TODO: deal with Boolean Choices like Or/And where there will be multiple conditions
             # They will be recognizable either by the "And"/"Or"/etc or by their list type
             # If we have one of those, we need sub-Choices (recurse)
-            
+
             # To get the evaluation type, we need to find the key that isn't 'Variable' or 'Next'
             # the remaining key should be the evaluation type and value
-            evaluation_type=list(filter(lambda x: x not in ['Variable', 'Next'], choice.keys()))[0]
+            evaluation_type = list(
+                filter(lambda x: x not in ["Variable", "Next"], choice.keys())
+            )[0]
 
-            self._choices.append(Choice(variable=choice["Variable"], evaluation_type=evaluation_type,
-            evaluation_value=choice[evaluation_type], next_state=choice['Next']))
-        
+            self._choices.append(
+                Choice(
+                    variable=choice["Variable"],
+                    evaluation_type=evaluation_type,
+                    evaluation_value=choice[evaluation_type],
+                    next_state=choice["Next"],
+                )
+            )
+
     def execute(self, state_input, execution):
         # TODO: implement
         sr = StepResult()
-        current_data = copy.deepcopy(state_input) # TODO: determine if the data input to a Choice continues on
-        
+        current_data = copy.deepcopy(
+            state_input
+        )  # TODO: determine if the data input to a Choice continues on
+
         # TODO: determine if Choice states also apply the phases that other states do
         # for phase in self._phases:
         #     current_data = phase.execute(state_input, current_data, sr, execution)
@@ -169,7 +181,10 @@ class ChoiceState(AbstractStateModel):
         # matching_choices = filter(self.apply_rules, self._choices) # Can probably do this with a filter ultimately
         for choice in self._choices:
             # Call evaluate on the choice instance, which will return True or False
-            if choice.evaluate(state_input=state_input, sr=sr, execution=execution) == True:
+            if (
+                choice.evaluate(state_input=state_input, sr=sr, execution=execution)
+                == True
+            ):
                 # If 2 choices match, we choose the first one
                 self._next_state = choice._next_state
                 break
@@ -182,12 +197,13 @@ class ChoiceState(AbstractStateModel):
                 # Execution does not end because Choice states can't end an execution on their own
                 sr.failed = True
                 # TODO: set error and cause correctly
-                sr.error = 'No match found'
-                sr.cause = 'No match found'
+                sr.error = "No match found"
+                sr.cause = "No match found"
         if self._next_state is not None:
             sr.next_state = self._next_state
-            
+
         return sr
+
 
 class WaitState(AbstractStateModel):
     def __init__(self, state_name: str, state_details):

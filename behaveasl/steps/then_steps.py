@@ -1,7 +1,6 @@
 import logging
 
 from behave import then
-
 from behaveasl import assertions, jsonpath
 
 
