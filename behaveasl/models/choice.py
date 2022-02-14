@@ -2,6 +2,7 @@ import re
 from datetime import datetime
 
 from behaveasl.models.state_phases import Path
+from behaveasl.models.exceptions import StatesRuntimeException
 
 
 class Choice:
@@ -40,6 +41,8 @@ class Choice:
                 execution=execution,
             )
         # TODO: If self._actual_value is None, raise a StatesRuntimeException (no value could be located)
+        # if actual_value is None:
+        #     raise StatesRuntimeException("No value could be located.")
         # TODO: depending on the value of the Choice's comparator, call the right method - compare actual_value with evaluation_value
         function_map = {
             "BooleanEquals": self._boolean_equals,
@@ -89,6 +92,8 @@ class Choice:
         pass
 
     def _not_comparator(self, actual_value):  # Not is a reserved word in Python
+        # self._evaluation_type will determine what function to call
+        # return logical not
         pass
 
     def _or_comparator(self, actual_value):
@@ -110,7 +115,7 @@ class Choice:
             return True
 
     def _is_null(self, actual_value):
-        # self._evaluation_value determines  whether we want the type or not
+        # self._evaluation_value determines whether we want the type or not
         if self._evaluation_value is True and actual_value is not None:
             return False
         elif self._evaluation_value is False and actual_value is None:
@@ -177,7 +182,7 @@ class Choice:
     def _is_present(self, actual_value):
         # TODO: this is a hard one to implement, because if you input JSON Path it
         # upsets some of the existing logic, hmm
-        # self._evaluation_value determines  whether we want the type or not
+        # self._evaluation_value determines whether we want the type or not
         pass
 
     def _is_string(self, actual_value):
