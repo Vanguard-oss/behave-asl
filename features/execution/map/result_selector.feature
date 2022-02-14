@@ -50,19 +50,19 @@ Feature: The Map type can filter results by using ResultSelector
         }
     }
     """
-    And the map state "FirstState" will return "blue" for input:
+    And the state "FirstState" will return "blue" for input:
     """
     { "prod": "R31", "dest-code": 9511, "quantity": 1344 }
     """
-    And the map state "FirstState" will return "green" for input:
+    And the state "FirstState" will return "green" for input:
     """
     { "prod": "S39", "dest-code": 9511, "quantity": 40 }
     """
-    And the map state "FirstState" will return "red" for input:
+    And the state "FirstState" will return "red" for input:
     """
     { "prod": "R31", "dest-code": 9833, "quantity": 12 }
     """
-    And the map state "FirstState" will return "unknown" when invoked with any unknown parameters
+    And the state "FirstState" will return "unknown" when invoked with any unknown parameters
     When the state machine executes
     Then the next state is "EndState"
     And the step result data path "$.result.Partner" is a string
@@ -139,19 +139,19 @@ Feature: The Map type can filter results by using ResultSelector
         }
     }
     """
-    And the map state "FirstState" will return "blue" for input:
+    And the state "FirstState" will return "blue" for input:
     """
     { "prod": "R31", "dest-code": 9511, "quantity": 1344 }
     """
-    And the map state "FirstState" will return "green" for input:
+    And the state "FirstState" will return "green" for input:
     """
     { "prod": "S39", "dest-code": 9511, "quantity": 40 }
     """
-    And the map state "FirstState" will return "red" for input:
+    And the state "FirstState" will return "red" for input:
     """
     { "prod": "R31", "dest-code": 9833, "quantity": 12 }
     """
-    And the map state "FirstState" will return "unknown" when invoked with any unknown parameters
+    And the state "FirstState" will return "unknown" when invoked with any unknown parameters
     When the state machine executes
     Then the next state is "EndState"
     And the step result data path "$.result.Eid" is a string

@@ -45,19 +45,19 @@ Scenario: The Map type can use an ItemsPath to provide a list to the map state
         }
     }
     """
-    And the map state "FirstState" will return "blue" for input:
+    And the state "FirstState" will return "blue" for input:
     """
     { "prod": "R31", "dest-code": 9511, "quantity": 1344 }
     """
-    And the map state "FirstState" will return "green" for input:
+    And the state "FirstState" will return "green" for input:
     """
     { "prod": "S39", "dest-code": 9511, "quantity": 40 }
     """
-    And the map state "FirstState" will return "red" for input:
+    And the state "FirstState" will return "red" for input:
     """
     { "prod": "R31", "dest-code": 9833, "quantity": 12 }
     """
-    And the map state "FirstState" will return "unknown" when invoked with any unknown parameters
+    And the state "FirstState" will return "unknown" when invoked with any unknown parameters
     When the state machine executes
     Then the json output of "FirstState" is
     """

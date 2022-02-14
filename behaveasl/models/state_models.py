@@ -1,4 +1,4 @@
-from cmath import phase
+import concurrent.futures as cf
 import copy
 import logging
 import json
@@ -139,30 +139,42 @@ class ChoiceState(AbstractStateModel):
         self._choices = []
         self._next_state = None
         # The set of Choices can also have a "Default" (if nothing matches) but is not required
-        self._default_next_state=state_details.get("Default", None)
+        self._default_next_state = state_details.get("Default", None)
 
         # For choice in choice_list, create an instance of Choice and add it to the list
         for choice in state_details["Choices"]:
             # Each Choice *must* have a "Next" field
-            if 'Next' not in choice.keys():
-                raise StatesCompileException("Each Choice requires an associated Next field.")
+            if "Next" not in choice.keys():
+                raise StatesCompileException(
+                    "Each Choice requires an associated Next field."
+                )
 
             # TODO: deal with Boolean Choices like Or/And where there will be multiple conditions
             # They will be recognizable either by the "And"/"Or"/etc or by their list type
             # If we have one of those, we need sub-Choices (recurse)
-            
+
             # To get the evaluation type, we need to find the key that isn't 'Variable' or 'Next'
             # the remaining key should be the evaluation type and value
-            evaluation_type=list(filter(lambda x: x not in ['Variable', 'Next'], choice.keys()))[0]
+            evaluation_type = list(
+                filter(lambda x: x not in ["Variable", "Next"], choice.keys())
+            )[0]
 
-            self._choices.append(Choice(variable=choice["Variable"], evaluation_type=evaluation_type,
-            evaluation_value=choice[evaluation_type], next_state=choice['Next']))
-        
+            self._choices.append(
+                Choice(
+                    variable=choice["Variable"],
+                    evaluation_type=evaluation_type,
+                    evaluation_value=choice[evaluation_type],
+                    next_state=choice["Next"],
+                )
+            )
+
     def execute(self, state_input, execution):
         # TODO: implement
         sr = StepResult()
-        current_data = copy.deepcopy(state_input) # TODO: determine if the data input to a Choice continues on
-        
+        current_data = copy.deepcopy(
+            state_input
+        )  # TODO: determine if the data input to a Choice continues on
+
         # TODO: determine if Choice states also apply the phases that other states do
         # for phase in self._phases:
         #     current_data = phase.execute(state_input, current_data, sr, execution)
@@ -172,7 +184,10 @@ class ChoiceState(AbstractStateModel):
         # matching_choices = filter(self.apply_rules, self._choices) # Can probably do this with a filter ultimately
         for choice in self._choices:
             # Call evaluate on the choice instance, which will return True or False
-            if choice.evaluate(state_input=state_input, sr=sr, execution=execution) == True:
+            if (
+                choice.evaluate(state_input=state_input, sr=sr, execution=execution)
+                == True
+            ):
                 # If 2 choices match, we choose the first one
                 self._next_state = choice._next_state
                 break
@@ -185,12 +200,13 @@ class ChoiceState(AbstractStateModel):
                 # Execution does not end because Choice states can't end an execution on their own
                 sr.failed = True
                 # TODO: set error and cause correctly
-                sr.error = 'No match found'
-                sr.cause = 'No match found'
+                sr.error = "No match found"
+                sr.cause = "No match found"
         if self._next_state is not None:
             sr.next_state = self._next_state
-            
+
         return sr
+
 
 class WaitState(AbstractStateModel):
     def __init__(self, state_name: str, state_details):
@@ -299,19 +315,84 @@ class FailState(AbstractStateModel):
         return sr
 
 
+class ParallelMockPhase(AbstractPhase):
+    def __init__(self, state_name, state_details: dict):
+        self._log = logging.getLogger("behaveasl.ParallelMockPhase")
+        self._parallel_state_machines = state_details["Branches"]
+
+    def execute(self, state_input, phase_input, sr: StepResult, execution):
+        output = []
+        with cf.ThreadPoolExecutor(
+            max_workers=len(self._parallel_state_machines)
+        ) as executor:
+            machines = {}
+            for machine in self._parallel_state_machines:
+                machines[
+                    executor.submit(
+                        self.execute_single, machine, phase_input, execution
+                    )
+                ] = machine
+
+            print(machines)
+            for future in cf.as_completed(machines):
+                output.append(future.result())
+        return output
+
+    def execute_single(self, machine, phase_input, execution):
+        machine_hash = json.dumps(machine, sort_keys=True)
+        resp = execution.resource_response_mocks.execute(machine_hash, phase_input)
+        self._log.debug(f"'{machine_hash}' returned '{resp}'")
+        return resp
+
+
 class ParallelState(AbstractStateModel):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, state_name, state_details, **kwargs):
+        self._branches = state_details.get("Branches", None)
+        if self._branches is None:
+            raise StatesCompileException("An Branches field must be provided.")
 
-        pass
+        self._phases = []
+        self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
+        self._phases.append(ParallelMockPhase(state_name, state_details))
+        if "ResultSelector" in state_details:
+            self._phases.append(
+                ResultSelectorPhase(state_details.get("ResultSelector", "$"))
+            )
+        self._phases.append(ResultPathPhase(state_details.get("ResultPath", "$")))
+        self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
 
-    # def __init__(self, state_name, state_details):
-    #     self.state_name = state_name
-    #     pass
+        self._next_state = state_details.get("Next", None)
+        self._is_end = state_details.get("End", False)
+        self._comment = state_details.get("Comment", None)
+
+        self._retry = state_details.get("Retry", None)
+        self._catch = state_details.get("Catch", None)
+
+        if self._retry:
+            self._retry_list = []
+            for r in self._retry:
+                self._retry_list.append(Retry(r))
+
+        if self._catch:
+            self._catch_list = []
+            for c in self._catch:
+                self._catch_list.append(Catch(c))
 
     def execute(self, state_input, execution):
-        """The fail state will always raise an error with a cause"""
-        # TODO: implement
-        pass
+        """The parallel state can be used to create parallel branches of
+        execution in a state machine"""
+        sr = StepResult()
+        current_data = copy.deepcopy(state_input)
+
+        for phase in self._phases:
+            current_data = phase.execute(state_input, current_data, sr, execution)
+        sr.result_data = current_data
+
+        if self._next_state is not None:
+            sr.next_state = self._next_state
+        sr.end_execution = self._is_end
+
+        return sr
 
 
 class ItemsPathPhase(AbstractPhase):

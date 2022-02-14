@@ -49,7 +49,7 @@ Scenario: The Map type can use Parameters
         }
     }
     """
-    And the map state "FirstState" will return "blue" for input:
+    And the state "FirstState" will return "blue" for input:
     """
     {
         "parcel": {
@@ -60,7 +60,7 @@ Scenario: The Map type can use Parameters
         "courier": "UQS"
     }
     """
-    And the map state "FirstState" will return "green" for input:
+    And the state "FirstState" will return "green" for input:
     """
     {
         "parcel": {
@@ -71,7 +71,7 @@ Scenario: The Map type can use Parameters
         "courier": "UQS"
     }
     """
-    And the map state "FirstState" will return "red" for input:
+    And the state "FirstState" will return "red" for input:
     """
     {
         "parcel": {
@@ -82,7 +82,7 @@ Scenario: The Map type can use Parameters
         "courier": "UQS"
     }
     """
-    And the map state "FirstState" will return "unknown" when invoked with any unknown parameters
+    And the state "FirstState" will return "unknown" when invoked with any unknown parameters
     When the state machine executes
     Then the json output of "FirstState" is
     """
