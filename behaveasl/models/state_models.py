@@ -1,7 +1,7 @@
-import concurrent.futures as cf
 import copy
-import logging
 import json
+import logging
+from concurrent import futures as cf
 
 from behaveasl.expr_eval import replace_expression
 from behaveasl.models.abstract_phase import AbstractPhase
@@ -9,7 +9,6 @@ from behaveasl.models.abstract_state import AbstractStateModel
 from behaveasl.models.catch import Catch
 from behaveasl.models.choice import Choice
 from behaveasl.models.exceptions import StatesCompileException
-
 from behaveasl.models.retry import Retry
 from behaveasl.models.state_phases import (
     InputPathPhase,
@@ -333,7 +332,6 @@ class ParallelMockPhase(AbstractPhase):
                     )
                 ] = machine
 
-            print(machines)
             for future in cf.as_completed(machines):
                 output.append(future.result())
         return output
