@@ -1,10 +1,6 @@
-Feature: The Parallel state type is supported
-  As a developer, I would like to validate the Parallel state type.
-  
-  These scenarios are a basic regression test that a minimal Parallel state can be
-  executed.  Only the minimum required fields are used.
+Feature: The Parallel type can filter results by using OutputPath
 
-  Scenario: The Parallel type can end the execution
+  Scenario: The Parallel type can use "$" in the OutputPath to copy everything
     Given a state machine defined by:
     """
     {
@@ -13,6 +9,8 @@ Feature: The Parallel state type is supported
       "States": {
         "LookupCustomerInfo": {
           "Type": "Parallel",
+          "OutputPath": "$",
+          "ResultPath": "$.parallel",
           "End": true,
           "Branches": [
             {
@@ -35,6 +33,90 @@ Feature: The Parallel state type is supported
             }
           ]
         }
+      }
+    }
+    """
+    And the execution input is
+    """
+    {
+      "Hello": "There"
+    }
+    """
+    And the state "LookupAddress" will return "123 Unit Test Street" for input
+    """
+    {
+      "StartAt": "LookupAddress",
+      "States": {
+        "LookupAddress": {
+          "Type": "Pass",
+          "End": true
+        }
+      }
+    }
+    """
+    And the state "LookupPhone" will return "8675309" for input
+    """
+    {
+      "StartAt": "LookupPhone",
+      "States": {
+        "LookupPhone": {
+          "Type": "Pass",
+          "End": true
+        }
+      }
+    }
+    """
+    When the state machine executes
+    Then the execution ended
+    And the execution succeeded
+    And the step result data path "$.parallel" is a list
+    And the step result data path "$.parallel" contains "8675309"
+    And the step result data path "$.parallel" contains "123 Unit Test Street"
+    And the step result data path "$.Hello" is a string
+    And the step result data path "$.Hello" matches "There"
+
+  Scenario: The Parallel type can use "$.subfield" in the OutputPath
+   Given a state machine defined by:
+    """
+    {
+      "Comment": "Parallel Example.",
+      "StartAt": "LookupCustomerInfo",
+      "States": {
+        "LookupCustomerInfo": {
+          "Type": "Parallel",
+          "OutputPath": "$.Phonebook",
+          "ResultPath": "$.Phonebook.parallel",
+          "End": true,
+          "Branches": [
+            {
+              "StartAt": "LookupAddress",
+              "States": {
+                "LookupAddress": {
+                  "Type": "Pass",
+                  "End": true
+                }
+              }
+            },
+            {
+              "StartAt": "LookupPhone",
+              "States": {
+                "LookupPhone": {
+                  "Type": "Pass",
+                  "End": true
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+    """
+    And the execution input is
+    """
+    {
+      "Hello": "There",
+      "Phonebook": {
+        "My": "Number"
       }
     }
     """
@@ -65,71 +147,8 @@ Feature: The Parallel state type is supported
     When the state machine executes
     Then the execution ended
     And the execution succeeded
-    And the step result data path "$" is a list
-    And the step result data path "$" contains "8675309"
-    And the step result data path "$" contains "123 Unit Test Street"
-
-  Scenario: The Parallel type can set the next state
-    Given a state machine defined by:
-    """
-    {
-      "Comment": "Parallel Example.",
-      "StartAt": "LookupCustomerInfo",
-      "States": {
-        "LookupCustomerInfo": {
-          "Type": "Parallel",
-          "Next": "EndState",
-          "Branches": [
-            {
-              "StartAt": "LookupAddress",
-              "States": {
-                "LookupAddress": {
-                  "Type": "Pass",
-                  "End": true
-                }
-              }
-            },
-            {
-              "StartAt": "LookupPhone",
-              "States": {
-                "LookupPhone": {
-                  "Type": "Pass",
-                  "End": true
-                }
-              }
-            }
-          ]
-        },
-        "EndState": {
-          "Type": "Pass",
-          "End": true
-        }
-      }
-    }
-    """
-    And the state "LookupAddress" will return "123 Unit Test Street" for input
-    """
-    {
-      "StartAt": "LookupAddress",
-      "States": {
-        "LookupAddress": {
-          "Type": "Pass",
-          "End": true
-        }
-      }
-    }
-    """
-    And the state "LookupPhone" will return "8675309" for input
-    """
-    {
-      "StartAt": "LookupPhone",
-      "States": {
-        "LookupPhone": {
-          "Type": "Pass",
-          "End": true
-        }
-      }
-    }
-    """
-    When the state machine executes
-    Then the next state is "EndState"
+    And the step result data path "$.parallel" is a list
+    And the step result data path "$.parallel" contains "8675309"
+    And the step result data path "$.parallel" contains "123 Unit Test Street"
+    And the step result data path "$.My" is a string
+    And the step result data path "$.My" matches "Number"

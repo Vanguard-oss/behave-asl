@@ -1,10 +1,6 @@
-Feature: The Parallel state type is supported
-  As a developer, I would like to validate the Parallel state type.
-  
-  These scenarios are a basic regression test that a minimal Parallel state can be
-  executed.  Only the minimum required fields are used.
+Feature: The Parallel type can filter results by using ResultSelector
 
-  Scenario: The Parallel type can end the execution
+  Scenario: The Parallel type can use ResultSelector
     Given a state machine defined by:
     """
     {
@@ -13,6 +9,12 @@ Feature: The Parallel state type is supported
       "States": {
         "LookupCustomerInfo": {
           "Type": "Parallel",
+          "OutputPath": "$",
+          "ResultPath": "$.parallel",
+          "ResultSelector": {
+            "Fake": "Address",
+            "Real.$": "$"
+          },
           "End": true,
           "Branches": [
             {
@@ -36,6 +38,12 @@ Feature: The Parallel state type is supported
           ]
         }
       }
+    }
+    """
+    And the execution input is
+    """
+    {
+      "Hello": "There"
     }
     """
     And the state "LookupAddress" will return "123 Unit Test Street" for input
@@ -65,11 +73,15 @@ Feature: The Parallel state type is supported
     When the state machine executes
     Then the execution ended
     And the execution succeeded
-    And the step result data path "$" is a list
-    And the step result data path "$" contains "8675309"
-    And the step result data path "$" contains "123 Unit Test Street"
+    And the step result data path "$.parallel.Fake" is a string
+    And the step result data path "$.parallel.Fake" matches "Address"
+    And the step result data path "$.parallel.Real" is a list
+    And the step result data path "$.parallel.Real" contains "8675309"
+    And the step result data path "$.parallel.Real" contains "123 Unit Test Street"
+    And the step result data path "$.Hello" is a string
+    And the step result data path "$.Hello" matches "There"
 
-  Scenario: The Parallel type can set the next state
+  Scenario: The Parallel ResultSelector can pull data from the Context object
     Given a state machine defined by:
     """
     {
@@ -78,7 +90,13 @@ Feature: The Parallel state type is supported
       "States": {
         "LookupCustomerInfo": {
           "Type": "Parallel",
-          "Next": "EndState",
+          "OutputPath": "$",
+          "ResultPath": "$.parallel",
+          "ResultSelector": {
+            "Eid.$": "$$.Execution.Id",
+            "Real.$": "$"
+          },
+          "End": true,
           "Branches": [
             {
               "StartAt": "LookupAddress",
@@ -99,12 +117,14 @@ Feature: The Parallel state type is supported
               }
             }
           ]
-        },
-        "EndState": {
-          "Type": "Pass",
-          "End": true
         }
       }
+    }
+    """
+    And the execution input is
+    """
+    {
+      "Hello": "There"
     }
     """
     And the state "LookupAddress" will return "123 Unit Test Street" for input
@@ -132,4 +152,12 @@ Feature: The Parallel state type is supported
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
+    Then the execution ended
+    And the execution succeeded
+    And the step result data path "$.parallel.Real" is a list
+    And the step result data path "$.parallel.Real" contains "8675309"
+    And the step result data path "$.parallel.Real" contains "123 Unit Test Street"
+    And the step result data path "$.Hello" is a string
+    And the step result data path "$.Hello" matches "There"
+    And the step result data path "$.parallel.Eid" is a string
+    And the step result data path "$.parallel.Eid" matches "123"
