@@ -1,6 +1,6 @@
 Feature: The Map state supports the ItemsPath phase
 
-Scenario: The Map type can use an ItemsPath to provide a list to the map state
+  Scenario: The Map type can use an ItemsPath to provide a list to the map state
     Given a state machine defined by:
     """
     {
@@ -15,7 +15,7 @@ Scenario: The Map type can use an ItemsPath to provide a list to the map state
                     "States": {
                         "Validate": {
                             "Type": "Task",
-	                        "Resource": "arn:aws:lambda:us-east-1:123456789012:function:ship-val",
+                         "Resource": "arn:aws:lambda:us-east-1:123456789012:function:ship-val",
                             "End": true
                         }
                     }
@@ -59,7 +59,7 @@ Scenario: The Map type can use an ItemsPath to provide a list to the map state
     """
     And the state "FirstState" will return "unknown" when invoked with any unknown parameters
     When the state machine executes
-    Then the json output of "FirstState" is
+    Then the JSON output of "FirstState" is
     """
     [
       "blue",

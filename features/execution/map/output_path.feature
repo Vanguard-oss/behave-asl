@@ -1,6 +1,6 @@
 Feature: The Map type can filter results by using OutputPath
 
-    Scenario: The Map type can use "$" in the OutputPath to copy everything
+  Scenario: The Map type can use "$" in the OutputPath to copy everything
     Given a state machine defined by:
     """
     {
@@ -66,7 +66,7 @@ Feature: The Map type can filter results by using OutputPath
     And the step result data path "$.result" contains "red"
     And the step result data path "$.result" contains "blue"
     And the step result data path "$.result" contains "green"
-    And the json output of "FirstState" is
+    And the JSON output of "FirstState" is
     """
     {
         "ship-date": "2016-03-14T01:59:00Z",
@@ -146,8 +146,7 @@ Feature: The Map type can filter results by using OutputPath
     When the state machine executes
     Then the next state is "EndState"
     And the step result data path "$.result" is a list
-    
-    And the json output of "FirstState" is
+    And the JSON output of "FirstState" is
     """
     {
         "delivery-partner": "UQS",

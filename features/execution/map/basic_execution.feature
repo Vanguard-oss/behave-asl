@@ -90,7 +90,7 @@ Feature: The Map state type is supported
     Then the execution ended
     And the execution succeeded
 
-Scenario: The Map type can use a map mock
+  Scenario: The Map type can use a map mock
     Given a state machine defined by:
     """
     {
@@ -103,7 +103,7 @@ Scenario: The Map type can use a map mock
                     "States": {
                         "Validate": {
                             "Type": "Task",
-	                        "Resource": "arn:aws:lambda:us-east-1:123456789012:function:ship-val",
+                         "Resource": "arn:aws:lambda:us-east-1:123456789012:function:ship-val",
                             "End": true
                         }
                     }
@@ -141,7 +141,7 @@ Scenario: The Map type can use a map mock
     """
     And the state "FirstState" will return "unknown" when invoked with any unknown parameters
     When the state machine executes
-    Then the json output of "FirstState" is
+    Then the JSON output of "FirstState" is
     """
     [
       "blue",
@@ -151,4 +151,3 @@ Scenario: The Map type can use a map mock
       "unknown"
     ]
     """
-
