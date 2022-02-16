@@ -1,7 +1,6 @@
 import copy
 import json
 import logging
-from concurrent import futures as cf
 
 from behaveasl.expr_eval import replace_expression
 from behaveasl.models.abstract_phase import AbstractPhase
@@ -321,19 +320,11 @@ class ParallelMockPhase(AbstractPhase):
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
         output = []
-        with cf.ThreadPoolExecutor(
-            max_workers=len(self._parallel_state_machines)
-        ) as executor:
-            machines = {}
-            for machine in self._parallel_state_machines:
-                machines[
-                    executor.submit(
-                        self.execute_single, machine, phase_input, execution
-                    )
-                ] = machine
+        for machine in self._parallel_state_machines:
+            machine_hash = json.dumps(machine, sort_keys=True)
+            resp = execution.resource_response_mocks.execute(machine_hash, phase_input)
+            output.append(resp)
 
-            for future in cf.as_completed(machines):
-                output.append(future.result())
         return output
 
     def execute_single(self, machine, phase_input, execution):
