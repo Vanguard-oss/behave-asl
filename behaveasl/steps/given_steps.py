@@ -1,7 +1,6 @@
 import json
 
 from behave import given
-
 from behaveasl import parser
 from behaveasl.models.execution import Execution
 from behaveasl.models.task_mock import (
@@ -56,14 +55,14 @@ def given_resource_any_param_will_return(context, resource):
 
 
 @given(u'the resource "{resource}" will be called with')
-@given(u'the map state "{resource}" will be called with')
+@given(u'the state "{resource}" will be called with')
 def given_resource_expect_param(context, resource):
     context.execution.resource_expectations.add_mock_list(
         resource, AssertParameters(context.text)
     )
 
 
-@given(u'the map state "{resource}" will return "{value}" for input')
+@given(u'the state "{resource}" will return "{value}" for input')
 def given_map_state_will_return(context, resource, value):
     context.execution.resource_response_mocks.add_mock(
         json.dumps(json.loads(context.text), sort_keys=True),
@@ -72,7 +71,7 @@ def given_map_state_will_return(context, resource, value):
 
 
 @given(
-    u'the map state "{resource}" will return "{mock_return}" when invoked with any unknown parameters'
+    u'the state "{resource}" will return "{mock_return}" when invoked with any unknown parameters'
 )
 def given_map_state_unknown_params(context, resource, mock_return):
     context.execution.resource_response_mocks.add_mock(
