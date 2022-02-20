@@ -1,5 +1,7 @@
+from cmath import phase
 import copy
 import logging
+import json
 
 from behaveasl.expr_eval import replace_expression
 from behaveasl.models.abstract_phase import AbstractPhase
@@ -7,6 +9,7 @@ from behaveasl.models.abstract_state import AbstractStateModel
 from behaveasl.models.catch import Catch
 from behaveasl.models.choice import Choice
 from behaveasl.models.exceptions import StatesCompileException
+
 from behaveasl.models.retry import Retry
 from behaveasl.models.state_phases import (
     InputPathPhase,
@@ -59,7 +62,7 @@ class PassState(AbstractStateModel):
 class TaskMockPhase(AbstractPhase):
     def __init__(self, state_details: dict):
         self._resource = state_details["Resource"]
-        self._log = logging.getLogger("behaveasl.ResultPathPhase")
+        self._log = logging.getLogger("behaveasl.TaskMockPhase")
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
         execution.resource_expectations.execute(self._resource, phase_input)
@@ -232,7 +235,7 @@ class WaitState(AbstractStateModel):
             )
             == 1
         ):
-            raise StateParamException(
+            raise StatesCompileException(
                 "Only one of Seconds, Timestamp, SecondsPath or TimestampPath may be set."
             )
 
@@ -329,19 +332,65 @@ class ParallelState(AbstractStateModel):
 
 class ItemsPathPhase(AbstractPhase):
     def __init__(self, state_details: dict):
-        pass
+        self._items_path = state_details.get("ItemsPath", "$")
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
-        pass
+        phase_output = replace_expression(
+            expr=self._items_path, input=phase_input, context=execution.context
+        )
+        return phase_output
+
+
+class MapMockPhase(AbstractPhase):
+    def __init__(self, state_name, state_details: dict):
+        self._log = logging.getLogger("behaveasl.MapMockPhase")
+        self._state_name = state_name
+        self._state_details = state_details
+
+    def execute(self, state_input, phase_input, sr: StepResult, execution):
+        self._state_input = state_input
+        self._phase_input = phase_input
+        self._sr = sr
+        self._execution = execution
+        return list(map(self.execute_single, enumerate(phase_input)))
+
+    def execute_single(self, input):
+        # https://docs.aws.amazon.com/step-functions/latest/dg/input-output-contextobject.html#contextobject-map
+        self._execution.context["Map"]["Item"]["Index"] = input[0]
+        self._execution.context["Map"]["Item"]["Value"] = input[1]
+        iteration_value = input[1]
+
+        if "Parameters" in self._state_details:
+            inp = InputPathPhase(self._state_details.get("InputPath", "$"))
+            inp_phase_output = inp.execute(
+                self._state_input, self._state_input, self._sr, self._execution
+            )
+
+            param = ParametersPhase(self._state_details["Parameters"])
+
+            iteration_value = param.execute(
+                self._state_input, inp_phase_output, self._sr, self._execution
+            )
+
+        mock_key = json.dumps(iteration_value, sort_keys=True)
+        if mock_key in self._execution.resource_response_mocks._map.keys():
+            return self._execution.resource_response_mocks._map[mock_key]._response
+        elif "unknown" in self._execution.resource_response_mocks._map.keys():
+            return self._execution.resource_response_mocks._map["unknown"]._response
+        else:
+            raise KeyError
 
 
 class MapState(AbstractStateModel):
     def __init__(self, state_name, state_details, **kwargs):
+        self._iterator = state_details.get("Iterator", None)
+        if self._iterator is None:
+            raise StatesCompileException("An Iterator field must be provided.")
+
         self._phases = []
         self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
-        self.phases.append(ItemsPathPhase(state_details.get("ItemsPath", "$")))
-        if "Parameters" in state_details:
-            self._phases.append(ParametersPhase(state_details["Parameters"]))
+        self._phases.append(ItemsPathPhase(state_details))
+        self._phases.append(MapMockPhase(state_name, state_details))
         if "ResultSelector" in state_details:
             self._phases.append(
                 ResultSelectorPhase(state_details.get("ResultSelector", "$"))
@@ -353,13 +402,9 @@ class MapState(AbstractStateModel):
         self._is_end = state_details.get("End", False)
         self._comment = state_details.get("Comment", None)
 
-        self._iterator = state_details.get("Iterator", None)
         self._max_concurrency = state_details.get("MaxConcurrency", None)
         self._retry = state_details.get("Retry", None)
         self._catch = state_details.get("Catch", None)
-
-        if self._iterator is None:
-            raise StatesCompileException("An Iterator field must be provided.")
 
         if self._retry:
             self._retry_list = []
@@ -375,8 +420,13 @@ class MapState(AbstractStateModel):
         """The map state can be used to run a set of steps for each element of an input array"""
         sr = StepResult()
         current_data = copy.deepcopy(state_input)
+
         for phase in self._phases:
             current_data = phase.execute(state_input, current_data, sr, execution)
         sr.result_data = current_data
+
+        if self._next_state is not None:
+            sr.next_state = self._next_state
+        sr.end_execution = self._is_end
 
         return sr

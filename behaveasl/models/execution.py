@@ -2,10 +2,10 @@ import copy
 import datetime
 import logging
 
-from .exceptions import StatesException
-from .state_machine import StateMachineModel
-from .step_result import StepResult
-from .task_mock import ResourceMockMap
+from behaveasl.models.exceptions import StatesException
+from behaveasl.models.state_machine import StateMachineModel
+from behaveasl.models.step_result import StepResult
+from behaveasl.models.task_mock import ResourceMockMap
 
 
 class Execution:
@@ -28,6 +28,9 @@ class Execution:
         }
         self._resource_response_mocks: ResourceMockMap = ResourceMockMap()
         self._resource_expectations: ResourceMockMap = ResourceMockMap()
+        if "Map" in str(self._state_machine.get_state(self._current_state)):
+            self._context_obj["Map"] = {}
+            self._context_obj["Map"]["Item"] = {"Index": "", "Value": ""}
         self._log = logging.getLogger("behaveasl.Execution")
 
     def execute(self):

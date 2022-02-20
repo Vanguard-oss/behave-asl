@@ -1,4 +1,5 @@
 import logging
+import json
 
 from behave import then
 from behaveasl import assertions, jsonpath
@@ -153,3 +154,10 @@ def then_waited_seconds(context, num):
 @then('the last state waited until "{timestamp}"')
 def then_waited_until_timestamp(context, timestamp):
     assert timestamp == context.execution.last_step_result.waited_until_timestamp
+
+
+@then(
+    'the json output of "{state_name}" is'
+)  # this will precede an array/json response
+def then_output_is_json(context, state_name):
+    assert context.execution.last_step_result.result_data == json.loads(context.text)

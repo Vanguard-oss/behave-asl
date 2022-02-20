@@ -1,5 +1,6 @@
 from behaveasl.models.abstract_state import AbstractStateModel
-from behaveasl.models.state_models import *
+from behaveasl.models.state_models import TaskState, ChoiceState, \
+PassState, WaitState, ParallelState, MapState, SucceedState, FailState
 
 
 class StateMachineModel:
