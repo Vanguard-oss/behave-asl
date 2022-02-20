@@ -25,6 +25,20 @@ class Path(AbstractPhase):
                 return None
         # TODO: determine if we need to deal with nesting or if json-ng
         # can just handle this locator
+    
+    def is_present(self, state_input, phase_input):
+        if self._path.startswith("$."):
+            jpexpr = jsonpath.get_instance(self._path)
+            results = jpexpr.find(phase_input)
+            if len(results) == 1:
+                new_value = results[0].value
+                print(f"Matched '{self._path}' [from phase_input] with '{new_value}'")
+                return True
+            else:
+                return False
+        # TODO: determine if we need to deal with nesting or if json-ng
+        # can just handle this locator
+
 
 
 class ResultPathPhase(AbstractPhase):

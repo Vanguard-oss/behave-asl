@@ -2,6 +2,8 @@ import re
 from datetime import datetime
 
 from behaveasl.models.state_phases import Path
+from behaveasl.models.exceptions import StatesRuntimeException
+
 
 
 class Choice:
@@ -15,9 +17,13 @@ class Choice:
         )
 
     def evaluate(self, state_input, sr, execution):
+        # Shortcut evaluation for 'IsPresent' here
+        if self._evaluation_type == 'IsPresent':
+            return self._is_present(
+                state_input=state_input,
+                phase_input=state_input
+                ) # TODO phase input
         variable_path = Path(result_path=self._variable)
-        # TODO: before calling the method, if the comparator ends in "Path", use the self._evaluation_value
-        # as the Path to evalute against the state_input
         if self._evaluation_type[-4:] == "Path":
             evaluation_path = Path(result_path=self._evaluation_value)
             actual_value = evaluation_path.execute(
@@ -40,14 +46,14 @@ class Choice:
                 execution=execution,
             )
         # TODO: If self._actual_value is None, raise a StatesRuntimeException (no value could be located)
-        # TODO: depending on the value of the Choice's comparator, call the right method - compare actual_value with evaluation_value
+        # if actual_value is None:
+        #     raise StatesRuntimeException("No value could be located.")
         function_map = {
             "BooleanEquals": self._boolean_equals,
             "BooleanEqualsPath": self._boolean_equals,
             "IsBoolean": self._is_boolean,
             "IsNull": self._is_null,
             "IsNumeric": self._is_numeric,
-            "IsPresent": self._is_present,
             "IsString": self._is_string,
             "IsTimestamp": self._is_timestamp,
             "NumericEquals": self._numeric_equals,
@@ -89,6 +95,8 @@ class Choice:
         pass
 
     def _not_comparator(self, actual_value):  # Not is a reserved word in Python
+        # self._evaluation_type will determine what function to call
+        # return logical not
         pass
 
     def _or_comparator(self, actual_value):
@@ -110,7 +118,7 @@ class Choice:
             return True
 
     def _is_null(self, actual_value):
-        # self._evaluation_value determines  whether we want the type or not
+        # self._evaluation_value determines whether we want the type or not
         if self._evaluation_value is True and actual_value is not None:
             return False
         elif self._evaluation_value is False and actual_value is None:
@@ -174,11 +182,20 @@ class Choice:
         else:
             return True
 
-    def _is_present(self, actual_value):
+    def _is_present(self, state_input, phase_input):
         # TODO: this is a hard one to implement, because if you input JSON Path it
         # upsets some of the existing logic, hmm
-        # self._evaluation_value determines  whether we want the type or not
-        pass
+        # self._evaluation_value determines whether we want the type or not
+        evaluation_path = Path(result_path=self._variable)
+        is_present = evaluation_path.is_present(
+            state_input=state_input,
+            phase_input=phase_input,
+        )
+        if self._evaluation_value is True and is_present == False:
+            return False
+        elif self._evaluation_value is False and is_present == True:
+            return False
+        return True
 
     def _is_string(self, actual_value):
         # self._evaluation_value determines  whether we want the type or not
