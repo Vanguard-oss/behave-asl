@@ -275,12 +275,12 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
     Then the next state is "<matched_state>"
 
     Examples: Comparators
-      | value_1 | value_2                     | matched_state |
-      | true    | {"thing": "here"}    | MatchState    |
-      | false   | { "notathing": "here" }     | MatchState    |
+      | value_1 | value_2                 | matched_state |
+      | true    | {"thing": "here"}       | MatchState    |
+      | false   | { "notathing": "here" } | MatchState    |
       | false   | { "thing": "here" }     | DefaultState  |
       | true    | { "notathing": "here" } | DefaultState  |
-      | true    | {}                          | DefaultState  |
+      | true    | {}                      | DefaultState  |
 
   Scenario Outline: The Choice type supports the IsString operator
     Given a state machine defined by:
