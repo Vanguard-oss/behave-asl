@@ -8,8 +8,9 @@
 | ----- | ------ |
 | Type | Yes |
 | Comment | Yes |
-| InputPath | No|
-| OutputPath | No |
+| InputPath | Yes|
+| Parameters | Yes |
+| OutputPath | Yes |
 | Choices | Partial |
 | Default | Yes |
 
@@ -23,7 +24,7 @@
 | IsBoolean | Yes |
 | IsNull | Yes |
 | IsNumeric | Yes |
-| IsPresent | No |
+| IsPresent | Yes |
 | IsString | Yes |
 | IsTimestamp | Yes |
 | Not | No |
