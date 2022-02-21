@@ -51,13 +51,13 @@ Feature: The Choice type supports Input, Output, and Result Processing
         "States": {
             "FirstState": {
                 "Type": "Choice",
-                "Parameters":{
+                "Parameters": {
                     "product_details": {
                         "size.$": "$.product.details.size",
                         "quantity.$": "$.product.details.quantity",
                         "StaticValue": "foo"
                     }
-                }
+                },
                 "Choices": [
                     {
                         "Variable": "$.product_details.size",
@@ -100,7 +100,7 @@ Feature: The Choice type supports Input, Output, and Result Processing
     And the step result data path "$.product_details.quantity" is an int
     And the step result data path "$.product_details.quantity" matches "24"
     And the step result data path "$.product_details.StaticValue" is a string
-    And the step result data path "$.product_details.StaticValue" equals "foo"
+    And the step result data path "$.product_details.StaticValue" matches "foo"
 
   Scenario: The Choice type supports OutputPath
     Given a state machine defined by:
@@ -144,6 +144,7 @@ Feature: The Choice type supports Input, Output, and Result Processing
             "availability": "in stock",
             "sku": "2317",
             "cost": "$23"
+        }
     }
     """
     When the state machine executes
