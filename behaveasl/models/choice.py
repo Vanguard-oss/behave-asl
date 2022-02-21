@@ -22,7 +22,7 @@ class Choice:
             return self._is_present(
                 state_input=state_input,
                 phase_input=phase_input,
-                ) # TODO phase input
+                )
         variable_path = Path(result_path=self._variable)
         if self._evaluation_type[-4:] == "Path":
             evaluation_path = Path(result_path=self._evaluation_value)
