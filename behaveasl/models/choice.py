@@ -16,32 +16,32 @@ class Choice:
             None  # If this is set, we are using an "And"/"Or"/"Not" comparator
         )
 
-    def evaluate(self, state_input, sr, execution):
+    def evaluate(self, state_input, phase_input, sr, execution):
         # Shortcut evaluation for 'IsPresent' here
         if self._evaluation_type == 'IsPresent':
             return self._is_present(
                 state_input=state_input,
-                phase_input=state_input
+                phase_input=phase_input,
                 ) # TODO phase input
         variable_path = Path(result_path=self._variable)
         if self._evaluation_type[-4:] == "Path":
             evaluation_path = Path(result_path=self._evaluation_value)
             actual_value = evaluation_path.execute(
                 state_input=state_input,
-                phase_input=state_input,
+                phase_input=phase_input,
                 sr=sr,
                 execution=execution,
             )
             self._evaluation_value = variable_path.execute(
                 state_input=state_input,
-                phase_input=state_input,
+                phase_input=phase_input,
                 sr=sr,
                 execution=execution,
             )
         else:
             actual_value = variable_path.execute(
                 state_input=state_input,
-                phase_input=state_input,
+                phase_input=phase_input,
                 sr=sr,
                 execution=execution,
             )

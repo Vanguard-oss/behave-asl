@@ -1,4 +1,4 @@
-Feature: The Choice type supports Input, Output, and Result Processing
+Feature: The Choice type supports Phases (InputPath, Parameters, and OutputPath)
 
   Scenario: The Choice type supports InputPath
     Given a state machine defined by:
