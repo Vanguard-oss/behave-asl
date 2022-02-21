@@ -16,10 +16,10 @@ class Path(AbstractPhase):
     def execute(self, state_input, phase_input, sr: StepResult, execution):
         if self._path.startswith("$."):
             jpexpr = jsonpath.get_instance(self._path)
-            results = jpexpr.find(state_input)
+            results = jpexpr.find(phase_input)
             if len(results) == 1:
                 new_value = results[0].value
-                print(f"Matched '{self._path}' [from state_input] with '{new_value}'")
+                print(f"Matched '{self._path}' [from phase_input] with '{new_value}'")
                 return new_value
             else:
                 return None
