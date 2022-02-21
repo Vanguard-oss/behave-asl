@@ -132,6 +132,7 @@ class TaskState(AbstractStateModel):
 
 class ChoiceSelectionPhase(AbstractPhase):
     def __init__(self, state_details: dict):
+        self._next_state = None
         # The set of Choices can also have a "Default" (if nothing matches) but is not required
         self._default_next_state = state_details.get("Default", None)
         self._choices = []
@@ -175,12 +176,15 @@ class ChoiceSelectionPhase(AbstractPhase):
                 == True
             ):
                 # If 2 choices match, we choose the first one
-                self._next_state = choice._next_state
-                return self._next_state
+                sr.next_state = choice._next_state
+                # Choice does not modify phase input currently
+                return phase_input 
         # If we still have not found a matching choice, and we have a default, use it
         if self._next_state is None:
             if self._default_next_state is not None:
-                return self._default_next_state
+                sr.next_state = self._default_next_state
+                # Choice does not modify phase input currently
+                return phase_input
                 # If we have NO matching Choices and no Default, throw an error, set StepResult w/failed + cause + error
             else:
                 # Execution does not end because Choice states can't end an execution on their own
@@ -188,7 +192,9 @@ class ChoiceSelectionPhase(AbstractPhase):
                 # TODO: set error and cause correctly
                 sr.error = "No match found"
                 sr.cause = "No match found"
-        return None
+                sr.next_state = None
+                # Choice does not modify phase input currently
+                return phase_input
 
 class ChoiceState(AbstractStateModel):
     def __init__(self, state_name: str, state_details: dict, **kwargs):
@@ -199,7 +205,7 @@ class ChoiceState(AbstractStateModel):
         self._phases.append(ChoiceSelectionPhase(state_details))
         self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
         self.state_name = state_name
-        self._next_state = None
+        # self._next_state = None #
 
     def execute(self, state_input, execution):
         # TODO: implement
@@ -217,8 +223,11 @@ class ChoiceState(AbstractStateModel):
             # phase.execute method if I'm not passing that variable somehow
         sr.result_data = current_data
         
-        if self._next_state is not None:
-            sr.next_state = self._next_state
+        # sr.next_state gets set in the execute phase for ChoiceSelection
+        if sr.next_state is not None:
+            self._next_state = sr.next_state
+        # if self._next_state is not None:
+        #     sr.next_state = self._next_state
 
         return sr
 
