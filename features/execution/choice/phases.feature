@@ -51,17 +51,28 @@ Feature: The Choice type supports Input, Output, and Result Processing
         "States": {
             "FirstState": {
                 "Type": "Choice",
+                "Parameters":{
+                    "product_details": {
+                        "size.$": "$.product.details.size",
+                        "quantity.$": "$.product.details.quantity",
+                        "StaticValue": "foo"
+                    }
+                }
                 "Choices": [
                     {
-                        "Variable": "$.thing",
-                        "StringEquals": "blue",
+                        "Variable": "$.product_details.size",
+                        "StringEquals": "small",
                         "Next": "EndState"
                     }
-                ]
+                ],
+                "Default": "DefaultState"
             },
-            "EndState": {
+            "MatchState": {
                 "Type": "Pass",
-                "Result": "end",
+                "End": true
+            },
+            "DefaultState": {
+                "Type": "Pass",
                 "End": true
             }
         }
@@ -70,14 +81,20 @@ Feature: The Choice type supports Input, Output, and Result Processing
     And the current state data is:
     """
     {
-        "thing": "blue"
+        "product": {
+            "details": {
+                "color": "blue",
+                "size": "small",
+                "material": "cotton",
+                "quantity": "24"
+            },
+            "availability": "in stock",
+            "sku": "2317",
+            "cost": "$23"
     }
     """
     When the state machine executes
-    Then the next state is "EndState"
-    When the state machine executes
-    Then the execution ended
-    And the execution succeeded
+    Then the next state is "MatchState"
 
   Scenario: The Choice type supports OutputPath
     Given a state machine defined by:
