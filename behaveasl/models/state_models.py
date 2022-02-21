@@ -130,6 +130,7 @@ class TaskState(AbstractStateModel):
 
         return sr
 
+
 class ChoiceSelectionPhase(AbstractPhase):
     def __init__(self, state_details: dict):
         self._next_state = None
@@ -169,16 +170,18 @@ class ChoiceSelectionPhase(AbstractPhase):
         for choice in self._choices:
             # Call evaluate on the choice instance, which will return True or False
             if (
-                choice.evaluate(state_input=state_input, 
-                phase_input=phase_input,
-                sr=sr, 
-                execution=execution)
+                choice.evaluate(
+                    state_input=state_input,
+                    phase_input=phase_input,
+                    sr=sr,
+                    execution=execution,
+                )
                 == True
             ):
                 # If 2 choices match, we choose the first one
                 sr.next_state = choice._next_state
                 # Choice does not modify phase input currently
-                return phase_input 
+                return phase_input
         # If we still have not found a matching choice, and we have a default, use it
         if self._next_state is None:
             if self._default_next_state is not None:
@@ -196,6 +199,7 @@ class ChoiceSelectionPhase(AbstractPhase):
                 # Choice does not modify phase input currently
                 return phase_input
 
+
 class ChoiceState(AbstractStateModel):
     def __init__(self, state_name: str, state_details: dict, **kwargs):
         self._phases = []
@@ -212,17 +216,19 @@ class ChoiceState(AbstractStateModel):
         sr = StepResult()
         current_data = copy.deepcopy(state_input)
 
-        # Phase processing    
+        # Phase processing
         for phase in self._phases:
-            current_data = phase.execute(state_input=state_input, 
-            phase_input=current_data, 
-            sr=sr, 
-            execution=execution)
+            current_data = phase.execute(
+                state_input=state_input,
+                phase_input=current_data,
+                sr=sr,
+                execution=execution,
+            )
             # Not sure what the data is supposed to look like here and how
-            # I'm supposed to set the self._next_state in the 
+            # I'm supposed to set the self._next_state in the
             # phase.execute method if I'm not passing that variable somehow
         sr.result_data = current_data
-        
+
         # sr.next_state gets set in the execute phase for ChoiceSelection
         if sr.next_state is not None:
             self._next_state = sr.next_state

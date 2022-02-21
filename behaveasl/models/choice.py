@@ -5,7 +5,6 @@ from behaveasl.models.state_phases import Path
 from behaveasl.models.exceptions import StatesRuntimeException
 
 
-
 class Choice:
     def __init__(self, variable, evaluation_type, evaluation_value, next_state):
         self._variable = variable
@@ -18,11 +17,11 @@ class Choice:
 
     def evaluate(self, state_input, phase_input, sr, execution):
         # Shortcut evaluation for 'IsPresent' here
-        if self._evaluation_type == 'IsPresent':
+        if self._evaluation_type == "IsPresent":
             return self._is_present(
                 state_input=state_input,
                 phase_input=phase_input,
-                )
+            )
         variable_path = Path(result_path=self._variable)
         if self._evaluation_type[-4:] == "Path":
             evaluation_path = Path(result_path=self._evaluation_value)

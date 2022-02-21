@@ -106,7 +106,9 @@ def then_next_state(context, name):
     try:
         assert context.execution.last_step_result.next_state == name
     except AssertionError:
-        print(f'Expected next state of: {name} - received: {context.execution.last_step_result.next_state}')
+        print(
+            f"Expected next state of: {name} - received: {context.execution.last_step_result.next_state}"
+        )
         raise
 
 
