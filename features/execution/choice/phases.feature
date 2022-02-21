@@ -86,11 +86,12 @@ Feature: The Choice type supports Phases (InputPath, Parameters, and OutputPath)
                 "color": "blue",
                 "size": "small",
                 "material": "cotton",
-                "quantity": "24"
+                "quantity": 24
             },
             "availability": "in stock",
             "sku": "2317",
             "cost": "$23"
+        }
     }
     """
     When the state machine executes
