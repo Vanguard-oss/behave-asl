@@ -13,7 +13,7 @@ Feature: The Choice type supports Phases (InputPath, Parameters, and OutputPath)
                     {
                         "Variable": "$.thing",
                         "StringEquals": "red",
-                        "Next": "EndState"
+                        "Next": "MatchState"
                     }
                 ],
                 "Default": "DefaultState"
@@ -62,7 +62,7 @@ Feature: The Choice type supports Phases (InputPath, Parameters, and OutputPath)
                     {
                         "Variable": "$.product_details.size",
                         "StringEquals": "small",
-                        "Next": "EndState"
+                        "Next": "MatchState"
                     }
                 ],
                 "Default": "DefaultState"
@@ -115,7 +115,7 @@ Feature: The Choice type supports Phases (InputPath, Parameters, and OutputPath)
                     {
                         "Variable": "$.product.details.size",
                         "StringEquals": "small",
-                        "Next": "EndState"
+                        "Next": "MatchState"
                     }
                 ],
                 "Default": "DefaultState"
