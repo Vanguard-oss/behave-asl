@@ -94,8 +94,6 @@ class Choice:
         pass
 
     def _not_comparator(self, actual_value):  # Not is a reserved word in Python
-        # self._evaluation_type will determine what function to call
-        # return logical not
         pass
 
     def _or_comparator(self, actual_value):
