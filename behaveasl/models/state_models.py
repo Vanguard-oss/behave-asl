@@ -209,7 +209,6 @@ class ChoiceState(AbstractStateModel):
         self._phases.append(ChoiceSelectionPhase(state_details))
         self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
         self.state_name = state_name
-        # self._next_state = None #
 
     def execute(self, state_input, execution):
         # TODO: implement
@@ -224,16 +223,12 @@ class ChoiceState(AbstractStateModel):
                 sr=sr,
                 execution=execution,
             )
-            # Not sure what the data is supposed to look like here and how
-            # I'm supposed to set the self._next_state in the
-            # phase.execute method if I'm not passing that variable somehow
+            # Note this is not the same way the other States do this
         sr.result_data = current_data
 
         # sr.next_state gets set in the execute phase for ChoiceSelection
         if sr.next_state is not None:
             self._next_state = sr.next_state
-        # if self._next_state is not None:
-        #     sr.next_state = self._next_state
 
         return sr
 
