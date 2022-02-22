@@ -131,14 +131,12 @@ class TaskState(AbstractStateModel):
         return sr
 
 
-class ChoiceState(AbstractStateModel):
-    def __init__(self, state_name: str, state_details: dict, **kwargs):
-        self.state_name = state_name
-        self._choices = []
+class ChoiceSelectionPhase(AbstractPhase):
+    def __init__(self, state_details: dict):
         self._next_state = None
         # The set of Choices can also have a "Default" (if nothing matches) but is not required
         self._default_next_state = state_details.get("Default", None)
-
+        self._choices = []
         # For choice in choice_list, create an instance of Choice and add it to the list
         for choice in state_details["Choices"]:
             # Each Choice *must* have a "Next" field
@@ -166,33 +164,30 @@ class ChoiceState(AbstractStateModel):
                 )
             )
 
-    def execute(self, state_input, execution):
-        # TODO: implement
-        sr = StepResult()
-        current_data = copy.deepcopy(
-            state_input
-        )  # TODO: determine if the data input to a Choice continues on
-
-        # TODO: determine if Choice states also apply the phases that other states do
-        # for phase in self._phases:
-        #     current_data = phase.execute(state_input, current_data, sr, execution)
-        # sr.result_data = current_data
-
+    def execute(self, state_input, phase_input, sr: StepResult, execution):
         # Given the state input, we need to try to find matching Choice(s)
         # matching_choices = filter(self.apply_rules, self._choices) # Can probably do this with a filter ultimately
         for choice in self._choices:
             # Call evaluate on the choice instance, which will return True or False
             if (
-                choice.evaluate(state_input=state_input, sr=sr, execution=execution)
+                choice.evaluate(
+                    state_input=state_input,
+                    phase_input=phase_input,
+                    sr=sr,
+                    execution=execution,
+                )
                 == True
             ):
                 # If 2 choices match, we choose the first one
-                self._next_state = choice._next_state
-                break
+                sr.next_state = choice._next_state
+                # Choice does not modify phase input currently
+                return phase_input
         # If we still have not found a matching choice, and we have a default, use it
         if self._next_state is None:
             if self._default_next_state is not None:
-                self._next_state = self._default_next_state
+                sr.next_state = self._default_next_state
+                # Choice does not modify phase input currently
+                return phase_input
                 # If we have NO matching Choices and no Default, throw an error, set StepResult w/failed + cause + error
             else:
                 # Execution does not end because Choice states can't end an execution on their own
@@ -200,8 +195,40 @@ class ChoiceState(AbstractStateModel):
                 # TODO: set error and cause correctly
                 sr.error = "No match found"
                 sr.cause = "No match found"
-        if self._next_state is not None:
-            sr.next_state = self._next_state
+                sr.next_state = None
+                # Choice does not modify phase input currently
+                return phase_input
+
+
+class ChoiceState(AbstractStateModel):
+    def __init__(self, state_name: str, state_details: dict, **kwargs):
+        self._phases = []
+        self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
+        if "Parameters" in state_details:
+            self._phases.append(ParametersPhase(state_details["Parameters"]))
+        self._phases.append(ChoiceSelectionPhase(state_details))
+        self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
+        self.state_name = state_name
+
+    def execute(self, state_input, execution):
+        # TODO: implement
+        sr = StepResult()
+        current_data = copy.deepcopy(state_input)
+
+        # Phase processing
+        for phase in self._phases:
+            current_data = phase.execute(
+                state_input=state_input,
+                phase_input=current_data,
+                sr=sr,
+                execution=execution,
+            )
+            # Note this is not the same way the other States do this
+        sr.result_data = current_data
+
+        # sr.next_state gets set in the execute phase for ChoiceSelection
+        if sr.next_state is not None:
+            self._next_state = sr.next_state
 
         return sr
 

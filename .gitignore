@@ -3,3 +3,4 @@
 behave_asl.egg-info/
 venv/
 **.ipynb
+.hypothesis/

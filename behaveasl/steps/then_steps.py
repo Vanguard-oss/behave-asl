@@ -103,7 +103,13 @@ def then_full_match(context):
 @then('the next state is "{name}"')
 def then_next_state(context, name):
     assert not context.execution.last_step_result.end_execution
-    assert context.execution.last_step_result.next_state == name
+    try:
+        assert context.execution.last_step_result.next_state == name
+    except AssertionError:
+        print(
+            f"Expected next state of: {name} - received: {context.execution.last_step_result.next_state}"
+        )
+        raise
 
 
 @then("the execution ended")
