@@ -44,13 +44,19 @@ class ResultPathPhase(AbstractPhase):
     def __init__(self, result_path: str = "$", **kwargs):
         super(ResultPathPhase, self).__init__(**kwargs)
         self._path = result_path
-        self._expr = jsonpath.get_instance(result_path)
+        self._expr = None if result_path is None else jsonpath.get_instance(result_path)
         self._log = logging.getLogger("behaveasl.ResultPathPhase")
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
         # jsonpath-ng doesn't seem to handle the '$' copy the same way AWS does
         if self._path == "$":
             phase_output = phase_input
+        elif self._path is None:
+            # If you set ResultPath to null, it will pass the original input to the output.
+            # Using "ResultPath": null, the state's input payload will be copied directly
+            # to the output, with no regard for the result.
+            # https://docs.aws.amazon.com/step-functions/latest/dg/input-output-resultpath.html
+            phase_output = copy.deepcopy(state_input)
         else:
             phase_output = copy.deepcopy(state_input)
             self._expr.update_or_create(phase_output, phase_input)
