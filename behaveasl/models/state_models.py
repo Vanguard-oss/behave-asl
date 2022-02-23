@@ -148,21 +148,21 @@ class ChoiceSelectionPhase(AbstractPhase):
             # TODO: deal with Boolean Choices like Or/And where there will be multiple conditions
             # They will be recognizable either by the "And"/"Or"/etc or by their list type
             # If we have one of those, we need sub-Choices (recurse)
+            if "Variable" in choice:
+                # To get the evaluation type, we need to find the key that isn't 'Variable' or 'Next'
+                # the remaining key should be the evaluation type and value
+                evaluation_type = list(
+                    filter(lambda x: x not in ["Variable", "Next"], choice.keys())
+                )[0]
 
-            # To get the evaluation type, we need to find the key that isn't 'Variable' or 'Next'
-            # the remaining key should be the evaluation type and value
-            evaluation_type = list(
-                filter(lambda x: x not in ["Variable", "Next"], choice.keys())
-            )[0]
-
-            self._choices.append(
-                Choice(
-                    variable=choice["Variable"],
-                    evaluation_type=evaluation_type,
-                    evaluation_value=choice[evaluation_type],
-                    next_state=choice["Next"],
+                self._choices.append(
+                    Choice(
+                        variable=choice["Variable"],
+                        evaluation_type=evaluation_type,
+                        evaluation_value=choice[evaluation_type],
+                        next_state=choice["Next"],
+                    )
                 )
-            )
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
         # Given the state input, we need to try to find matching Choice(s)

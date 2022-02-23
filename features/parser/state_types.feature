@@ -77,6 +77,37 @@ Feature: Perform sanity checks against the parser
     Then a "StateMachineModel" is created
     And the "FirstState" step is a "ChoiceState" object
 
+  Scenario: State with Type=Choice with nested choices
+    Given a state machine defined by:
+    """
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Choice",
+                "Choices": [
+                    {
+                        "And": {
+                            "Variable": "$.value",
+                            "NumericEquals": 0,
+                            "Next": "FailState"
+                        },
+                        "Next": "EndState"
+                    }
+                ]
+            },
+            "EndState": {
+                "Type": "Pass",
+                "Result": "end",
+                "End": true
+            }
+        }
+    }
+    """
+    When the parser runs
+    Then a "StateMachineModel" is created
+    And the "FirstState" step is a "ChoiceState" object
+
   Scenario: State with Type=Wait
     Given a state machine defined by:
     """
