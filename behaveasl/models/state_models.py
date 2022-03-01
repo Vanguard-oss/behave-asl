@@ -433,6 +433,7 @@ class MapMockPhase(AbstractPhase):
         self._phase_input = phase_input
         self._sr = sr
         self._execution = execution
+        print(phase_input)
         return list(map(self.execute_single, enumerate(phase_input)))
 
     def execute_single(self, input):
@@ -455,9 +456,14 @@ class MapMockPhase(AbstractPhase):
 
         mock_key = json.dumps(iteration_value, sort_keys=True)
         if mock_key in self._execution.resource_response_mocks._map.keys():
-            return self._execution.resource_response_mocks._map[mock_key]._response
+            print(f"Map: {self._execution.resource_response_mocks._map}")
+            return self._execution.resource_response_mocks._map[mock_key].execute(
+                mock_key, ""
+            )
         elif "unknown" in self._execution.resource_response_mocks._map.keys():
-            return self._execution.resource_response_mocks._map["unknown"]._response
+            return self._execution.resource_response_mocks._map["unknown"].execute(
+                "unknown", ""
+            )
         else:
             raise KeyError
 
