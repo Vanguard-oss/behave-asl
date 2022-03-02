@@ -455,9 +455,13 @@ class MapMockPhase(AbstractPhase):
 
         mock_key = json.dumps(iteration_value, sort_keys=True)
         if mock_key in self._execution.resource_response_mocks._map.keys():
-            return self._execution.resource_response_mocks._map[mock_key]._response
+            return self._execution.resource_response_mocks._map[mock_key].execute(
+                mock_key, ""
+            )
         elif "unknown" in self._execution.resource_response_mocks._map.keys():
-            return self._execution.resource_response_mocks._map["unknown"]._response
+            return self._execution.resource_response_mocks._map["unknown"].execute(
+                "unknown", ""
+            )
         else:
             raise KeyError
 

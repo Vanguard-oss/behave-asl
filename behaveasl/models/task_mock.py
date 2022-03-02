@@ -46,7 +46,12 @@ class MockList(AbstractMock):
         self._list = []
 
     def execute(self, resource_name: str, resource_input):
-        m = self._list.pop(0)
+        # TODO: dynamically set should_pop for error handling
+        should_pop = False
+        if should_pop:
+            m = self._list.pop(0)
+        else:
+            m = self._list[0]
         return m.execute(resource_name, resource_input)
 
     def add_mock(self, obj):
@@ -64,11 +69,6 @@ class ResourceMockMap(AbstractMock):
         return self._map[resource_name].execute(resource_name, resource_input)
 
     def add_mock(self, resource_name, obj):
-        """Add a mock for a specific resource"""
-        if resource_name not in self._map:
-            self._map[resource_name] = obj
-
-    def add_mock_list(self, resource_name, obj):
         """Add a mock for a specific resource"""
         if resource_name not in self._map:
             self._map[resource_name] = MockList()

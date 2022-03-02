@@ -41,23 +41,23 @@ def given_set_execution_input(context):
 
 @given(u'the resource "{resource}" will return')
 def given_resource_will_return(context, resource):
-    context.execution.resource_response_mocks.add_mock_list(
+    context.execution.resource_response_mocks.add_mock(
         resource, StaticResponse(json.loads(context.text))
     )
 
 
 @given(u'the resource "{resource}" will be called with any parameters and return')
 def given_resource_any_param_will_return(context, resource):
-    context.execution.resource_response_mocks.add_mock_list(
+    context.execution.resource_response_mocks.add_mock(
         resource, StaticResponse(json.loads(context.text))
     )
-    context.execution.resource_expectations.add_mock_list(resource, AnyParameters())
+    context.execution.resource_expectations.add_mock(resource, AnyParameters())
 
 
 @given(u'the resource "{resource}" will be called with')
 @given(u'the state "{resource}" will be called with')
 def given_resource_expect_param(context, resource):
-    context.execution.resource_expectations.add_mock_list(
+    context.execution.resource_expectations.add_mock(
         resource, AssertParameters(context.text)
     )
 
