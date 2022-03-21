@@ -22,7 +22,7 @@ def assert_json_matches(expected: str, actual: dict):
     if canonical_expected != canonical_actual:
         # Print out the values to make it easier to identify what the
         # difference is between the values
-        LOG.warn("Exepcted: " + canonical_expected)
+        LOG.warn("Expected: " + canonical_expected)
         LOG.warn("Actual: " + canonical_actual)
 
         # Perform a "diff" to try and see the difference
