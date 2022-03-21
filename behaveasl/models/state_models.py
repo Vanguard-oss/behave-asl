@@ -1,6 +1,7 @@
 import copy
 import json
 import logging
+from unittest import mock
 
 from behaveasl.expr_eval import replace_expression
 from behaveasl.models.abstract_phase import AbstractPhase
@@ -453,10 +454,29 @@ class MapMockPhase(AbstractPhase):
                 self._state_input, inp_phase_output, self._sr, self._execution
             )
 
-        mock_key = json.dumps(iteration_value, sort_keys=True)
-        if mock_key in self._execution.resource_response_mocks._map.keys():
-            return self._execution.resource_response_mocks._map[mock_key].execute(
-                mock_key, ""
+        if isinstance(iteration_value, dict):
+            mock_value = json.dumps(iteration_value, sort_keys=True)
+        else:
+            mock_value = iteration_value
+
+        shared_key = ""
+        for k in list(self._execution.resource_expectations._map.keys()):
+            exec_result = self._execution.resource_expectations.execute(
+                k, self._phase_input
+            )
+            try:
+                sorted = json.dumps(json.loads(exec_result), sort_keys=True)
+                if sorted == mock_value:
+                    shared_key = k
+                    break
+            except:
+                if exec_result == mock_value:
+                    shared_key = k
+                    break
+
+        if shared_key:
+            return self._execution.resource_response_mocks.execute(
+                shared_key, self._phase_input
             )
         elif "unknown" in self._execution.resource_response_mocks._map.keys():
             return self._execution.resource_response_mocks._map["unknown"].execute(

@@ -103,7 +103,7 @@ Feature: The Map state type is supported
                     "States": {
                         "Validate": {
                             "Type": "Task",
-                         "Resource": "arn:aws:lambda:us-east-1:123456789012:function:ship-val",
+                            "Resource": "arn:aws:lambda:us-east-1:123456789012:function:ship-val",
                             "End": true
                         }
                     }
@@ -124,20 +124,41 @@ Feature: The Map state type is supported
       { "prod": "S39", "dest-code": 9511, "quantity": 40 },
       { "prod": "R31", "dest-code": 9833, "quantity": 12 },
       { "prod": "R40", "dest-code": 9860, "quantity": 887 },
-      { "prod": "R40", "dest-code": 9511, "quantity": 1220 }
+      { "prod": "R40", "dest-code": 9511, "quantity": 1220 },
+      "yellow"
     ]
     """
-    And the state "FirstState" will return "blue" for input:
+    And for input "A", the state "FirstState" will be called with:
     """
     { "prod": "R31", "dest-code": 9511, "quantity": 1344 }
     """
-    And the state "FirstState" will return "green" for input:
+    And for input "A", the state "FirstState" will return:
+    """
+    blue
+    """
+    And for input "B", the state "FirstState" will be called with:
     """
     { "prod": "S39", "dest-code": 9511, "quantity": 40 }
     """
-    And the state "FirstState" will return "red" for input:
+    And for input "B", the state "FirstState" will return:
+    """
+    green
+    """
+    And for input "C", the state "FirstState" will be called with:
     """
     { "prod": "R31", "dest-code": 9833, "quantity": 12 }
+    """
+    And for input "C", the state "FirstState" will return:
+    """
+    red
+    """
+    And for input "D", the state "FirstState" will be called with:
+    """
+    yellow
+    """
+    And for input "D", the state "FirstState" will return:
+    """
+    orange
     """
     And the state "FirstState" will return "unknown" when invoked with any unknown parameters
     When the state machine executes
@@ -148,6 +169,7 @@ Feature: The Map state type is supported
       "green",
       "red",
       "unknown",
-      "unknown"
+      "unknown",
+      "orange"
     ]
     """
