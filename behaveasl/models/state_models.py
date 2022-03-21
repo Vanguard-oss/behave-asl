@@ -1,7 +1,6 @@
 import copy
 import json
 import logging
-from unittest import mock
 
 from behaveasl.expr_eval import replace_expression
 from behaveasl.models.abstract_phase import AbstractPhase
