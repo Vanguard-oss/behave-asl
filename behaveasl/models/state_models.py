@@ -349,16 +349,28 @@ class ParallelMockPhase(AbstractPhase):
         output = []
         for machine in self._parallel_state_machines:
             machine_hash = json.dumps(machine, sort_keys=True)
-            resp = execution.resource_response_mocks.execute(machine_hash, phase_input)
+
+            shared_key = ""
+            for k in list(execution.resource_expectations._map.keys()):
+                exec_result = execution.resource_expectations.execute(k, phase_input)
+                try:
+                    sorted = json.dumps(json.loads(exec_result), sort_keys=True)
+                    if sorted == machine_hash:
+                        shared_key = k
+                        break
+                except:
+                    if exec_result == machine_hash:
+                        shared_key = k
+                        break
+            if shared_key:
+                resp = execution.resource_response_mocks.execute(
+                    shared_key, phase_input
+                )
+            else:
+                raise KeyError
             output.append(resp)
 
         return output
-
-    def execute_single(self, machine, phase_input, execution):
-        machine_hash = json.dumps(machine, sort_keys=True)
-        resp = execution.resource_response_mocks.execute(machine_hash, phase_input)
-        self._log.debug(f"'{machine_hash}' returned '{resp}'")
-        return resp
 
 
 class ParallelState(AbstractStateModel):
