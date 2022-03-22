@@ -38,7 +38,7 @@ Feature: The Parallel state type is supported
       }
     }
     """
-    And the state "LookupAddress" will return "123 Unit Test Street" for input
+    And for input "A", the state "LookupAddress" will be called with
     """
     {
       "StartAt": "LookupAddress",
@@ -50,7 +50,11 @@ Feature: The Parallel state type is supported
       }
     }
     """
-    And the state "LookupPhone" will return "8675309" for input
+    And for input "A", the state "LookupAddress" will return
+    """
+    123 Unit Test Street
+    """
+    And for input "B", the state "LookupPhone" will be called with
     """
     {
       "StartAt": "LookupPhone",
@@ -62,12 +66,20 @@ Feature: The Parallel state type is supported
       }
     }
     """
+    And for input "B", the state "LookupPhone" will return JSON:
+    """
+    {
+      "number": 8675309
+    }
+    """
     When the state machine executes
     Then the execution ended
     And the execution succeeded
     And the step result data path "$" is a list
-    And the step result data path "$" contains "8675309"
-    And the step result data path "$" contains "123 Unit Test Street"
+    And the step result data is
+    """
+    ["123 Unit Test Street", {"number": 8675309}]
+    """
 
   Scenario: The Parallel type can set the next state
     Given a state machine defined by:
@@ -107,7 +119,7 @@ Feature: The Parallel state type is supported
       }
     }
     """
-    And the state "LookupAddress" will return "123 Unit Test Street" for input
+    And for input "A", the state "LookupAddress" will be called with
     """
     {
       "StartAt": "LookupAddress",
@@ -119,7 +131,11 @@ Feature: The Parallel state type is supported
       }
     }
     """
-    And the state "LookupPhone" will return "8675309" for input
+    And for input "A", the state "LookupAddress" will return
+    """
+    123 Unit Test Street
+    """
+    And for input "B", the state "LookupPhone" will be called with
     """
     {
       "StartAt": "LookupPhone",
@@ -130,6 +146,10 @@ Feature: The Parallel state type is supported
         }
       }
     }
+    """
+    And for input "B", the state "LookupPhone" will return
+    """
+    8675309
     """
     When the state machine executes
     Then the next state is "EndState"

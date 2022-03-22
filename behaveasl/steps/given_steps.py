@@ -77,3 +77,21 @@ def given_map_state_unknown_params(context, resource, mock_return):
     context.execution.resource_response_mocks.add_mock(
         "unknown", StaticResponse(mock_return)
     )
+
+
+@given(u'for input "{key}", the state "{state}" will be called with')
+def given_for_return(context, key, state):
+    context.execution.resource_expectations.add_mock(key, StaticResponse(context.text))
+
+
+@given(u'for input "{key}", the state "{state}" will return')
+def given_for_return(context, key, state):
+    context.execution.resource_response_mocks.add_mock(
+        key, StaticResponse(context.text)
+    )
+
+@given(u'for input "{key}", the state "{state}" will return JSON')
+def given_for_return(context, key, state):
+    context.execution.resource_response_mocks.add_mock(
+        key, StaticResponse(json.loads(context.text))
+    )

@@ -46,7 +46,7 @@ Feature: The Parallel type can filter results by using ResultSelector
       "Hello": "There"
     }
     """
-    And the state "LookupAddress" will return "123 Unit Test Street" for input
+    And for input "A", the state "LookupAddress" will be called with
     """
     {
       "StartAt": "LookupAddress",
@@ -58,7 +58,11 @@ Feature: The Parallel type can filter results by using ResultSelector
       }
     }
     """
-    And the state "LookupPhone" will return "8675309" for input
+    And for input "A", the state "LookupAddress" will return
+    """
+    123 Unit Test Street
+    """
+    And for input "B", the state "LookupPhone" will be called with
     """
     {
       "StartAt": "LookupPhone",
@@ -69,6 +73,10 @@ Feature: The Parallel type can filter results by using ResultSelector
         }
       }
     }
+    """
+    And for input "B", the state "LookupPhone" will return
+    """
+    8675309
     """
     When the state machine executes
     Then the execution ended
@@ -127,7 +135,7 @@ Feature: The Parallel type can filter results by using ResultSelector
       "Hello": "There"
     }
     """
-    And the state "LookupAddress" will return "123 Unit Test Street" for input
+    And for input "A", the state "LookupAddress" will be called with
     """
     {
       "StartAt": "LookupAddress",
@@ -139,7 +147,11 @@ Feature: The Parallel type can filter results by using ResultSelector
       }
     }
     """
-    And the state "LookupPhone" will return "8675309" for input
+    And for input "A", the state "LookupAddress" will return
+    """
+    123 Unit Test Street
+    """
+    And for input "B", the state "LookupPhone" will be called with
     """
     {
       "StartAt": "LookupPhone",
@@ -150,6 +162,10 @@ Feature: The Parallel type can filter results by using ResultSelector
         }
       }
     }
+    """
+    And for input "B", the state "LookupPhone" will return
+    """
+    8675309
     """
     When the state machine executes
     Then the execution ended
