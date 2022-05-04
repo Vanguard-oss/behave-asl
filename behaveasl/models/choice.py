@@ -1,8 +1,8 @@
 import re
 from datetime import datetime
 
-from behaveasl.models.state_phases import Path
 from behaveasl.models.exceptions import StatesRuntimeException
+from behaveasl.models.state_phases import Path
 
 
 class Choice:

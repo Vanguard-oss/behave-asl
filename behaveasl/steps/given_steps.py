@@ -1,6 +1,7 @@
 import json
 
 from behave import given
+
 from behaveasl import parser
 from behaveasl.models.execution import Execution
 from behaveasl.models.task_mock import (
@@ -16,7 +17,7 @@ def create_state_machine(context):
     context.execution = Execution(state_machine=context.state_machine)
 
 
-@given(u'a state machine defined in "{filename}"')
+@given('a state machine defined in "{filename}"')
 def given_load_definition_from_file(context, filename):
     with open(filename, "r") as f:
         context.definition_text = f.read()
@@ -24,7 +25,7 @@ def given_load_definition_from_file(context, filename):
     create_state_machine(context)
 
 
-@given(u'the state machine is current at the state "{name}"')
+@given('the state machine is current at the state "{name}"')
 def given_set_current_state(context, name):
     context.execution.set_current_state_name(name)
 
@@ -39,14 +40,14 @@ def given_set_execution_input(context):
     context.execution.set_execution_input_data(json.loads(context.text))
 
 
-@given(u'the resource "{resource}" will return')
+@given('the resource "{resource}" will return')
 def given_resource_will_return(context, resource):
     context.execution.resource_response_mocks.add_mock(
         resource, StaticResponse(json.loads(context.text))
     )
 
 
-@given(u'the resource "{resource}" will be called with any parameters and return')
+@given('the resource "{resource}" will be called with any parameters and return')
 def given_resource_any_param_will_return(context, resource):
     context.execution.resource_response_mocks.add_mock(
         resource, StaticResponse(json.loads(context.text))
@@ -54,15 +55,15 @@ def given_resource_any_param_will_return(context, resource):
     context.execution.resource_expectations.add_mock(resource, AnyParameters())
 
 
-@given(u'the resource "{resource}" will be called with')
-@given(u'the state "{resource}" will be called with')
+@given('the resource "{resource}" will be called with')
+@given('the state "{resource}" will be called with')
 def given_resource_expect_param(context, resource):
     context.execution.resource_expectations.add_mock(
         resource, AssertParameters(context.text)
     )
 
 
-@given(u'the state "{resource}" will return "{value}" for input')
+@given('the state "{resource}" will return "{value}" for input')
 def given_map_state_will_return(context, resource, value):
     context.execution.resource_response_mocks.add_mock(
         json.dumps(json.loads(context.text), sort_keys=True),
@@ -71,7 +72,7 @@ def given_map_state_will_return(context, resource, value):
 
 
 @given(
-    u'the state "{resource}" will return "{mock_return}" when invoked with any unknown parameters'
+    'the state "{resource}" will return "{mock_return}" when invoked with any unknown parameters'
 )
 def given_map_state_unknown_params(context, resource, mock_return):
     context.execution.resource_response_mocks.add_mock(
@@ -79,18 +80,19 @@ def given_map_state_unknown_params(context, resource, mock_return):
     )
 
 
-@given(u'for input "{key}", the state "{state}" will be called with')
+@given('for input "{key}", the state "{state}" will be called with')
 def given_for_return(context, key, state):
     context.execution.resource_expectations.add_mock(key, StaticResponse(context.text))
 
 
-@given(u'for input "{key}", the state "{state}" will return')
+@given('for input "{key}", the state "{state}" will return')
 def given_for_return(context, key, state):
     context.execution.resource_response_mocks.add_mock(
         key, StaticResponse(context.text)
     )
 
-@given(u'for input "{key}", the state "{state}" will return JSON')
+
+@given('for input "{key}", the state "{state}" will return JSON')
 def given_for_return(context, key, state):
     context.execution.resource_response_mocks.add_mock(
         key, StaticResponse(json.loads(context.text))

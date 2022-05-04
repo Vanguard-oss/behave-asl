@@ -1,6 +1,7 @@
 import json
 
 import yaml
+
 from behaveasl.models.state_machine import StateMachineModel
 
 
