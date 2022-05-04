@@ -1,5 +1,5 @@
-import logging
 import json
+import logging
 
 from behave import then
 
@@ -104,7 +104,13 @@ def then_full_match(context):
 @then('the next state is "{name}"')
 def then_next_state(context, name):
     assert not context.execution.last_step_result.end_execution
-    assert context.execution.last_step_result.next_state == name
+    try:
+        assert context.execution.last_step_result.next_state == name
+    except AssertionError:
+        print(
+            f"Expected next state of: {name} - received: {context.execution.last_step_result.next_state}"
+        )
+        raise
 
 
 @then("the execution ended")
@@ -158,7 +164,15 @@ def then_waited_until_timestamp(context, timestamp):
 
 
 @then(
-    'the json output of "{state_name}" is'
+    'the JSON output of "{state_name}" is'
 )  # this will precede an array/json response
 def then_output_is_json(context, state_name):
     assert context.execution.last_step_result.result_data == json.loads(context.text)
+
+
+@then('the sorted JSON output of "{state_name}" is')
+def then_sorted_json(context, state_name):
+    assert (
+        context.execution.last_step_result.result_data.sort()
+        == json.loads(context.text).sort()
+    )

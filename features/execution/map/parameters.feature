@@ -1,6 +1,6 @@
 Feature: The Map state supports the Parameters phase
 
-Scenario: The Map type can use Parameters
+  Scenario: The Map type can use Parameters
     Given a state machine defined by:
     """
     {
@@ -49,7 +49,7 @@ Scenario: The Map type can use Parameters
         }
     }
     """
-    And the map state "FirstState" will return "blue" for input:
+    And for input "A", the state "FirstState" will be called with:
     """
     {
         "parcel": {
@@ -60,7 +60,11 @@ Scenario: The Map type can use Parameters
         "courier": "UQS"
     }
     """
-    And the map state "FirstState" will return "green" for input:
+    And for input "A", the state "FirstState" will return:
+    """
+    blue
+    """
+    And for input "B", the state "FirstState" will be called with:
     """
     {
         "parcel": {
@@ -71,7 +75,11 @@ Scenario: The Map type can use Parameters
         "courier": "UQS"
     }
     """
-    And the map state "FirstState" will return "red" for input:
+    And for input "B", the state "FirstState" will return:
+    """
+    green
+    """
+    And for input "C", the state "FirstState" will be called with:
     """
     {
         "parcel": {
@@ -82,14 +90,18 @@ Scenario: The Map type can use Parameters
         "courier": "UQS"
     }
     """
-    And the map state "FirstState" will return "unknown" when invoked with any unknown parameters
+    And for input "C", the state "FirstState" will return JSON:
+    """
+    {"color": "red"}
+    """
+    And the state "FirstState" will return "unknown" when invoked with any unknown parameters
     When the state machine executes
-    Then the json output of "FirstState" is
+    Then the JSON output of "FirstState" is
     """
     [
       "blue",
       "green",
-      "red",
+      {"color": "red"},
       "unknown",
       "unknown"
     ]

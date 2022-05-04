@@ -1,6 +1,6 @@
 Feature: The Map type can filter results by using OutputPath
 
-    Scenario: The Map type can use "$" in the OutputPath to copy everything
+  Scenario: The Map type can use "$" in the OutputPath to copy everything
     Given a state machine defined by:
     """
     {
@@ -46,19 +46,31 @@ Feature: The Map type can filter results by using OutputPath
         }
     }
     """
-    And the map state "FirstState" will return "blue" for input:
+    And for input "A", the state "FirstState" will be called with:
     """
     { "prod": "R31", "dest-code": 9511, "quantity": 1344 }
     """
-    And the map state "FirstState" will return "green" for input:
+    And for input "A", the state "FirstState" will return:
+    """
+    blue
+    """
+    And for input "B", the state "FirstState" will be called with:
     """
     { "prod": "S39", "dest-code": 9511, "quantity": 40 }
     """
-    And the map state "FirstState" will return "red" for input:
+    And for input "B", the state "FirstState" will return:
+    """
+    green
+    """
+    And for input "C", the state "FirstState" will be called with:
     """
     { "prod": "R31", "dest-code": 9833, "quantity": 12 }
     """
-    And the map state "FirstState" will return "unknown" when invoked with any unknown parameters
+    And for input "C", the state "FirstState" will return:
+    """
+    red
+    """
+    And the state "FirstState" will return "unknown" when invoked with any unknown parameters
     When the state machine executes
     Then the next state is "EndState"
     And the step result data path "$.result" is a list
@@ -66,7 +78,7 @@ Feature: The Map type can filter results by using OutputPath
     And the step result data path "$.result" contains "red"
     And the step result data path "$.result" contains "blue"
     And the step result data path "$.result" contains "green"
-    And the json output of "FirstState" is
+    And the JSON output of "FirstState" is
     """
     {
         "ship-date": "2016-03-14T01:59:00Z",
@@ -130,24 +142,35 @@ Feature: The Map type can filter results by using OutputPath
         }
     }
     """
-    And the map state "FirstState" will return "blue" for input:
+    And for input "A", the state "FirstState" will be called with:
     """
     { "prod": "R31", "dest-code": 9511, "quantity": 1344 }
     """
-    And the map state "FirstState" will return "green" for input:
+    And for input "A", the state "FirstState" will return:
+    """
+    blue
+    """
+    And for input "B", the state "FirstState" will be called with:
     """
     { "prod": "S39", "dest-code": 9511, "quantity": 40 }
     """
-    And the map state "FirstState" will return "red" for input:
+    And for input "B", the state "FirstState" will return:
+    """
+    green
+    """
+    And for input "C", the state "FirstState" will be called with:
     """
     { "prod": "R31", "dest-code": 9833, "quantity": 12 }
     """
-    And the map state "FirstState" will return "unknown" when invoked with any unknown parameters
+    And for input "C", the state "FirstState" will return:
+    """
+    red
+    """
+    And the state "FirstState" will return "unknown" when invoked with any unknown parameters
     When the state machine executes
     Then the next state is "EndState"
     And the step result data path "$.result" is a list
-    
-    And the json output of "FirstState" is
+    And the JSON output of "FirstState" is
     """
     {
         "delivery-partner": "UQS",

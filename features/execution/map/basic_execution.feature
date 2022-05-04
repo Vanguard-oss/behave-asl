@@ -44,7 +44,7 @@ Feature: The Map state type is supported
         }
     ]
     """
-    And the map state "FirstState" will return "unknown" when invoked with any unknown parameters
+    And the state "FirstState" will return "unknown" when invoked with any unknown parameters
     When the state machine executes
     Then the next state is "EndState"
 
@@ -84,13 +84,13 @@ Feature: The Map state type is supported
         }
     ]
     """
-    And the map state "FirstState" will return "unknown" when invoked with any unknown parameters
+    And the state "FirstState" will return "unknown" when invoked with any unknown parameters
     And the state machine is current at the state "FirstState"
     When the state machine executes
     Then the execution ended
     And the execution succeeded
 
-Scenario: The Map type can use a map mock
+  Scenario: The Map type can use a map mock
     Given a state machine defined by:
     """
     {
@@ -103,7 +103,7 @@ Scenario: The Map type can use a map mock
                     "States": {
                         "Validate": {
                             "Type": "Task",
-	                        "Resource": "arn:aws:lambda:us-east-1:123456789012:function:ship-val",
+                            "Resource": "arn:aws:lambda:us-east-1:123456789012:function:ship-val",
                             "End": true
                         }
                     }
@@ -124,31 +124,52 @@ Scenario: The Map type can use a map mock
       { "prod": "S39", "dest-code": 9511, "quantity": 40 },
       { "prod": "R31", "dest-code": 9833, "quantity": 12 },
       { "prod": "R40", "dest-code": 9860, "quantity": 887 },
-      { "prod": "R40", "dest-code": 9511, "quantity": 1220 }
+      { "prod": "R40", "dest-code": 9511, "quantity": 1220 },
+      "yellow"
     ]
     """
-    And the map state "FirstState" will return "blue" for input:
+    And for input "A", the state "FirstState" will be called with:
     """
     { "prod": "R31", "dest-code": 9511, "quantity": 1344 }
     """
-    And the map state "FirstState" will return "green" for input:
+    And for input "A", the state "FirstState" will return:
+    """
+    blue
+    """
+    And for input "B", the state "FirstState" will be called with:
     """
     { "prod": "S39", "dest-code": 9511, "quantity": 40 }
     """
-    And the map state "FirstState" will return "red" for input:
+    And for input "B", the state "FirstState" will return:
+    """
+    green
+    """
+    And for input "C", the state "FirstState" will be called with:
     """
     { "prod": "R31", "dest-code": 9833, "quantity": 12 }
     """
-    And the map state "FirstState" will return "unknown" when invoked with any unknown parameters
+    And for input "C", the state "FirstState" will return:
+    """
+    red
+    """
+    And for input "D", the state "FirstState" will be called with:
+    """
+    yellow
+    """
+    And for input "D", the state "FirstState" will return:
+    """
+    orange
+    """
+    And the state "FirstState" will return "unknown" when invoked with any unknown parameters
     When the state machine executes
-    Then the json output of "FirstState" is
+    Then the JSON output of "FirstState" is
     """
     [
       "blue",
       "green",
       "red",
       "unknown",
-      "unknown"
+      "unknown",
+      "orange"
     ]
     """
-
