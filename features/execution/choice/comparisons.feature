@@ -3,38 +3,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
   # https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-choice-state.html#amazon-states-language-choice-state-rules
   Scenario Outline: The Choice type supports the BooleanEquals operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "BooleanEquals": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": Pass,
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "BooleanEquals": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": Pass,
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -48,39 +48,39 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the BooleanEqualsPath operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "BooleanEqualsPath": "$.mybool",
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "BooleanEqualsPath": "$.mybool",
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_2>,
-        "mybool": <value_1>
-    }
-    """
+      """
+      {
+          "thing": <value_2>,
+          "mybool": <value_1>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -95,38 +95,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the IsBoolean operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "IsBoolean": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "IsBoolean": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -141,38 +141,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the IsNull operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "IsNull": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "IsNull": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -185,38 +185,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the IsNumeric operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "IsNumeric": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "IsNumeric": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -241,36 +241,36 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the IsPresent operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "IsPresent": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "IsPresent": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    <value_2>
-    """
+      """
+      <value_2>
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -284,38 +284,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the IsString operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "IsString": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "IsString": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -333,38 +333,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the IsTimestamp operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "IsTimestamp": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "IsTimestamp": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -385,38 +385,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the NumericEquals operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "NumericEquals": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "NumericEquals": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -435,39 +435,39 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the NumericEqualsPath operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "NumericEqualsPath": "$.myvalue",
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "NumericEqualsPath": "$.myvalue",
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_2>,
-        "myvalue": <value_1>
-    }
-    """
+      """
+      {
+          "thing": <value_2>,
+          "myvalue": <value_1>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -483,38 +483,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the NumericGreaterThan operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "NumericGreaterThan": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "NumericGreaterThan": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -531,39 +531,39 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the NumericGreaterThanPath operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "NumericGreaterThanPath": "$.myvalue",
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "NumericGreaterThanPath": "$.myvalue",
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_1>,
-        "myvalue": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_1>,
+          "myvalue": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -581,38 +581,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the NumericGreaterThanEquals operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "NumericGreaterThanEquals": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "NumericGreaterThanEquals": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -633,39 +633,39 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the NumericGreaterThanEqualsPath
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "NumericGreaterThanEqualsPath": "$.myvalue",
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "NumericGreaterThanEqualsPath": "$.myvalue",
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_1>,
-        "myvalue": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_1>,
+          "myvalue": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -686,38 +686,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the NumericLessThan operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "NumericLessThan": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "NumericLessThan": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -735,39 +735,39 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the NumericLessThanPath operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "NumericLessThanPath": "$.otherthing",
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "NumericLessThanPath": "$.otherthing",
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_1>,
-        "otherthing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_1>,
+          "otherthing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -785,38 +785,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the NumericLessThanEquals operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "NumericLessThanEquals": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "NumericLessThanEquals": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -837,39 +837,39 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the NumericLessThanEqualsPath operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "NumericLessThanEqualsPath": "$.otherthing",
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "NumericLessThanEqualsPath": "$.otherthing",
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_1>,
-        "otherthing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_1>,
+          "otherthing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -890,38 +890,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the StringEquals operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "StringEquals": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "StringEquals": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -943,39 +943,39 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the StringEqualsPath operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "StringEqualsPath": "$.otherthing",
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "StringEqualsPath": "$.otherthing",
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_2>,
-        "otherthing": <value_1>
-    }
-    """
+      """
+      {
+          "thing": <value_2>,
+          "otherthing": <value_1>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -997,38 +997,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the StringGreaterThan operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "StringGreaterThan": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "StringGreaterThan": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -1052,39 +1052,39 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the StringGreaterThanPath operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "StringGreaterThanPath": "$.otherthing",
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "StringGreaterThanPath": "$.otherthing",
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_1>,
-        "otherthing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_1>,
+          "otherthing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -1104,38 +1104,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the StringGreaterThanEquals operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "StringGreaterThanEquals": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "StringGreaterThanEquals": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -1155,40 +1155,40 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the StringGreaterThanEqualsPath operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "StringGreaterThanEqualsPath": "$.otherthing",
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "StringGreaterThanEqualsPath": "$.otherthing",
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
+      """
+      {
 
-        "thing": <value_1>,
-        "otherthing": <value_2>
-    }
-    """
+          "thing": <value_1>,
+          "otherthing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -1208,38 +1208,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the StringLessThan operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "StringLessThan": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "StringLessThan": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -1259,39 +1259,39 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the StringLessThanPath operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "StringLessThanPath": "$.otherthing",
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "StringLessThanPath": "$.otherthing",
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_1>,
-        "otherthing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_1>,
+          "otherthing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -1311,38 +1311,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the StringLessThanEquals operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "StringLessThanEquals": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "StringLessThanEquals": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -1362,39 +1362,39 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the StringLessThanEqualsPath operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "StringLessThanEqualsPath": "$.otherthing",
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "StringLessThanEqualsPath": "$.otherthing",
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_1>,
-        "otherthing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_1>,
+          "otherthing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -1414,38 +1414,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the StringMatches operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.thing",
-                        "StringMatches": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.thing",
+                          "StringMatches": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "thing": <value_2>
-    }
-    """
+      """
+      {
+          "thing": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -1468,38 +1468,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the TimestampEquals operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.timestamp",
-                        "TimestampEquals": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.timestamp",
+                          "TimestampEquals": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "timestamp": <value_2>
-    }
-    """
+      """
+      {
+          "timestamp": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -1517,39 +1517,39 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the TimestampEqualsPath operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.timestamp",
-                        "TimestampEqualsPath": "$.othertimestamp",
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.timestamp",
+                          "TimestampEqualsPath": "$.othertimestamp",
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "timestamp": <value_2>,
-        "othertimestamp": <value_1>
-    }
-    """
+      """
+      {
+          "timestamp": <value_2>,
+          "othertimestamp": <value_1>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -1567,38 +1567,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the TimestampGreaterThan operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.timestamp",
-                        "TimestampGreaterThan": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.timestamp",
+                          "TimestampGreaterThan": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "timestamp": <value_2>
-    }
-    """
+      """
+      {
+          "timestamp": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -1622,39 +1622,39 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the TimestampGreaterThanPath operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.timestamp",
-                        "TimestampGreaterThanPath": "$.othertimestamp",
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.timestamp",
+                          "TimestampGreaterThanPath": "$.othertimestamp",
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "timestamp": <value_1>,
-        "othertimestamp": <value_2>
-    }
-    """
+      """
+      {
+          "timestamp": <value_1>,
+          "othertimestamp": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -1678,38 +1678,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the TimestampGreaterThanEquals operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.timestamp",
-                        "TimestampGreaterThanEquals": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.timestamp",
+                          "TimestampGreaterThanEquals": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "timestamp": <value_2>
-    }
-    """
+      """
+      {
+          "timestamp": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -1733,39 +1733,39 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the TimestampGreaterThanEqualsPath operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.timestamp",
-                        "TimestampGreaterThanEqualsPath": "$.othertimestamp",
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.timestamp",
+                          "TimestampGreaterThanEqualsPath": "$.othertimestamp",
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "timestamp": <value_1>,
-        "othertimestamp": <value_2>
-    }
-    """
+      """
+      {
+          "timestamp": <value_1>,
+          "othertimestamp": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -1789,38 +1789,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the TimestampLessThan operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.timestamp",
-                        "TimestampLessThan": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.timestamp",
+                          "TimestampLessThan": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "timestamp": <value_2>
-    }
-    """
+      """
+      {
+          "timestamp": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -1844,39 +1844,39 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the TimestampLessThanPath operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.timestamp",
-                        "TimestampLessThanPath": "$.othertimestamp",
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.timestamp",
+                          "TimestampLessThanPath": "$.othertimestamp",
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "timestamp": <value_1>,
-        "othertimestamp": <value_2>
-    }
-    """
+      """
+      {
+          "timestamp": <value_1>,
+          "othertimestamp": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -1900,38 +1900,38 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the TimestampLessThanEquals operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.timestamp",
-                        "TimestampLessThanEquals": <value_1>,
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.timestamp",
+                          "TimestampLessThanEquals": <value_1>,
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "timestamp": <value_2>
-    }
-    """
+      """
+      {
+          "timestamp": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 
@@ -1955,39 +1955,39 @@ Feature: The Choice state type supports all operators (Except for And/Not/Or)
 
   Scenario Outline: The Choice type supports the TimestampLessThanEqualsPath operator
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Choice",
-                "Choices": [
-                    {
-                        "Variable": "$.timestamp",
-                        "TimestampLessThanEqualsPath": "$.othertimestamp",
-                        "Next": "MatchState"
-                    }
-                ],
-                "Default": "DefaultState"
-            },
-            "MatchState": {
-                "Type": "Pass",
-                "End": true
-            },
-            "DefaultState": {
-                "Type": "Pass",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Choice",
+                  "Choices": [
+                      {
+                          "Variable": "$.timestamp",
+                          "TimestampLessThanEqualsPath": "$.othertimestamp",
+                          "Next": "MatchState"
+                      }
+                  ],
+                  "Default": "DefaultState"
+              },
+              "MatchState": {
+                  "Type": "Pass",
+                  "End": true
+              },
+              "DefaultState": {
+                  "Type": "Pass",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "timestamp": <value_1>,
-        "othertimestamp": <value_2>
-    }
-    """
+      """
+      {
+          "timestamp": <value_1>,
+          "othertimestamp": <value_2>
+      }
+      """
     When the state machine executes
     Then the next state is "<matched_state>"
 

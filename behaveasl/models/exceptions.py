@@ -30,4 +30,12 @@ class StatesCompileException(Exception):
 
 
 class StatesCatchableException(StatesException):
-    pass
+    """Exception that represents a catchable error"""
+
+    def __init__(self, error: str, cause: str = ""):
+        super(StatesCatchableException, self).__init__(error, cause)
+        self._error = error
+
+    @property
+    def error(self) -> str:
+        return self._error
