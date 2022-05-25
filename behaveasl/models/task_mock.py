@@ -24,7 +24,7 @@ class StaticResponse(AbstractMock):
 
 
 class ErrorResponse(AbstractMock):
-    """Mock the return as an errir response"""
+    """Mock the return as an error response"""
 
     def __init__(self, error):
         self._error = error

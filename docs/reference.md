@@ -234,6 +234,7 @@ Feature: Example feature
     Given a state machine defined in "my-state-machine.asl"
     And the resource "Lambda" will be called with any parameters fail with error "States.Timeout"
     When the state machine executes
+    Then the next state is "FirstState"
 ```
 
 **Notes**
