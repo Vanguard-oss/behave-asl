@@ -188,7 +188,7 @@ Feature: Example feature
 
 - This step is standalone.  It cannot be paired with one of the other mock steps
 
-## Given the resource "name" will be called with any parameters fail with error "error"
+## Given the resource "name" will be called with any parameters and fail with error "error"
 
 Tell the execution environment to mock out a resource to return an error.
 This step will also tell the execution environment that it doesn't matter what
@@ -232,7 +232,7 @@ parameters are used to call the resource.
 Feature: Example feature
   Scenario: Load a state machine from an asl file
     Given a state machine defined in "my-state-machine.asl"
-    And the resource "Lambda" will be called with any parameters fail with error "States.Timeout"
+    And the resource "Lambda" will be called with any parameters and fail with error "States.Timeout"
     When the state machine executes
     Then the next state is "FirstState"
 ```

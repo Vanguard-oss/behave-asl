@@ -57,7 +57,7 @@ def given_resource_any_param_will_return(context, resource):
 
 
 @given(
-    'the resource "{resource}" will be called with any parameters fail with error "{error}"'
+    'the resource "{resource}" will be called with any parameters and fail with error "{error}"'
 )
 def given_resource_any_param_fail(context, resource, error):
     context.execution.resource_response_mocks.add_mock(resource, ErrorResponse(error))

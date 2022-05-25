@@ -22,7 +22,7 @@ Feature: Thas Task can retry a failed state
           }
       }
       """
-    And the resource "Lambda" will be called with any parameters fail with error "States.Timeout"
+    And the resource "Lambda" will be called with any parameters and fail with error "States.Timeout"
     When the state machine executes
     Then the next state is "FirstState"
 
@@ -48,7 +48,7 @@ Feature: Thas Task can retry a failed state
           }
       }
       """
-    And the resource "Lambda" will be called with any parameters fail with error "States.Timeout"
+    And the resource "Lambda" will be called with any parameters and fail with error "States.Timeout"
     When the state machine executes
     Then the next state is "FirstState"
 
@@ -75,7 +75,7 @@ Feature: Thas Task can retry a failed state
           }
       }
       """
-    And the resource "Lambda" will be called with any parameters fail with error "States.Timeout"
+    And the resource "Lambda" will be called with any parameters and fail with error "States.Timeout"
     When the state machine executes
     Then the execution ended
     And the execution failed
