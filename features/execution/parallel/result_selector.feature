@@ -2,82 +2,82 @@ Feature: The Parallel type can filter results by using ResultSelector
 
   Scenario: The Parallel type can use ResultSelector
     Given a state machine defined by:
-    """
-    {
-      "Comment": "Parallel Example.",
-      "StartAt": "LookupCustomerInfo",
-      "States": {
-        "LookupCustomerInfo": {
-          "Type": "Parallel",
-          "OutputPath": "$",
-          "ResultPath": "$.parallel",
-          "ResultSelector": {
-            "Fake": "Address",
-            "Real.$": "$"
-          },
-          "End": true,
-          "Branches": [
-            {
-              "StartAt": "LookupAddress",
-              "States": {
-                "LookupAddress": {
-                  "Type": "Pass",
-                  "End": true
-                }
-              }
+      """
+      {
+        "Comment": "Parallel Example.",
+        "StartAt": "LookupCustomerInfo",
+        "States": {
+          "LookupCustomerInfo": {
+            "Type": "Parallel",
+            "OutputPath": "$",
+            "ResultPath": "$.parallel",
+            "ResultSelector": {
+              "Fake": "Address",
+              "Real.$": "$"
             },
-            {
-              "StartAt": "LookupPhone",
-              "States": {
-                "LookupPhone": {
-                  "Type": "Pass",
-                  "End": true
+            "End": true,
+            "Branches": [
+              {
+                "StartAt": "LookupAddress",
+                "States": {
+                  "LookupAddress": {
+                    "Type": "Pass",
+                    "End": true
+                  }
+                }
+              },
+              {
+                "StartAt": "LookupPhone",
+                "States": {
+                  "LookupPhone": {
+                    "Type": "Pass",
+                    "End": true
+                  }
                 }
               }
-            }
-          ]
+            ]
+          }
         }
       }
-    }
-    """
+      """
     And the execution input is
-    """
-    {
-      "Hello": "There"
-    }
-    """
+      """
+      {
+        "Hello": "There"
+      }
+      """
     And for input "A", the state "LookupAddress" will be called with
-    """
-    {
-      "StartAt": "LookupAddress",
-      "States": {
-        "LookupAddress": {
-          "Type": "Pass",
-          "End": true
+      """
+      {
+        "StartAt": "LookupAddress",
+        "States": {
+          "LookupAddress": {
+            "Type": "Pass",
+            "End": true
+          }
         }
       }
-    }
-    """
+      """
     And for input "A", the state "LookupAddress" will return
-    """
-    123 Unit Test Street
-    """
+      """
+      123 Unit Test Street
+      """
     And for input "B", the state "LookupPhone" will be called with
-    """
-    {
-      "StartAt": "LookupPhone",
-      "States": {
-        "LookupPhone": {
-          "Type": "Pass",
-          "End": true
+      """
+      {
+        "StartAt": "LookupPhone",
+        "States": {
+          "LookupPhone": {
+            "Type": "Pass",
+            "End": true
+          }
         }
       }
-    }
-    """
+      """
     And for input "B", the state "LookupPhone" will return
-    """
-    8675309
-    """
+      """
+      8675309
+      """
     When the state machine executes
     Then the execution ended
     And the execution succeeded
@@ -91,82 +91,82 @@ Feature: The Parallel type can filter results by using ResultSelector
 
   Scenario: The Parallel ResultSelector can pull data from the Context object
     Given a state machine defined by:
-    """
-    {
-      "Comment": "Parallel Example.",
-      "StartAt": "LookupCustomerInfo",
-      "States": {
-        "LookupCustomerInfo": {
-          "Type": "Parallel",
-          "OutputPath": "$",
-          "ResultPath": "$.parallel",
-          "ResultSelector": {
-            "Eid.$": "$$.Execution.Id",
-            "Real.$": "$"
-          },
-          "End": true,
-          "Branches": [
-            {
-              "StartAt": "LookupAddress",
-              "States": {
-                "LookupAddress": {
-                  "Type": "Pass",
-                  "End": true
-                }
-              }
+      """
+      {
+        "Comment": "Parallel Example.",
+        "StartAt": "LookupCustomerInfo",
+        "States": {
+          "LookupCustomerInfo": {
+            "Type": "Parallel",
+            "OutputPath": "$",
+            "ResultPath": "$.parallel",
+            "ResultSelector": {
+              "Eid.$": "$$.Execution.Id",
+              "Real.$": "$"
             },
-            {
-              "StartAt": "LookupPhone",
-              "States": {
-                "LookupPhone": {
-                  "Type": "Pass",
-                  "End": true
+            "End": true,
+            "Branches": [
+              {
+                "StartAt": "LookupAddress",
+                "States": {
+                  "LookupAddress": {
+                    "Type": "Pass",
+                    "End": true
+                  }
+                }
+              },
+              {
+                "StartAt": "LookupPhone",
+                "States": {
+                  "LookupPhone": {
+                    "Type": "Pass",
+                    "End": true
+                  }
                 }
               }
-            }
-          ]
+            ]
+          }
         }
       }
-    }
-    """
+      """
     And the execution input is
-    """
-    {
-      "Hello": "There"
-    }
-    """
+      """
+      {
+        "Hello": "There"
+      }
+      """
     And for input "A", the state "LookupAddress" will be called with
-    """
-    {
-      "StartAt": "LookupAddress",
-      "States": {
-        "LookupAddress": {
-          "Type": "Pass",
-          "End": true
+      """
+      {
+        "StartAt": "LookupAddress",
+        "States": {
+          "LookupAddress": {
+            "Type": "Pass",
+            "End": true
+          }
         }
       }
-    }
-    """
+      """
     And for input "A", the state "LookupAddress" will return
-    """
-    123 Unit Test Street
-    """
+      """
+      123 Unit Test Street
+      """
     And for input "B", the state "LookupPhone" will be called with
-    """
-    {
-      "StartAt": "LookupPhone",
-      "States": {
-        "LookupPhone": {
-          "Type": "Pass",
-          "End": true
+      """
+      {
+        "StartAt": "LookupPhone",
+        "States": {
+          "LookupPhone": {
+            "Type": "Pass",
+            "End": true
+          }
         }
       }
-    }
-    """
+      """
     And for input "B", the state "LookupPhone" will return
-    """
-    8675309
-    """
+      """
+      8675309
+      """
     When the state machine executes
     Then the execution ended
     And the execution succeeded

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from behaveasl import assertions
+from behaveasl.models.exceptions import StatesCatchableException
 
 
 class AbstractMock(ABC):
@@ -13,13 +14,23 @@ class AbstractMock(ABC):
 
 
 class StaticResponse(AbstractMock):
-    """Mock the returns a static response"""
+    """Mock the return as a static response"""
 
     def __init__(self, response):
         self._response = response
 
     def execute(self, resource_name: str, resource_input):
         return self._response
+
+
+class ErrorResponse(AbstractMock):
+    """Mock the return as an error response"""
+
+    def __init__(self, error):
+        self._error = error
+
+    def execute(self, resource_name: str, resource_input):
+        raise StatesCatchableException(self._error)
 
 
 class AssertParameters(AbstractMock):

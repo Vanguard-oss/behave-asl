@@ -2,7 +2,10 @@ import copy
 import datetime
 import logging
 
-from behaveasl.models.exceptions import StatesException
+from behaveasl.models.exceptions import (
+    StatesCatchableException,
+    StatesException,
+)
 from behaveasl.models.state_machine import StateMachineModel
 from behaveasl.models.step_result import StepResult
 from behaveasl.models.task_mock import ResourceMockMap
@@ -50,6 +53,25 @@ class Execution:
             if self._last_step_result.next_state is not None:
                 self._current_state = self._last_step_result.next_state
                 self._current_state_data = self._last_step_result.result_data
+                self._context_obj["State"]["RetryCount"] = 0
+        except StatesCatchableException as e:
+            self._log.exception(
+                f"Error executing state {self._current_state}, error={e.error}, cause={e.cause}"
+            )
+
+            retry = self.find_matching_retry(current_state_obj._retry_list, e.error)
+            if retry is None:
+                self._last_step_result.end_execution = True
+                self._last_step_result.failed = True
+                self._last_step_result.error = e.error
+                self._last_step_result.cause = e.cause
+            else:
+                self._context_obj["State"]["RetryCount"] = (
+                    self._context_obj["State"]["RetryCount"] + 1
+                )
+                self._last_step_result = StepResult()
+                self._last_step_result.next_state = self._current_state
+
         except StatesException as e:
             self._log.exception(
                 f"Failed to execute state {self._current_state}, error={e.error}, cause={e.cause}"
@@ -58,6 +80,12 @@ class Execution:
             self._last_step_result.failed = True
             self._last_step_result.error = e.error
             self._last_step_result.cause = e.cause
+
+    def find_matching_retry(self, retry_list, error):
+        for r in retry_list:
+            if error in r.error_list or "States.ALL" in r.error_list:
+                return r
+        return None
 
     def set_execution_input_data(self, data):
         """Set the initial input of the execution"""

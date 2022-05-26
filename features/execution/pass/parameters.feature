@@ -2,32 +2,32 @@ Feature: The Pass type can have parameters set
 
   Scenario: The Pass type can set a hard coded parameter
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Pass",
-                "Next": "EndState",
-                "Parameters": {
-                    "Static": "Value"
-                },
-                "ResultPath": "$.output"
-            },
-            "EndState": {
-                "Type": "Pass",
-                "Result": "end",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Pass",
+                  "Next": "EndState",
+                  "Parameters": {
+                      "Static": "Value"
+                  },
+                  "ResultPath": "$.output"
+              },
+              "EndState": {
+                  "Type": "Pass",
+                  "Result": "end",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "Existing": "Value"
-    }
-    """
+      """
+      {
+          "Existing": "Value"
+      }
+      """
     When the state machine executes
     Then the next state is "EndState"
     And the step result data path "$.output.Static" is a string
@@ -37,32 +37,32 @@ Feature: The Pass type can have parameters set
 
   Scenario: The Pass type can set a parameter that is a JsonPath selector of the input
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Pass",
-                "Next": "EndState",
-                "Parameters": {
-                    "Param.$": "$.Existing"
-                },
-                "ResultPath": "$.output"
-            },
-            "EndState": {
-                "Type": "Pass",
-                "Result": "end",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Pass",
+                  "Next": "EndState",
+                  "Parameters": {
+                      "Param.$": "$.Existing"
+                  },
+                  "ResultPath": "$.output"
+              },
+              "EndState": {
+                  "Type": "Pass",
+                  "Result": "end",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "Existing": "Value"
-    }
-    """
+      """
+      {
+          "Existing": "Value"
+      }
+      """
     When the state machine executes
     Then the next state is "EndState"
     And the step result data path "$.output.Param" is a string
@@ -72,32 +72,32 @@ Feature: The Pass type can have parameters set
 
   Scenario: The Pass type can set a parameter that is a JsonPath selector that is nonsense
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Pass",
-                "Next": "EndState",
-                "Parameters": {
-                    "Param.$": "Invalid"
-                },
-                "ResultPath": "$.output"
-            },
-            "EndState": {
-                "Type": "Pass",
-                "Result": "end",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Pass",
+                  "Next": "EndState",
+                  "Parameters": {
+                      "Param.$": "Invalid"
+                  },
+                  "ResultPath": "$.output"
+              },
+              "EndState": {
+                  "Type": "Pass",
+                  "Result": "end",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "Existing": "Value"
-    }
-    """
+      """
+      {
+          "Existing": "Value"
+      }
+      """
     When the state machine executes
     Then the execution failed
     And the execution error was "States.Runtime"
@@ -105,32 +105,32 @@ Feature: The Pass type can have parameters set
 
   Scenario: The Pass type can set a parameter that looks like a JsonPath selector of the input
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Pass",
-                "Next": "EndState",
-                "Parameters": {
-                    "Param": "$.Existing"
-                },
-                "ResultPath": "$.output"
-            },
-            "EndState": {
-                "Type": "Pass",
-                "Result": "end",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Pass",
+                  "Next": "EndState",
+                  "Parameters": {
+                      "Param": "$.Existing"
+                  },
+                  "ResultPath": "$.output"
+              },
+              "EndState": {
+                  "Type": "Pass",
+                  "Result": "end",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "Existing": "Value"
-    }
-    """
+      """
+      {
+          "Existing": "Value"
+      }
+      """
     When the state machine executes
     Then the next state is "EndState"
     And the step result data path "$.output.Param" is a string
@@ -140,35 +140,35 @@ Feature: The Pass type can have parameters set
 
   Scenario: The Pass type can have both Parameters and Result set, but Result wins
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Pass",
-                "Next": "EndState",
-                "Parameters": {
-                    "Static": "Value"
-                },
-                "Result": {
-                    "Key": "Something"
-                },
-                "ResultPath": "$.output"
-            },
-            "EndState": {
-                "Type": "Pass",
-                "Result": "end",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Pass",
+                  "Next": "EndState",
+                  "Parameters": {
+                      "Static": "Value"
+                  },
+                  "Result": {
+                      "Key": "Something"
+                  },
+                  "ResultPath": "$.output"
+              },
+              "EndState": {
+                  "Type": "Pass",
+                  "Result": "end",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "Existing": "Value"
-    }
-    """
+      """
+      {
+          "Existing": "Value"
+      }
+      """
     When the state machine executes
     Then the next state is "EndState"
     And the step result data path "$.output.Static" does not exist
@@ -179,48 +179,48 @@ Feature: The Pass type can have parameters set
 
   Scenario: The Pass type can have a nested json path expression
     Given a state machine defined by:
-    """
-    {
-    "StartAt": "FirstState",
-    "States": {
-        "FirstState": {
-            "Type": "Pass",
-            "Next": "EndState",
-            "Parameters": {
-                "OutputDetails": {
-                    "colorData": {
-                        "color.$": "$.product.details.color",
-                        "materialData": {
-                            "material.$": "$.product.details.material"
-                        }
-                    },
-                    "productDetails.$": "$.product.details",
-                    "staticValue": "foo",
-                    "sizes.$": "$.product.details.sizes"
-                }
-            },
-            "ResultPath": "$.output"
-        },
-        "EndState": {
-            "Type": "Pass",
-            "Result": "end",
-            "End": true
-        }
-    }
-    }
-    """
+      """
+      {
+      "StartAt": "FirstState",
+      "States": {
+          "FirstState": {
+              "Type": "Pass",
+              "Next": "EndState",
+              "Parameters": {
+                  "OutputDetails": {
+                      "colorData": {
+                          "color.$": "$.product.details.color",
+                          "materialData": {
+                              "material.$": "$.product.details.material"
+                          }
+                      },
+                      "productDetails.$": "$.product.details",
+                      "staticValue": "foo",
+                      "sizes.$": "$.product.details.sizes"
+                  }
+              },
+              "ResultPath": "$.output"
+          },
+          "EndState": {
+              "Type": "Pass",
+              "Result": "end",
+              "End": true
+          }
+      }
+      }
+      """
     And the current state data is:
-    """
-    {
-    "product": {
-        "details": {
-            "color": "blue",
-            "sizes": ["small", "medium", "large"],
-            "material": "cotton"
-        }
-        }
-    }
-    """
+      """
+      {
+      "product": {
+          "details": {
+              "color": "blue",
+              "sizes": ["small", "medium", "large"],
+              "material": "cotton"
+          }
+          }
+      }
+      """
     When the state machine executes
     Then the next state is "EndState"
     And the step result data path "$.output.OutputDetails.colorData.materialData.material" is a string

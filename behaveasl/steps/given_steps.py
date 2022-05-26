@@ -7,6 +7,7 @@ from behaveasl.models.execution import Execution
 from behaveasl.models.task_mock import (
     AnyParameters,
     AssertParameters,
+    ErrorResponse,
     StaticResponse,
 )
 
@@ -52,6 +53,14 @@ def given_resource_any_param_will_return(context, resource):
     context.execution.resource_response_mocks.add_mock(
         resource, StaticResponse(json.loads(context.text))
     )
+    context.execution.resource_expectations.add_mock(resource, AnyParameters())
+
+
+@given(
+    'the resource "{resource}" will be called with any parameters and fail with error "{error}"'
+)
+def given_resource_any_param_fail(context, resource, error):
+    context.execution.resource_response_mocks.add_mock(resource, ErrorResponse(error))
     context.execution.resource_expectations.add_mock(resource, AnyParameters())
 
 

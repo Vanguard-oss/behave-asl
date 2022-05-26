@@ -2,34 +2,34 @@ Feature: The Pass type can filter results by using OutputPath
 
   Scenario: The Pass type can use '$' in the OutputPath to copy everything
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Pass",
-                "Next": "EndState",
-                "Result": {
-                    "StringField": "ABC",
-                    "IntField": 123
-                },
-                "ResultPath": "$.output",
-                "OutputPath": "$"
-            },
-            "EndState": {
-                "Type": "Pass",
-                "Result": "end",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Pass",
+                  "Next": "EndState",
+                  "Result": {
+                      "StringField": "ABC",
+                      "IntField": 123
+                  },
+                  "ResultPath": "$.output",
+                  "OutputPath": "$"
+              },
+              "EndState": {
+                  "Type": "Pass",
+                  "Result": "end",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "Existing": "Value"
-    }
-    """
+      """
+      {
+          "Existing": "Value"
+      }
+      """
     When the state machine executes
     Then the next state is "EndState"
     And the step result data path "$.output.StringField" is a string
@@ -41,34 +41,34 @@ Feature: The Pass type can filter results by using OutputPath
 
   Scenario: When the ResultPath and OutputPath match, the Result replaces the State Input
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Pass",
-                "Next": "EndState",
-                "Result": {
-                    "StringField": "ABC",
-                    "IntField": 123
-                },
-                "ResultPath": "$.output",
-                "OutputPath": "$.output"
-            },
-            "EndState": {
-                "Type": "Pass",
-                "Result": "end",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Pass",
+                  "Next": "EndState",
+                  "Result": {
+                      "StringField": "ABC",
+                      "IntField": 123
+                  },
+                  "ResultPath": "$.output",
+                  "OutputPath": "$.output"
+              },
+              "EndState": {
+                  "Type": "Pass",
+                  "Result": "end",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "Existing": "Value"
-    }
-    """
+      """
+      {
+          "Existing": "Value"
+      }
+      """
     When the state machine executes
     Then the next state is "EndState"
     And the step result data path "$.StringField" is a string
@@ -79,35 +79,35 @@ Feature: The Pass type can filter results by using OutputPath
 
   Scenario: The OutputPath can use values from the Context object
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Pass",
-                "Next": "EndState",
-                "Result": {
-                    "StringField": "ABC",
-                    "IntField": 123
-                },
-                "OutputPath": "$$.Execution.Input.Existing"
-            },
-            "EndState": {
-                "Type": "Pass",
-                "Result": "end",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Pass",
+                  "Next": "EndState",
+                  "Result": {
+                      "StringField": "ABC",
+                      "IntField": 123
+                  },
+                  "OutputPath": "$$.Execution.Input.Existing"
+              },
+              "EndState": {
+                  "Type": "Pass",
+                  "Result": "end",
+                  "End": true
+              }
+          }
+      }
+      """
     And the execution input is:
-    """
-    {
-        "Existing": "Value"
-    }
-    """
+      """
+      {
+          "Existing": "Value"
+      }
+      """
     When the state machine executes
     Then the step result data is:
-    """
-    "Value"
-    """
+      """
+      "Value"
+      """

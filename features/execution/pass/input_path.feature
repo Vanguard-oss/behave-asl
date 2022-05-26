@@ -2,35 +2,35 @@ Feature: The Pass type can have an input path that filters the input
 
   Scenario: The Pass type can set a parameter that is a JsonPath selector of the input path
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Pass",
-                "Next": "EndState",
-                "InputPath": "$.Map",
-                "Parameters": {
-                    "Param.$": "$.Key"
-                },
-                "ResultPath": "$.output"
-            },
-            "EndState": {
-                "Type": "Pass",
-                "Result": "end",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Pass",
+                  "Next": "EndState",
+                  "InputPath": "$.Map",
+                  "Parameters": {
+                      "Param.$": "$.Key"
+                  },
+                  "ResultPath": "$.output"
+              },
+              "EndState": {
+                  "Type": "Pass",
+                  "Result": "end",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "Map": {
-            "Key": "Value"
-        }
-    }
-    """
+      """
+      {
+          "Map": {
+              "Key": "Value"
+          }
+      }
+      """
     When the state machine executes
     Then the next state is "EndState"
     And the step result data path "$.output.Param" is a string
@@ -40,32 +40,32 @@ Feature: The Pass type can have an input path that filters the input
 
   Scenario: The Pass type can set aan input path without a parameter
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Pass",
-                "Next": "EndState",
-                "InputPath": "$.Map",
-                "ResultPath": "$.output"
-            },
-            "EndState": {
-                "Type": "Pass",
-                "Result": "end",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Pass",
+                  "Next": "EndState",
+                  "InputPath": "$.Map",
+                  "ResultPath": "$.output"
+              },
+              "EndState": {
+                  "Type": "Pass",
+                  "Result": "end",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "Map": {
-            "Key": "Value"
-        }
-    }
-    """
+      """
+      {
+          "Map": {
+              "Key": "Value"
+          }
+      }
+      """
     When the state machine executes
     Then the next state is "EndState"
     And the step result data path "$.output.Key" is a string
@@ -75,66 +75,66 @@ Feature: The Pass type can have an input path that filters the input
 
   Scenario: The Pass type can set an input path from the Context object
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Pass",
-                "Next": "EndState",
-                "InputPath": "$$.Execution.Input.Map"
-            },
-            "EndState": {
-                "Type": "Pass",
-                "Result": "end",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Pass",
+                  "Next": "EndState",
+                  "InputPath": "$$.Execution.Input.Map"
+              },
+              "EndState": {
+                  "Type": "Pass",
+                  "Result": "end",
+                  "End": true
+              }
+          }
+      }
+      """
     And the execution input is:
-    """
-    {
-        "Map": {
-            "Key": "Value"
-        }
-    }
-    """
+      """
+      {
+          "Map": {
+              "Key": "Value"
+          }
+      }
+      """
     When the state machine executes
     Then the step result data is:
-    """
-    {
-        "Key": "Value"
-    }
-    """
+      """
+      {
+          "Key": "Value"
+      }
+      """
 
   Scenario: The Pass type can set a parameter that is a JsonPath selector for an input that doesn't exist
     Given a state machine defined by:
-    """
-    {
-        "StartAt": "FirstState",
-        "States": {
-            "FirstState": {
-                "Type": "Pass",
-                "Next": "EndState",
-                "InputPath": "$.DoesNotExist"
-            },
-            "EndState": {
-                "Type": "Pass",
-                "Result": "end",
-                "End": true
-            }
-        }
-    }
-    """
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Pass",
+                  "Next": "EndState",
+                  "InputPath": "$.DoesNotExist"
+              },
+              "EndState": {
+                  "Type": "Pass",
+                  "Result": "end",
+                  "End": true
+              }
+          }
+      }
+      """
     And the current state data is:
-    """
-    {
-        "Map": {
-            "Key": "Value"
-        }
-    }
-    """
+      """
+      {
+          "Map": {
+              "Key": "Value"
+          }
+      }
+      """
     When the state machine executes
     Then the execution failed
     And the execution error was "States.Runtime"

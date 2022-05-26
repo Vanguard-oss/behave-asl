@@ -188,6 +188,59 @@ Feature: Example feature
 
 - This step is standalone.  It cannot be paired with one of the other mock steps
 
+## Given the resource "name" will be called with any parameters and fail with error "error"
+
+Tell the execution environment to mock out a resource to return an error.
+This step will also tell the execution environment that it doesn't matter what
+parameters are used to call the resource.
+
+**Parameters**
+
+- name - the name or ARN of the resource to mock out
+- error - the error type that should be thrown
+
+**Examples**
+*Definition*
+
+```
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Task",
+                "Resource": "Lambda",
+                "Parameters": {
+                    "Type": "Teapot"
+                },
+                "Retry": [
+                    "ErrorEquals": ["States.Timeout"]
+                ]
+                "Next": "EndState"
+            },
+            "EndState": {
+                "Type": "Task",
+                "Resource": "Lambda",
+                "End": true
+            }
+        }
+    }
+```
+
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    And the resource "Lambda" will be called with any parameters and fail with error "States.Timeout"
+    When the state machine executes
+    Then the next state is "FirstState"
+```
+
+**Notes**
+
+- This step is standalone.  It cannot be paired with one of the other mock steps
+
 ## Given the resource "name" will be called with
 
 Tell the execution environment that you expect the mocked resource to be called with specific parameters
