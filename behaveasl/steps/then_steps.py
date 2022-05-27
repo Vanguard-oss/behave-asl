@@ -101,6 +101,15 @@ def then_full_match(context):
     )
 
 
+@then('the context path "{path}" matches "{value}"')
+def step_impl(context, path, value):
+    jpexpr = jsonpath.get_instance(path)
+    results = jpexpr.find(context.execution.context)
+    assert len(results) == 1
+    t = results[0].value
+    assert t == int(value)
+
+
 @then('the next state is "{name}"')
 def then_next_state(context, name):
     assert not context.execution.last_step_result.end_execution

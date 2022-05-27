@@ -138,7 +138,7 @@ is just a passthrough.
 | ResultPath | Yes |
 | Parameters | Yes |
 | ResultSelector | Yes |
-| Retry | No |
+| Retry | Yes |
 | Catch | No |
 
 ### Wait

@@ -41,7 +41,6 @@ class Execution:
         current_state_obj = self._state_machine.get_state(self._current_state)
         self._context_obj["State"]["Name"] = self._current_state
         self._context_obj["State"]["EnteredTime"] = datetime.datetime.now().isoformat()
-        self._context_obj["State"]["RetryCount"] = 0
 
         try:
             self._log.info(
@@ -61,16 +60,36 @@ class Execution:
 
             retry = self.find_matching_retry(current_state_obj._retry_list, e.error)
             if retry is None:
+                self._log.info(
+                    f"No matching Retry found, failing step function execution"
+                )
                 self._last_step_result.end_execution = True
                 self._last_step_result.failed = True
                 self._last_step_result.error = e.error
                 self._last_step_result.cause = e.cause
+                self._context_obj["State"]["RetryCount"] = 0
             else:
+                self._log.info(f"Found a matching Retry configuration")
                 self._context_obj["State"]["RetryCount"] = (
                     self._context_obj["State"]["RetryCount"] + 1
                 )
+
+                current_retry_count = self._context_obj["State"]["RetryCount"]
+
                 self._last_step_result = StepResult()
-                self._last_step_result.next_state = self._current_state
+                if current_retry_count < retry.max_attempts:
+                    self._log.info(
+                        f"Retry count {current_retry_count} < {retry.max_attempts}, trying again"
+                    )
+                    self._last_step_result.next_state = self._current_state
+                else:
+                    self._log.info(
+                        f"Retry count {current_retry_count} >= {retry.max_attempts}, not trying again"
+                    )
+                    self._last_step_result.end_execution = True
+                    self._last_step_result.failed = True
+                    self._last_step_result.error = e.error
+                    self._last_step_result.cause = e.cause
 
         except StatesException as e:
             self._log.exception(
@@ -100,6 +119,9 @@ class Execution:
     def set_current_state_name(self, name: str):
         """Set the name of the current state of the execution"""
         self._current_state = name
+
+    def set_retry_count(self, count: int):
+        self._context_obj["State"]["RetryCount"] = count
 
     @property
     def last_step_result(self) -> StepResult:

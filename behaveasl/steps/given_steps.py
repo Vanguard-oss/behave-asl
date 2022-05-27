@@ -41,6 +41,11 @@ def given_set_execution_input(context):
     context.execution.set_execution_input_data(json.loads(context.text))
 
 
+@given('the retry count is "{count}"')
+def given_retry_count(context, count):
+    context.execution.set_retry_count(int(count))
+
+
 @given('the resource "{resource}" will return')
 def given_resource_will_return(context, resource):
     context.execution.resource_response_mocks.add_mock(
