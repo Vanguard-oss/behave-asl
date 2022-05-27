@@ -7,6 +7,7 @@ from behaveasl.models.exceptions import (
     StatesException,
 )
 from behaveasl.models.state_machine import StateMachineModel
+from behaveasl.models.state_phases import ResultPathPhase
 from behaveasl.models.step_result import StepResult
 from behaveasl.models.task_mock import ResourceMockMap
 
@@ -58,38 +59,10 @@ class Execution:
                 f"Error executing state {self._current_state}, error={e.error}, cause={e.cause}"
             )
 
-            retry = self.find_matching_retry(current_state_obj._retry_list, e.error)
-            if retry is None:
-                self._log.info(
-                    f"No matching Retry found, failing step function execution"
-                )
-                self._last_step_result.end_execution = True
-                self._last_step_result.failed = True
-                self._last_step_result.error = e.error
-                self._last_step_result.cause = e.cause
-                self._context_obj["State"]["RetryCount"] = 0
-            else:
-                self._log.info(f"Found a matching Retry configuration")
-                self._context_obj["State"]["RetryCount"] = (
-                    self._context_obj["State"]["RetryCount"] + 1
-                )
-
-                current_retry_count = self._context_obj["State"]["RetryCount"]
-
-                self._last_step_result = StepResult()
-                if current_retry_count < retry.max_attempts:
-                    self._log.info(
-                        f"Retry count {current_retry_count} < {retry.max_attempts}, trying again"
-                    )
-                    self._last_step_result.next_state = self._current_state
-                else:
-                    self._log.info(
-                        f"Retry count {current_retry_count} >= {retry.max_attempts}, not trying again"
-                    )
-                    self._last_step_result.end_execution = True
-                    self._last_step_result.failed = True
-                    self._last_step_result.error = e.error
-                    self._last_step_result.cause = e.cause
+            try:
+                self._handle_retries(current_state_obj, e)
+            except StatesCatchableException as e2:
+                self._handle_catches(current_state_obj, e2)
 
         except StatesException as e:
             self._log.exception(
@@ -100,10 +73,79 @@ class Execution:
             self._last_step_result.error = e.error
             self._last_step_result.cause = e.cause
 
-    def find_matching_retry(self, retry_list, error):
+    def _handle_retries(self, current_state_obj, e):
+        retry = self._find_matching_retry(current_state_obj._retry_list, e.error)
+        if retry is None:
+            self._log.info(f"No matching Retry found, bubbling up exception")
+            self._context_obj["State"]["RetryCount"] = 0
+            raise e
+        else:
+            self._log.info(f"Found a matching Retry configuration")
+            self._context_obj["State"]["RetryCount"] = (
+                self._context_obj["State"]["RetryCount"] + 1
+            )
+
+            current_retry_count = self._context_obj["State"]["RetryCount"]
+
+            if current_retry_count < retry.max_attempts:
+                self._log.info(
+                    f"Retry count {current_retry_count} < {retry.max_attempts}, trying again"
+                )
+                self._last_step_result.next_state = self._current_state
+            else:
+                self._log.info(
+                    f"Retry count {current_retry_count} >= {retry.max_attempts}, not trying again"
+                )
+                raise e
+
+    def _handle_catches(self, current_state_obj, e):
+        catch = self._find_matching_catch(current_state_obj._catch_list, e.error)
+        self._last_step_result = StepResult()
+        if catch is None:
+            self._log.info(f"No matching Catch found, failing execution")
+            self._last_step_result.end_execution = True
+            self._last_step_result.failed = True
+            self._last_step_result.error = e.error
+            self._last_step_result.cause = e.cause
+        else:
+            self._log.info(f"Found a matching Catch configuration")
+            self._last_step_result.next_state = catch.next
+
+            error_data = {"Cause": e.cause}
+
+            rpp = ResultPathPhase(result_path=catch.result_path)
+
+            self._last_step_result.result_data = rpp.execute(
+                self._current_state_data,
+                error_data,
+                self._last_step_result,
+                self,
+            )
+
+    def _find_matching_retry(self, retry_list, error):
         for r in retry_list:
-            if error in r.error_list or "States.ALL" in r.error_list:
+            if (
+                error in r.error_list
+                or ("States.ALL" in r.error_list and error not in ["States.Runtime"])
+                or (
+                    error not in ["States.Timeout", "States.Runtime"]
+                    and "States.TaskFailed" in r.error_list
+                )
+            ):
                 return r
+        return None
+
+    def _find_matching_catch(self, catch_list, error):
+        for c in catch_list:
+            if (
+                error in c.error_list
+                or ("States.ALL" in c.error_list and error not in ["States.Runtime"])
+                or (
+                    error not in ["States.Timeout", "States.Runtime"]
+                    and "States.TaskFailed" in c.error_list
+                )
+            ):
+                return c
         return None
 
     def set_execution_input_data(self, data):

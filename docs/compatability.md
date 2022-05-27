@@ -139,7 +139,7 @@ is just a passthrough.
 | Parameters | Yes |
 | ResultSelector | Yes |
 | Retry | Yes |
-| Catch | No |
+| Catch | Yes |
 
 ### Wait
 

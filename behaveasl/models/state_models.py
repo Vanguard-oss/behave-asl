@@ -107,13 +107,13 @@ class TaskState(AbstractStateModel):
                 "Only one of HeartbeatSeconds and HeartbeatSecondsPath can be set."
             )
 
+        self._retry_list = []
         if self._retry:
-            self._retry_list = []
             for r in self._retry:
                 self._retry_list.append(Retry(r))
 
+        self._catch_list = []
         if self._catch:
-            self._catch_list = []
             for c in self._catch:
                 self._catch_list.append(Catch(c))
 

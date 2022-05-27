@@ -4,7 +4,3 @@ class Retry:
         self.interval_seconds = config.get("IntervalSeconds", 1)
         self.max_attempts = config.get("MaxAttempts", 3)
         self.backoff_rate = config.get("BackoffRate", 2.0)
-
-    def _execute(self):
-        # TODO: implement
-        pass
