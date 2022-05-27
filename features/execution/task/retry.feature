@@ -149,3 +149,37 @@ Feature: Thas Task can retry a failed state
     When the state machine executes
     Then the execution ended
     And the execution failed
+
+  Scenario: The state machine will go to the next step after a successful retry
+    Given a state machine defined by:
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Task",
+                  "Resource": "Lambda",
+                  "Next": "EndState",
+                  "Retry": [
+                      {
+                        "MaxAttempts": 2,
+                        "ErrorEquals": ["States.Timeout"]
+                      }
+                  ]
+              },
+              "EndState": {
+                  "Type": "Task",
+                  "Resource": "Lambda",
+                  "End": true
+              }
+          }
+      }
+      """
+    And the resource "Lambda" will be called with any parameters and return:
+      """
+      {
+      }
+      """
+    And the retry count is "1"
+    When the state machine executes
+    Then the next state is "EndState"
