@@ -71,6 +71,55 @@ Feature: Example feature
     """
 ```
 
+## Given the retry count is "count"
+
+Tell the state machine execution what the retry count is for the current step
+
+**Parameters**
+
+- count - the number of retries that the step function already performed
+
+**Examples**
+
+*Definition*
+
+```
+    {
+       "StartAt": "FirstState",
+       "States": {
+           "FirstState": {
+               "Type": "Task",
+               "Resource": "Lambda",
+               "Next": "EndState",
+               "Retry": [
+                   {
+                       "MaxAttempts": 2,
+                       "ErrorEquals": ["States.Timeout"]
+                   }
+                ]
+            },
+            "EndState": {
+               "Type": "Task",
+               "Resource": "Lambda",
+               "End": true
+            }
+        }
+    }
+```
+
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: The system won't exceed the max retries
+    Given a state machine defined in "my-state-machine.asl"
+    And the resource "Lambda" will be called with any parameters and fail with error "States.Timeout"
+    And the retry count is "1"
+    When the state machine executes
+    Then the execution ended
+    And the execution failed
+```
+
 ## Given the resource "name" will return
 
 Tell the execution environment to mock out a resource to return a specific value.
@@ -213,7 +262,9 @@ parameters are used to call the resource.
                     "Type": "Teapot"
                 },
                 "Retry": [
-                    "ErrorEquals": ["States.Timeout"]
+                    {
+                        "ErrorEquals": ["States.Timeout"]
+                    }
                 ]
                 "Next": "EndState"
             },
@@ -316,6 +367,56 @@ Feature: Example feature
 ```
 
 ______________________________________________________________________
+
+## Then the context path "path" matches "value"
+
+Verify that some data in the execution context matches what you expect it to.
+
+**Parameters**
+
+- path - a JsonPath query to traverse into the execution context
+- value - the value to check for
+
+**Examples**
+
+*Definition*
+
+```
+    {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Task",
+                  "Resource": "Lambda",
+                  "Next": "EndState",
+                  "Retry": [
+                      {
+                        "MaxAttempts": 3,
+                        "ErrorEquals": ["States.Timeout"]
+                      }
+                  ]
+              },
+              "EndState": {
+                  "Type": "Task",
+                  "Resource": "Lambda",
+                  "End": true
+              }
+          }
+      }
+```
+
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: A second retry can occur
+    Given a state machine defined in "my-state-machine.asl"
+    And the resource "Lambda" will be called with any parameters and fail with error "States.Timeout"
+    And the retry count is "1"
+    When the state machine executes
+    Then the next state is "FirstState"
+    And the context path "$.State.RetryCount" matches "2"
+```
 
 ## Then the step result data is
 
