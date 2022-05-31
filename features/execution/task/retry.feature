@@ -1,4 +1,4 @@
-Feature: Thas Task can retry a failed state
+Feature: The Task can retry a failed state
 
   Scenario: Errors that can be retried are retried
     Given a state machine defined by:
@@ -28,65 +28,6 @@ Feature: Thas Task can retry a failed state
     When the state machine executes
     Then the next state is "FirstState"
     And the context path "$.State.RetryCount" matches "1"
-
-  Scenario: Retry for all errors will retry when any error is thrown
-    Given a state machine defined by:
-      """
-      {
-          "StartAt": "FirstState",
-          "States": {
-              "FirstState": {
-                  "Type": "Task",
-                  "Resource": "Lambda",
-                  "Next": "EndState",
-                  "Retry": [
-                      {
-                        "ErrorEquals": ["States.ALL"]
-                      }
-                  ]
-              },
-              "EndState": {
-                  "Type": "Task",
-                  "Resource": "Lambda",
-                  "End": true
-              }
-          }
-      }
-      """
-    And the resource "Lambda" will be called with any parameters and fail with error "States.Timeout"
-    When the state machine executes
-    Then the next state is "FirstState"
-    And the context path "$.State.RetryCount" matches "1"
-
-  Scenario: Errors that can't be retried fail the execution
-    Given a state machine defined by:
-      """
-      {
-          "StartAt": "FirstState",
-          "States": {
-              "FirstState": {
-                  "Type": "Task",
-                  "Resource": "Lambda",
-                  "Next": "EndState",
-                  "Retry": [
-                      {
-                        "ErrorEquals": ["States.Other"]
-                      }
-                  ]
-              },
-              "EndState": {
-                  "Type": "Task",
-                  "Resource": "Lambda",
-                  "End": true
-              }
-          }
-      }
-      """
-    And the resource "Lambda" will be called with any parameters and fail with error "States.Timeout"
-    When the state machine executes
-    Then the execution ended
-    And the execution failed
-    And the context path "$.State.RetryCount" matches "0"
 
   Scenario: A second retry can occur
     Given a state machine defined by:
@@ -183,3 +124,92 @@ Feature: Thas Task can retry a failed state
     And the retry count is "1"
     When the state machine executes
     Then the next state is "EndState"
+
+  Scenario Outline: A Retry will match an error
+    Given a state machine defined by:
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Task",
+                  "Resource": "Lambda",
+                  "Next": "EndState",
+                  "Retry": [
+                      {
+                        "ErrorEquals": ["<matcher>"]
+                      }
+                  ]
+              },
+              "EndState": {
+                  "Type": "Task",
+                  "Resource": "Lambda",
+                  "End": true
+              }
+          }
+      }
+      """
+    And the resource "Lambda" will be called with any parameters and fail with error "<thrown>"
+    When the state machine executes
+    Then the next state is "FirstState"
+    And the context path "$.State.RetryCount" matches "1"
+
+    Examples: States.ALL
+      | matcher    | thrown                    |
+      | States.ALL | States.DataLimitExceeded  |
+      | States.ALL | States.Permissions        |
+      | States.ALL | States.TaskFailed         |
+      | States.ALL | States.Timeout            |
+      | States.ALL | Lambda.ServiceException   |
+      | States.ALL | Lambda.SdkClientException |
+
+    Examples: States.TaskFailed
+      | matcher           | thrown                    |
+      | States.TaskFailed | States.DataLimitExceeded  |
+      | States.TaskFailed | States.Permissions        |
+      | States.TaskFailed | States.TaskFailed         |
+      | States.TaskFailed | States.TaskFailed         |
+      | States.TaskFailed | Lambda.ServiceException   |
+      | States.TaskFailed | Lambda.SdkClientException |
+
+    Examples: Exact matches
+      | matcher                   | thrown                    |
+      | States.DataLimitExceeded  | States.DataLimitExceeded  |
+      | Lambda.ServiceException   | Lambda.ServiceException   |
+      | Lambda.SdkClientException | Lambda.SdkClientException |
+
+  Scenario Outline: Executions will fail if they don't match
+    Given a state machine defined by:
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Task",
+                  "Resource": "Lambda",
+                  "Next": "EndState",
+                  "Retry": [
+                      {
+                        "ErrorEquals": ["<matcher>"]
+                      }
+                  ]
+              },
+              "EndState": {
+                  "Type": "Task",
+                  "Resource": "Lambda",
+                  "End": true
+              }
+          }
+      }
+      """
+    And the resource "Lambda" will be called with any parameters and fail with error "<thrown>"
+    When the state machine executes
+    Then the execution ended
+    And the execution failed
+
+    Examples:
+      | matcher                  | thrown             |
+      | States.TaskFailed        | States.Timeout     |
+      | States.TaskFailed        | States.Runtime     |
+      | States.ALL               | States.Runtime     |
+      | States.DataLimitExceeded | States.Permissions |
