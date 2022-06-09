@@ -6,7 +6,7 @@ from behaveasl.expr_eval import replace_expression
 from behaveasl.models.abstract_phase import AbstractPhase
 from behaveasl.models.abstract_state import AbstractStateModel
 from behaveasl.models.catch import Catch
-from behaveasl.models.choice import Choice
+from behaveasl.models.choice import create_choice
 from behaveasl.models.exceptions import StatesCompileException
 from behaveasl.models.retry import Retry
 from behaveasl.models.state_phases import (
@@ -145,29 +145,14 @@ class ChoiceSelectionPhase(AbstractPhase):
                     "Each Choice requires an associated Next field."
                 )
 
-            # TODO: deal with Boolean Choices like Or/And where there will be multiple conditions
-            # They will be recognizable either by the "And"/"Or"/etc or by their list type
-            # If we have one of those, we need sub-Choices (recurse)
-            if "Variable" in choice:
-                # To get the evaluation type, we need to find the key that isn't 'Variable' or 'Next'
-                # the remaining key should be the evaluation type and value
-                evaluation_type = list(
-                    filter(lambda x: x not in ["Variable", "Next"], choice.keys())
-                )[0]
-
-                self._choices.append(
-                    Choice(
-                        variable=choice["Variable"],
-                        evaluation_type=evaluation_type,
-                        evaluation_value=choice[evaluation_type],
-                        next_state=choice["Next"],
-                    )
-                )
+            self._choices.append((create_choice(choice), choice["Next"]))
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
         # Given the state input, we need to try to find matching Choice(s)
         # matching_choices = filter(self.apply_rules, self._choices) # Can probably do this with a filter ultimately
-        for choice in self._choices:
+        for choice_tuple in self._choices:
+            choice = choice_tuple[0]
+            choice_next = choice_tuple[1]
             # Call evaluate on the choice instance, which will return True or False
             if (
                 choice.evaluate(
@@ -179,7 +164,7 @@ class ChoiceSelectionPhase(AbstractPhase):
                 == True
             ):
                 # If 2 choices match, we choose the first one
-                sr.next_state = choice._next_state
+                sr.next_state = choice_next
                 # Choice does not modify phase input currently
                 return phase_input
         # If we still have not found a matching choice, and we have a default, use it
