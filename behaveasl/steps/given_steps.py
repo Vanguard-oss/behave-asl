@@ -94,6 +94,15 @@ def given_map_state_unknown_params(context, resource, mock_return):
     )
 
 
+@given("branch {idx} will return")
+def step_impl(context, idx):
+    idx = int(idx)
+    print(f"Saving {idx} = {context.text}")
+    context.execution.resource_response_mocks.add_mock(
+        idx, StaticResponse(json.loads(context.text))
+    )
+
+
 @given('for input "{key}", the state "{state}" will be called with')
 def given_for_return(context, key, state):
     context.execution.resource_expectations.add_mock(key, StaticResponse(context.text))

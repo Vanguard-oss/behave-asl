@@ -332,29 +332,12 @@ class ParallelMockPhase(AbstractPhase):
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
         output = []
+        idx = -1
+        sr.branch_input = copy.deepcopy(phase_input)
         for machine in self._parallel_state_machines:
-            machine_hash = json.dumps(machine, sort_keys=True)
-
-            shared_key = ""
-            for k in list(execution.resource_expectations._map.keys()):
-                exec_result = execution.resource_expectations.execute(k, phase_input)
-                try:
-                    sorted = json.dumps(json.loads(exec_result), sort_keys=True)
-                    if sorted == machine_hash:
-                        shared_key = k
-                        break
-                except:
-                    if exec_result == machine_hash:
-                        shared_key = k
-                        break
-            if shared_key:
-                resp = execution.resource_response_mocks.execute(
-                    shared_key, phase_input
-                )
-            else:
-                raise KeyError
+            idx = idx + 1
+            resp = execution.resource_response_mocks.execute(idx, phase_input)
             output.append(resp)
-
         return output
 
 
@@ -366,6 +349,8 @@ class ParallelState(AbstractStateModel):
 
         self._phases = []
         self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
+        if "Parameters" in state_details:
+            self._phases.append(ParametersPhase(state_details["Parameters"]))
         self._phases.append(ParallelMockPhase(state_name, state_details))
         if "ResultSelector" in state_details:
             self._phases.append(

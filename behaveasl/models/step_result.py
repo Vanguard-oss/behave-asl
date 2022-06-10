@@ -13,3 +13,4 @@ class StepResult:
     error: str = None
     waited_seconds: int = None
     waited_until_timestamp: str = None
+    branch_input: object = None
