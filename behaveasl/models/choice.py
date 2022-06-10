@@ -6,16 +6,103 @@ from behaveasl.models.state_phases import Path
 
 
 class Choice:
-    def __init__(self, variable, evaluation_type, evaluation_value, next_state):
+    """Base class for a Choice type"""
+
+    def evaluate(self, state_input, phase_input, sr, execution) -> bool:
+        return False
+
+
+class AndChoice(Choice):
+    """Choice that returns True if all the child choices return True"""
+
+    def __init__(self, choices: list):
+        """Constructor
+
+        Args:
+            choices (list): List of Choice objects
+        """
+        self._choices = map(lambda x: create_choice(x), choices)
+
+    def evaluate(self, state_input, phase_input, sr, execution) -> bool:
+        for choice in self._choices:
+            # Call evaluate on the choice instance, which will return True or False
+            if (
+                choice.evaluate(
+                    state_input=state_input,
+                    phase_input=phase_input,
+                    sr=sr,
+                    execution=execution,
+                )
+                == False
+            ):
+                return False
+        return True
+
+
+class OrChoice(Choice):
+    """Choice that returns True if any of the child choices return True"""
+
+    def __init__(self, choices: list):
+        """Constructor
+
+        Args:
+            choices (list): List of Choice objects
+        """
+        self._choices = map(lambda x: create_choice(x), choices)
+
+    def evaluate(self, state_input, phase_input, sr, execution) -> bool:
+        for choice in self._choices:
+            # Call evaluate on the choice instance, which will return True or False
+            if (
+                choice.evaluate(
+                    state_input=state_input,
+                    phase_input=phase_input,
+                    sr=sr,
+                    execution=execution,
+                )
+                == True
+            ):
+                return True
+        return False
+
+
+class NotChoice(Choice):
+    """Choice that returns the opposite of what the single child Choice returned"""
+
+    def __init__(self, child: Choice):
+        """Constructor
+
+        Args:
+            child (Choice): The child choice
+        """
+        self._child = child
+
+    def evaluate(self, state_input, phase_input, sr, execution) -> bool:
+        return not self._child.evaluate(
+            state_input=state_input,
+            phase_input=phase_input,
+            sr=sr,
+            execution=execution,
+        )
+
+
+class SingleOperationChoice(Choice):
+    """Choice that runs a single operation"""
+
+    def __init__(self, variable: str, evaluation_type: str, evaluation_value):
+        """Constructor
+
+        Args:
+            variable (str): The variable path to evaluate against
+            evaluation_type (str): The type of operation to execute
+            evaluation_value: The value we are checking against
+        """
+
         self._variable = variable
         self._evaluation_type = evaluation_type
         self._evaluation_value = evaluation_value
-        self._next_state = next_state
-        self._choices = (
-            None  # If this is set, we are using an "And"/"Or"/"Not" comparator
-        )
 
-    def evaluate(self, state_input, phase_input, sr, execution):
+    def evaluate(self, state_input, phase_input, sr, execution) -> bool:
         # Shortcut evaluation for 'IsPresent' here
         if self._evaluation_type == "IsPresent":
             return self._is_present(
@@ -88,16 +175,6 @@ class Choice:
             "TimestampLessThanEqualsPath": self._timestamp_less_than_equals,
         }
         return function_map[self._evaluation_type](actual_value=actual_value)
-
-    # Roughly follow the order of comparators here: https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-choice-state.html
-    def _and_comparator(self, actual_value):  # And is a reserved word in Python
-        pass
-
-    def _not_comparator(self, actual_value):  # Not is a reserved word in Python
-        pass
-
-    def _or_comparator(self, actual_value):
-        pass
 
     def _boolean_equals(self, actual_value):
         if type(actual_value) != bool:
@@ -464,3 +541,34 @@ class Choice:
         evaluation_value_dt = self._convert_to_dt(value=self._evaluation_value)
         actual_value_dt = self._convert_to_dt(value=actual_value)
         return evaluation_value_dt <= actual_value_dt
+
+
+def create_choice(fields: dict) -> Choice:
+    """Create a choice object based on on the fields that are passed in
+
+    Args:
+        fields (dict): dictionary decribing the choice object to create
+
+    Returns:
+        The Choice object
+    """
+    if "Variable" in fields:
+        # To get the evaluation type, we need to find the key that isn't 'Variable' or 'Next'
+        # the remaining key should be the evaluation type and value
+        evaluation_type = list(
+            filter(lambda x: x not in ["Variable", "Next"], fields.keys())
+        )[0]
+
+        return SingleOperationChoice(
+            variable=fields["Variable"],
+            evaluation_type=evaluation_type,
+            evaluation_value=fields[evaluation_type],
+        )
+    elif "And" in fields:
+        return AndChoice(choices=fields["And"])
+    elif "Or" in fields:
+        return OrChoice(choices=fields["Or"])
+    elif "Not" in fields:
+        return NotChoice(child=create_choice(fields["Not"]))
+
+    raise StatesRuntimeException(f"Invalid choice configuration: {fields}")

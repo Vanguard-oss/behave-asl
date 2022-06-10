@@ -11,14 +11,14 @@
 | InputPath | Yes|
 | Parameters | Yes |
 | OutputPath | Yes |
-| Choices | Partial |
+| Choices | Yes |
 | Default | Yes |
 
 #### Comparison Operators
 
 | Operator | Status |
 | -------- | ------ |
-| And | No |
+| And | Yes |
 | BooleanEquals | Yes |
 | BooleanEqualsPath | Yes |
 | IsBoolean | Yes |
@@ -27,7 +27,7 @@
 | IsPresent | Yes |
 | IsString | Yes |
 | IsTimestamp | Yes |
-| Not | No |
+| Not | Yes |
 | NumericEquals | Yes |
 | NumericEqualsPath | Yes |
 | NumericGreaterThan | Yes |
@@ -38,7 +38,7 @@
 | NumericLessThanPath | Yes |
 | NumericLessThanEquals | Yes |
 | NumericLessThanEqualsPath | Yes |
-| Or | No |
+| Or | Yes |
 | StringEquals | Yes |
 | StringEqualsPath | Yes |
 | StringGreaterThan | Yes |
