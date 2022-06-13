@@ -103,13 +103,13 @@
 | ----- | ------ |
 | Type | Yes |
 | Comment | Yes |
-| InputPath | No|
-| OutputPath | No |
-| Next | No |
-| End | No |
-| ResultPath | No |
-| Parameters | No |
-| ResultSelector | No |
+| InputPath | Yes|
+| OutputPath | Yes |
+| Next | Yes |
+| End | Yes |
+| ResultPath | Yes |
+| Parameters | Yes |
+| ResultSelector | Yes |
 | Retry | No |
 | Catch | No |
 

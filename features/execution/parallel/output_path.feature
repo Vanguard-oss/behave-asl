@@ -42,37 +42,13 @@ Feature: The Parallel type can filter results by using OutputPath
         "Hello": "There"
       }
       """
-    And for input "A", the state "LookupAddress" will be called with
+    And branch 0 will return
       """
-      {
-        "StartAt": "LookupAddress",
-        "States": {
-          "LookupAddress": {
-            "Type": "Pass",
-            "End": true
-          }
-        }
-      }
+      "123 Unit Test Street"
       """
-    And for input "A", the state "LookupAddress" will return
+    And branch 1 will return
       """
-      123 Unit Test Street
-      """
-    And for input "B", the state "LookupPhone" will be called with
-      """
-      {
-        "StartAt": "LookupPhone",
-        "States": {
-          "LookupPhone": {
-            "Type": "Pass",
-            "End": true
-          }
-        }
-      }
-      """
-    And for input "B", the state "LookupPhone" will return
-      """
-      8675309
+      "8675309"
       """
     When the state machine executes
     Then the execution ended
@@ -128,37 +104,13 @@ Feature: The Parallel type can filter results by using OutputPath
         }
       }
       """
-    And for input "A", the state "LookupAddress" will be called with
+    And branch 0 will return
       """
-      {
-        "StartAt": "LookupAddress",
-        "States": {
-          "LookupAddress": {
-            "Type": "Pass",
-            "End": true
-          }
-        }
-      }
+      "123 Unit Test Street"
       """
-    And for input "A", the state "LookupAddress" will return
+    And branch 1 will return
       """
-      123 Unit Test Street
-      """
-    And for input "B", the state "LookupPhone" will be called with
-      """
-      {
-        "StartAt": "LookupPhone",
-        "States": {
-          "LookupPhone": {
-            "Type": "Pass",
-            "End": true
-          }
-        }
-      }
-      """
-    And for input "B", the state "LookupPhone" will return
-      """
-      8675309
+      "8675309"
       """
     When the state machine executes
     Then the execution ended

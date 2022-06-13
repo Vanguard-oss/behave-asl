@@ -38,35 +38,17 @@ Feature: The Parallel state type is supported
         }
       }
       """
-    And for input "A", the state "LookupAddress" will be called with
+    And the current state data is
       """
       {
-        "StartAt": "LookupAddress",
-        "States": {
-          "LookupAddress": {
-            "Type": "Pass",
-            "End": true
-          }
-        }
+          "Foo": "Bar"
       }
       """
-    And for input "A", the state "LookupAddress" will return
+    And branch 0 will return
       """
-      123 Unit Test Street
+      "123 Unit Test Street"
       """
-    And for input "B", the state "LookupPhone" will be called with
-      """
-      {
-        "StartAt": "LookupPhone",
-        "States": {
-          "LookupPhone": {
-            "Type": "Pass",
-            "End": true
-          }
-        }
-      }
-      """
-    And for input "B", the state "LookupPhone" will return JSON:
+    And branch 1 will return
       """
       {
         "number": 8675309
@@ -79,6 +61,12 @@ Feature: The Parallel state type is supported
     And the step result data is
       """
       ["123 Unit Test Street", {"number": 8675309}]
+      """
+    And branches were called with
+      """
+      {
+          "Foo": "Bar"
+      }
       """
 
   Scenario: The Parallel type can set the next state
@@ -119,37 +107,21 @@ Feature: The Parallel state type is supported
         }
       }
       """
-    And for input "A", the state "LookupAddress" will be called with
+    And the current state data is:
       """
       {
-        "StartAt": "LookupAddress",
-        "States": {
-          "LookupAddress": {
-            "Type": "Pass",
-            "End": true
-          }
-        }
+          "Foo": "Bar"
       }
       """
-    And for input "A", the state "LookupAddress" will return
+    And branch 0 will return
       """
-      123 Unit Test Street
+      "123 Unit Test Street"
       """
-    And for input "B", the state "LookupPhone" will be called with
+    And branch 1 will return
       """
       {
-        "StartAt": "LookupPhone",
-        "States": {
-          "LookupPhone": {
-            "Type": "Pass",
-            "End": true
-          }
-        }
+        "number": 8675309
       }
-      """
-    And for input "B", the state "LookupPhone" will return
-      """
-      8675309
       """
     When the state machine executes
     Then the next state is "EndState"

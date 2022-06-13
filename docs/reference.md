@@ -237,6 +237,72 @@ Feature: Example feature
 
 - This step is standalone.  It cannot be paired with one of the other mock steps
 
+## Given branch "idx" will return
+
+Tell the execution environment that the parallel branch will return a specific json value
+
+**Parameters**
+
+- idx - index of the branch in the parallel state
+
+**Text**
+
+Json object representing the return value of the branch
+
+**Examples**
+*Definition*
+
+```
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Parallel",
+                "Branches": [
+                    {
+                        "StartAt": "BranchA1",
+                        "States": {
+                            "BranchA1": {
+                                "Type": "Pass",
+                                "End": true
+                            }
+                        }
+                    }
+                ],
+                "End": true
+            }
+        }
+    }
+```
+
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    And the execution input is
+      """
+      {
+        "Hello": "There"
+      }
+      """
+    And branch "0" will return
+      """
+      {
+        "A": "B"
+      }
+    """
+    When the state machine executes
+    Then branches were called with
+      """
+      {
+        "Hello": "There"
+      }
+      """
+
+```
+
 ## Given the resource "name" will be called with any parameters and fail with error "error"
 
 Tell the execution environment to mock out a resource to return an error.
@@ -851,4 +917,66 @@ Feature: Example feature
     Then the exeuction has ended
     And the execution failed
     And the execution error cause was null
+```
+
+## Then branches were called with
+
+Validates that each branch got a specific input
+
+**Text**
+
+Json object representing the expected input
+
+**Examples**
+*Definition*
+
+```
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Parallel",
+                "Branches": [
+                    {
+                        "StartAt": "BranchA1",
+                        "States": {
+                            "BranchA1": {
+                                "Type": "Pass",
+                                "End": true
+                            }
+                        }
+                    }
+                ],
+                "End": true
+            }
+        }
+    }
+```
+
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    And the execution input is
+      """
+      {
+        "Hello": "There"
+      }
+      """
+    And branch "0" will return
+      """
+      {
+        "A": "B"
+      }
+    """
+    When the state machine executes
+    Then branches were called with
+      """
+      {
+        "Hello": "There"
+      }
+      """
+
 ```

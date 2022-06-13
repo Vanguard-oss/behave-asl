@@ -101,6 +101,14 @@ def then_full_match(context):
     )
 
 
+@then("branches were called with")
+def step_impl(context):
+    assert context.text is not None
+    assertions.assert_json_matches(
+        context.text, context.execution.last_step_result.branch_input
+    )
+
+
 @then('the context path "{path}" matches "{value}"')
 def step_impl(context, path, value):
     jpexpr = jsonpath.get_instance(path)
