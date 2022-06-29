@@ -15,7 +15,7 @@ Feature: Example feature
     Given a state machine defined in "my-state-machine.asl"
 ```
 
-## Given the execution is currently at "name"
+## Given the state machine is current at the state "name"
 
 Tell the state machine execution that it is currently at the specific state
 **Parameters**
@@ -28,7 +28,7 @@ Tell the state machine execution that it is currently at the specific state
 Feature: Example feature
   Scenario: Load a state machine from an asl file
     Given a state machine defined in "my-state-machine.asl"
-    And the execution is currently at "SecondState"
+    And the state machine is current at the state "SecondState"
 ```
 
 ## Given the current state data is
