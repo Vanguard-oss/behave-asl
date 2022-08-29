@@ -27,6 +27,7 @@ def given_load_definition_from_file(context, filename):
 
 
 @given('the state machine is current at the state "{name}"')
+@given('the execution is currently at the state "{name}"')
 def given_set_current_state(context, name):
     context.execution.set_current_state_name(name)
 

@@ -33,13 +33,13 @@ In the below example, we define a basic state machine with multiple states.  We 
 Feature: States can transition
   Scenario: Go from second to third state
     Given a state machine defined in "state-machine.asl"
-    And the execution is currently at "SecondState"
+    And the execution is currently at the state "SecondState"
     When the state machine executes
     Then the next state is "ThirdState"
 
   Scenario: Third state is the final state
     Given a state machine defined in "state-machine.asl"
-    And the execution is currently at "ThirdState"
+    And the execution is currently at the state "ThirdState"
     When the state machine executes
     Then the execution ended
     And the execution was successful
