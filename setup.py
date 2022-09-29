@@ -23,7 +23,7 @@ setup(
     ],
     description="Cucumber-style unit testing of Step Functions",
     long_description=long_description,
-    long_description_content_type='text/markdown'
+    long_description_content_type='text/markdown',
     license="Apache License 2.0",
     install_requires=[
         "behave>=1.0.25",
