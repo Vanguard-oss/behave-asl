@@ -62,7 +62,9 @@ Feature files are regularly used in the software development industry to documen
 
 ## Installation
 
-In the near future, a python package version of it will be hosted on PyPi. For the time being, please git clone the repo to use it.
+```
+$ pip install behave-asl
+```
 
 ## Usage
 
