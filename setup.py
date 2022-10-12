@@ -1,9 +1,13 @@
 from setuptools import find_packages, setup
+import re
 
 # read the contents of your README file
 from pathlib import Path
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
+github_docs_base_url = "https://github.com/vanguard/behave-asl/blob/master/"
+# Have Pypi use FQDN to Github, but everywhere else use relative links
+long_description = re.compile(r"\(([a-zA-Z0-9_\-/]*.md)\)").sub(f"({github_docs_base_url}\\1)", long_description)
 
 setup(
     author="Vanguard",
@@ -39,5 +43,5 @@ setup(
         ]
     },
     url=("https://github.com/vanguard/behave-asl"),
-    version="0.4.0",
+    version="0.5.0",
 )
