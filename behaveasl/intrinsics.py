@@ -101,11 +101,30 @@ def states_array_parition(args):
     return resp
 
 
+def states_array_contains(args):
+    """Implementation of States.ArrayContains
+
+    https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-intrinsic-functions.html#asl-intrsc-func-arrays
+
+    Args:
+        args (list): Two items, an array and a value to search for
+
+    Returns:
+        bool: true if the item is in the array
+    """
+
+    haystack = args.pop(0)
+    needle = args.pop(0)
+
+    return needle in haystack
+
+
 STATES_INTRINSICS = {
     "States.Format": states_format,
     "States.StringToJson": states_string_to_json,
     "States.JsonToString": states_json_to_string,
     "States.Array": states_array,
     "States.ArrayPartition": states_array_parition,
+    "States.ArrayContains": states_array_contains,
     "States.UUID": states_uuid,
 }

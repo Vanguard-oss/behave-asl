@@ -166,9 +166,23 @@ is just a passthrough.
 | Function | Status |
 | --- | --- |
 | States.Array | Yes |
+| States.ArrayContains | Yes |
+| States.ArrayGetItem | No |
+| States.ArrayLength | No |
+| States.ArrayPartition | Yes |
+| States.ArrayRange | No |
+| States.ArrayUnique | No |
 | States.Format | Yes |
+| States.Base64Decode | No |
+| States.Base64Encode | No |
+| States.Hash | No |
+| States.JsonMerge | Yes |
 | States.JsonToString | Yes |
+| States.MathAdd | No |
+| States.MathRandom | No |
+| States.StringSplit | No |
 | States.StringToJson | Yes |
+| States.UUID | Yes |
 
 ## Intrinsic Argument Literal Types
 
