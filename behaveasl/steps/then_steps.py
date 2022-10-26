@@ -82,6 +82,15 @@ def then_result_data_is_list(context, path):
         assert t == list
 
 
+@then('the step result data path "{path}" has length "{length}"')
+def then_result_data_is_list(context, path, length):
+    jpexpr = jsonpath.get_instance(path)
+    results = jpexpr.find(context.execution.last_step_result.result_data)
+    assert len(results) == 1
+
+    assert len(results[0].value) == int(length)
+
+
 @then('the step result data path "{path}" is a dict')
 def then_result_data_is_dict(context, path):
     jpexpr = jsonpath.get_instance(path)

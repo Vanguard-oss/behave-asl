@@ -1,84 +1,11 @@
 import ast
-import json
 import logging
 
-from behaveasl import jsonpath
+from behaveasl import intrinsics, jsonpath
 from behaveasl.models.exceptions import StatesRuntimeException
 
 
 LOG = logging.getLogger("behaveasl.expression_evaluation")
-
-
-def states_format(args):
-    """Implementation of States.Format
-
-    https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-intrinsic-functions.html
-
-    Args:
-        args (list): List of arguments for the intrinsic function
-
-    Returns:
-        str: The formatted string
-    """
-    fmt = args.pop(0)
-    return fmt.format(*args)
-
-
-def states_string_to_json(args):
-    """Implementation of States.StringToJson
-
-    https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-intrinsic-functions.html
-
-    Args:
-        args (list): List of arguments for the intrinsic function
-
-    Returns:
-        str: Json object
-    """
-    input = args.pop(0)
-    return json.loads(input)
-
-
-def states_json_to_string(args):
-    """Implementation of States.StringToJson
-
-    https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-intrinsic-functions.html
-
-    Args:
-        args (list): List of arguments for the intrinsic function
-
-    Returns:
-        str: json string
-    """
-    input = args.pop(0)
-
-    # AWS does not put a space after the separator, so we have to tell Python
-    # to do the same
-    separators = (",", ":")
-
-    return json.dumps(input, separators=separators)
-
-
-def states_array(args):
-    """Implementation of States.Array
-
-    https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-intrinsic-functions.html
-
-    Args:
-        args (list): List of arguments for the intrinsic function
-
-    Returns:
-        list: array of values
-    """
-    return args
-
-
-STATES_INTRINSICS = {
-    "States.Format": states_format,
-    "States.StringToJson": states_string_to_json,
-    "States.JsonToString": states_json_to_string,
-    "States.Array": states_array,
-}
 
 
 def _tokenize_expression(expr: str):
@@ -211,8 +138,8 @@ def replace_expression(*, expr: str, input, context: dict):
         args = _tokenize_expression(args_str)
         args = _replace_jsonpath_expressions(args=args, input=input, context=context)
 
-        if func_name in STATES_INTRINSICS:
-            func = STATES_INTRINSICS[func_name]
+        if func_name in intrinsics.STATES_INTRINSICS:
+            func = intrinsics.STATES_INTRINSICS[func_name]
             new_value = func(args)
             LOG.info(f"Replacing '{expr}' with '{new_value}'")
             return new_value
