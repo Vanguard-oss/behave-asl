@@ -1,5 +1,6 @@
 import ast
 import logging
+import traceback
 
 from behaveasl import intrinsics, jsonpath
 from behaveasl.models.exceptions import StatesRuntimeException
@@ -140,7 +141,11 @@ def replace_expression(*, expr: str, input, context: dict):
 
         if func_name in intrinsics.STATES_INTRINSICS:
             func = intrinsics.STATES_INTRINSICS[func_name]
-            new_value = func(args)
+            try:
+                new_value = func(args)
+            except Exception as e:
+                traceback.print_exc()
+                raise StatesRuntimeException(f"Failed expression {expr}: "+str(e))
             LOG.info(f"Replacing '{expr}' with '{new_value}'")
             return new_value
     raise StatesRuntimeException(f"Invalid expression {expr}: Nonsense")

@@ -167,11 +167,11 @@ is just a passthrough.
 | --- | --- |
 | States.Array | Yes |
 | States.ArrayContains | Yes |
-| States.ArrayGetItem | No |
-| States.ArrayLength | No |
+| States.ArrayGetItem | Yes |
+| States.ArrayLength | Yes |
 | States.ArrayPartition | Yes |
-| States.ArrayRange | No |
-| States.ArrayUnique | No |
+| States.ArrayRange | Yes |
+| States.ArrayUnique | Yes |
 | States.Format | Yes |
 | States.Base64Decode | No |
 | States.Base64Encode | No |
