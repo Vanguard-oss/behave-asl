@@ -189,6 +189,6 @@ is just a passthrough.
 | Type | Status | Notes |
 | --- | --- | --- |
 | String | Yes | |
-| Boolean | No | |
+| Boolean | Yes | |
 | Integer | Yes | |
 | Float | Yes | x.x format only |
