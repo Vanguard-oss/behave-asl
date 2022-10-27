@@ -180,7 +180,7 @@ is just a passthrough.
 | States.JsonToString | Yes |
 | States.MathAdd | Yes |
 | States.MathRandom | Yes |
-| States.StringSplit | No |
+| States.StringSplit | Yes |
 | States.StringToJson | Yes |
 | States.UUID | Yes |
 
