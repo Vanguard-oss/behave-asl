@@ -1,3 +1,5 @@
+import base64
+import hashlib
 import json
 import uuid
 
@@ -97,6 +99,16 @@ def states_array_parition(args):
     resp = []
     input = args.pop(0)
     max = args.pop(0)
+
+    if type(input) != list:
+        raise StatesRuntimeException(
+            f"States.ArrayPartition can only accept a list as the first input"
+        )
+    if type(max) != int:
+        raise StatesRuntimeException(
+            f"States.ArrayPartition can only accept an int as the second input"
+        )
+
     while len(input) > 0:
         resp.append(input[0:max])
         input = input[max:]
@@ -118,6 +130,11 @@ def states_array_contains(args):
     haystack = args.pop(0)
     needle = args.pop(0)
 
+    if type(haystack) != list:
+        raise StatesRuntimeException(
+            f"States.ArrayContains can only accept a list as the first input"
+        )
+
     return needle in haystack
 
 
@@ -135,6 +152,15 @@ def states_array_get_item(args):
 
     input = args.pop(0)
     index = args.pop(0)
+
+    if type(input) != list:
+        raise StatesRuntimeException(
+            f"States.ArrayGetItem can only accept a list as the first input"
+        )
+    if type(index) != int:
+        raise StatesRuntimeException(
+            f"States.ArrayGetItem can only accept an int as the second input"
+        )
 
     return input[index]
 
@@ -193,7 +219,12 @@ def states_array_length(args):
         int: length of the list
     """
 
-    return len(args[0])
+    input = args.pop(0)
+
+    if type(input) != list:
+        raise StatesRuntimeException(f"States.ArrayUnique can only accept list inputs")
+
+    return len(input)
 
 
 def states_array_unique(args):
@@ -209,6 +240,10 @@ def states_array_unique(args):
     """
 
     items = args.pop(0)
+
+    if type(items) != list:
+        raise StatesRuntimeException(f"States.ArrayUnique can only accept list inputs")
+
     resp = []
 
     for item in items:
@@ -225,6 +260,82 @@ def states_array_unique(args):
     return resp
 
 
+def states_base64_encode(args):
+    """Implementation of States.Base64Encode
+
+    https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-intrinsic-functions.html#asl-intrsc-func-data-encode-decode
+
+    Args:
+        args (list): A single item, that is a string
+
+    Returns:
+        str: a string with the encoded contents
+    """
+    input = args.pop(0)
+
+    if type(input) != str:
+        raise StatesRuntimeException(
+            f"States.Base64Encode can only accept string inputs"
+        )
+
+    if len(input) > 10000:
+        raise StatesRuntimeException(
+            f"States.Base64Encode can only accept 10,000 characters"
+        )
+
+    return base64.b64encode(input.encode("UTF-8")).decode("UTF-8")
+
+
+def states_base64_decode(args):
+    """Implementation of States.Base64Decode
+
+    https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-intrinsic-functions.html#asl-intrsc-func-data-encode-decode
+
+    Args:
+        args (list): A single item, that is a base64 encoded string
+
+    Returns:
+        str: a string with the decoded contents
+    """
+
+    input = args.pop(0)
+
+    if type(input) != str:
+        raise StatesRuntimeException(
+            f"States.Base64Decode can only accept string inputs"
+        )
+
+    if len(input) > 10000:
+        raise StatesRuntimeException(
+            f"States.Base64Decode can only accept 10,000 characters"
+        )
+
+    return base64.b64decode(input.encode("UTF-8")).decode("UTF-8")
+
+
+def states_hash(args):
+
+    input = args.pop(0)
+    algo = args.pop(0)
+
+    if type(input) != str:
+        raise StatesRuntimeException(
+            f"States.Hash can only accept a string as the first input"
+        )
+
+    algos = {
+        "MD5": hashlib.md5,
+        "SHA-1": hashlib.sha1,
+        "SHA-256": hashlib.sha256,
+        "SHA-384": hashlib.sha384,
+        "SHA-512": hashlib.sha512,
+    }
+
+    m = algos[algo]()
+    m.update(input.encode("UTF-8"))
+    return m.hexdigest()
+
+
 STATES_INTRINSICS = {
     "States.Format": states_format,
     "States.StringToJson": states_string_to_json,
@@ -236,5 +347,8 @@ STATES_INTRINSICS = {
     "States.ArrayPartition": states_array_parition,
     "States.ArrayRange": states_array_range,
     "States.ArrayUnique": states_array_unique,
+    "States.Base64Decode": states_base64_decode,
+    "States.Base64Encode": states_base64_encode,
+    "States.Hash": states_hash,
     "States.UUID": states_uuid,
 }

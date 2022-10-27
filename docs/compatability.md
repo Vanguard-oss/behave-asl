@@ -173,9 +173,9 @@ is just a passthrough.
 | States.ArrayRange | Yes |
 | States.ArrayUnique | Yes |
 | States.Format | Yes |
-| States.Base64Decode | No |
-| States.Base64Encode | No |
-| States.Hash | No |
+| States.Base64Decode | Yes |
+| States.Base64Encode | Yes |
+| States.Hash | Yes |
 | States.JsonMerge | Yes |
 | States.JsonToString | Yes |
 | States.MathAdd | No |
