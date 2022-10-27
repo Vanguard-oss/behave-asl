@@ -31,6 +31,20 @@ def then_result_data_is_none(context, path):
     assert len(results) == 1
     assert results[0].value is None
 
+@then('the step result data path "{path}" is true')
+def then_result_data_is_none(context, path):
+    jpexpr = jsonpath.get_instance(path)
+    results = jpexpr.find(context.execution.last_step_result.result_data)
+    assert len(results) == 1
+    assert results[0].value == True
+
+@then('the step result data path "{path}" is false')
+def then_result_data_is_none(context, path):
+    jpexpr = jsonpath.get_instance(path)
+    results = jpexpr.find(context.execution.last_step_result.result_data)
+    assert len(results) == 1
+    assert results[0].value == False
+
 
 @then('the step result data path "{path}" contains "{value}"')
 def then_contains_result_data(context, path, value):
@@ -80,6 +94,15 @@ def then_result_data_is_list(context, path):
     if t != list:
         LOG.critical(f"{path} is {t}")
         assert t == list
+
+
+@then('the step result data path "{path}" has length "{length}"')
+def then_result_data_is_list(context, path, length):
+    jpexpr = jsonpath.get_instance(path)
+    results = jpexpr.find(context.execution.last_step_result.result_data)
+    assert len(results) == 1
+
+    assert len(results[0].value) == int(length)
 
 
 @then('the step result data path "{path}" is a dict')

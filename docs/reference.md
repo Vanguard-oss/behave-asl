@@ -609,6 +609,34 @@ Feature: Example feature
     Then the step result data path "$.hello" has "2" entries
 ```
 
+## Then the step result data path "path" has length "length"
+
+Verify that the path within the result data is a list with the specific length
+**Parameters**
+
+- path - JsonPath to the data element to check
+- length - number of elements to expect
+
+**Examples**
+*Result Data*
+
+```
+{
+    "hello": ["world"]
+}
+```
+
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    When the state machine executes
+    Then the step result data path "$.hello" has length "1"
+```
+
+
 ## Then the step result data path "path" is a dict
 
 Verify that the path within the result data is a dictionary/map
@@ -740,6 +768,58 @@ Feature: Example feature
     Given a state machine defined in "my-state-machine.asl"
     When the state machine executes
     Then the step result data path "$.hello" is null
+```
+
+## Then the step result data path "path" is true
+
+Verify that the path within the result data is a boolean true
+**Parameters**
+
+- path - JsonPath to the data element to check
+
+**Examples**
+*Result Data*
+
+```
+{
+    "hello": true
+}
+```
+
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    When the state machine executes
+    Then the step result data path "$.hello" is true
+```
+
+## Then the step result data path "path" is false
+
+Verify that the path within the result data is a boolean false
+**Parameters**
+
+- path - JsonPath to the data element to check
+
+**Examples**
+*Result Data*
+
+```
+{
+    "hello": false
+}
+```
+
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    When the state machine executes
+    Then the step result data path "$.hello" is false
 ```
 
 ## Then the step result data path "path" matches "value"
