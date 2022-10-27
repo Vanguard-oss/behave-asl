@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import json
+import random
 import uuid
 
 from behaveasl.models.exceptions import StatesRuntimeException
@@ -84,7 +85,7 @@ def states_uuid(args):
     return str(uuid.uuid4())
 
 
-def states_array_parition(args):
+def states_array_partition(args):
     """Implementation of States.ArrayPartition
 
     https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-intrinsic-functions.html#asl-intrsc-func-arrays
@@ -314,6 +315,16 @@ def states_base64_decode(args):
 
 
 def states_hash(args):
+    """Implementation of States.Hash
+
+    https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-intrinsic-functions.html#asl-intrsc-func-hash-calc
+
+    Args:
+        args (list): The value to hash and the algorithm to hash with
+
+    Returns:
+        str: a string with hex hashed contents
+    """
 
     input = args.pop(0)
     algo = args.pop(0)
@@ -336,6 +347,88 @@ def states_hash(args):
     return m.hexdigest()
 
 
+def states_json_merge(args):
+    """Implementation of States.JsonMerge
+
+    https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-intrinsic-functions.html#asl-intrsc-func-hash-calc
+
+    Args:
+        args (list): Two objects to merge and a boolean of if the merge should be deep or not
+
+    Returns:
+        str: a string with hex hashed contents
+    """
+    input1 = args.pop(0)
+    input2 = args.pop(0)
+    deep = args.pop(0)
+
+    if deep:
+        raise StatesRuntimeException(f"States.JsonMerge deep mode is not supported yet")
+    else:
+        resp = {}
+        resp.update(input1)
+        resp.update(input2)
+        return resp
+
+
+def states_math_add(args):
+    """Implementation of States.MathAdd
+
+    https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-intrinsic-functions.html#asl-intrsc-func-math-operation
+
+    Args:
+        args (list): Two numbers to add
+
+    Returns:
+        int|float: the sum of the two numbers
+    """
+
+    input1 = args.pop(0)
+    input2 = args.pop(0)
+
+    return input1 + input2
+
+
+def states_math_random(args):
+    """Implementation of States.MathRandom
+
+    https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-intrinsic-functions.html#asl-intrsc-func-math-operation
+
+    Args:
+        args (list): The min and max values
+
+    Returns:
+        int: random int between the inputs
+    """
+
+    # Input validation
+    # You must specify integer values for the start number and end number arguments.
+    # If you specify a non-integer value for the start number or end number argument, Step Functions will round it off to the nearest integer.
+
+    input1 = int(args.pop(0))
+    input2 = int(args.pop(0))
+
+    return random.randint(input1, input2)
+
+
+def states_string_split(args):
+    """Implementation of States.StringSplit
+
+    https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-intrinsic-functions.html#asl-intrsc-func-string-operation
+
+    Args:
+        args (list): The string to split and the delimiter
+
+    Returns:
+        list: list of values
+    """
+
+    input = args.pop(0)
+    splitter = args.pop(0)
+
+    return input.split(splitter)
+
+
 STATES_INTRINSICS = {
     "States.Format": states_format,
     "States.StringToJson": states_string_to_json,
@@ -344,11 +437,15 @@ STATES_INTRINSICS = {
     "States.ArrayContains": states_array_contains,
     "States.ArrayGetItem": states_array_get_item,
     "States.ArrayLength": states_array_length,
-    "States.ArrayPartition": states_array_parition,
+    "States.ArrayPartition": states_array_partition,
     "States.ArrayRange": states_array_range,
     "States.ArrayUnique": states_array_unique,
     "States.Base64Decode": states_base64_decode,
     "States.Base64Encode": states_base64_encode,
     "States.Hash": states_hash,
+    "States.JsonMerge": states_json_merge,
+    "States.MathAdd": states_math_add,
+    "States.MathRandom": states_math_random,
+    "States.StringSplit": states_string_split,
     "States.UUID": states_uuid,
 }

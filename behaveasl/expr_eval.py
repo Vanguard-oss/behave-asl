@@ -28,7 +28,7 @@ def _tokenize_expression(expr: str):
             # If this is a JsonPath, then we can assume that it ends at the next comma or the end of the string
             if "," in args_str:
                 # This JsonPath goes to the next comma
-                new_parts = args_str.split(",", 2)
+                new_parts = args_str.split(",", 1)
                 next_token = new_parts[0]
                 args_str = new_parts[1]
                 args.append(next_token)
@@ -45,10 +45,18 @@ def _tokenize_expression(expr: str):
             # If we get here, then we are between arguments
             # We can skip the comma so we can get to the start of the next argument
             args_str = args_str[1:]
-        elif args_str[0].isdigit():
+        elif args_str.startswith("false,") or args_str == "false":
+            args.append(args_str)
+            args_str = args_str[len("false") :]
+        elif args_str.startswith("true,") or args_str == "true":
+            args.append(args_str)
+            args_str = args_str[len("true") :]
+        elif args_str[0].isdigit() or args_str[0] == "-":
             next_token = ""
             # while len(args_str)>0 and args_str[0].isnumeric():
-            while len(args_str) > 0 and (args_str[0].isdecimal() or args_str[0] == "."):
+            while len(args_str) > 0 and (
+                args_str[0].isdecimal() or args_str[0] == "." or args_str[0] == "-"
+            ):
                 next_token = next_token + args_str[0]
                 args_str = args_str[1:]
             args.append(next_token)
@@ -102,10 +110,14 @@ def _replace_jsonpath_expressions(*, args, input, context):
             # If it is surounded by quotes, try to replace backslashes the way AWS does
             arg = arg.replace("\n", "\\n")
             new_args.append(ast.literal_eval(arg).replace("'", "\\'"))
-        elif arg.isdigit():
-            new_args.append(int(arg))
-        elif arg[0].isdigit():
+        elif (arg[0].isdigit() or arg[0] == "-") and "." in arg:
             new_args.append(float(arg))
+        elif arg[0].isdigit() or arg[0] == "-":
+            new_args.append(int(arg))
+        elif arg == "true":
+            new_args.append(True)
+        elif arg == "false":
+            new_args.append(False)
         else:
             raise StatesRuntimeException(f"Unparsable argument: {arg}")
     return new_args
@@ -145,7 +157,7 @@ def replace_expression(*, expr: str, input, context: dict):
                 new_value = func(args)
             except Exception as e:
                 traceback.print_exc()
-                raise StatesRuntimeException(f"Failed expression {expr}: "+str(e))
+                raise StatesRuntimeException(f"Failed expression {expr}: " + str(e))
             LOG.info(f"Replacing '{expr}' with '{new_value}'")
             return new_value
     raise StatesRuntimeException(f"Invalid expression {expr}: Nonsense")

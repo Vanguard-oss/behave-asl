@@ -178,8 +178,8 @@ is just a passthrough.
 | States.Hash | Yes |
 | States.JsonMerge | Yes |
 | States.JsonToString | Yes |
-| States.MathAdd | No |
-| States.MathRandom | No |
+| States.MathAdd | Yes |
+| States.MathRandom | Yes |
 | States.StringSplit | No |
 | States.StringToJson | Yes |
 | States.UUID | Yes |
