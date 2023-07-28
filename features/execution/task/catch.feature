@@ -182,3 +182,46 @@ Feature: The Task can catch an error and send to another state
     And the resource "Lambda" will be called with any parameters and fail with error "States.Permissions"
     When the state machine executes
     Then the step result data path "$.MyError.Cause" is a string
+
+  Scenario: The Task Catch can work with Credentials
+    Given a state machine defined by:
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Task",
+                  "Resource": "Lambda",
+                  "Credentials": {
+                      "RoleArn": "arn:aws:iam::123456789012:role/MyRole"
+                  },
+                  "Next": "EndState",
+                  "Catch": [
+                      {
+                        "ErrorEquals": ["States.Permissions"],
+                        "Next": "ErrorState",
+                        "ResultPath": "$.MyError"
+                      }
+                  ]
+              },
+              "ErrorState": {
+                "Type": "Pass",
+                "Next": "EndState"
+              },
+              "EndState": {
+                  "Type": "Task",
+                  "Resource": "Lambda",
+                  "End": true
+              }
+          }
+      }
+      """
+    And the current state data is:
+      """
+      {
+          "MyKey": "MyValue"
+      }
+      """
+    And the resource "Lambda" will be called with any parameters, with role "arn:aws:iam::123456789012:role/MyRole" and fail with error "States.Permissions"
+    When the state machine executes
+    Then the step result data path "$.MyError.Cause" is a string

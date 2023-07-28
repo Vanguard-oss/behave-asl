@@ -43,5 +43,5 @@ setup(
         ]
     },
     url=("https://github.com/vanguard/behave-asl"),
-    version="1.0.0",
+    version="1.1.0",
 )

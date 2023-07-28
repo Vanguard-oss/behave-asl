@@ -140,6 +140,7 @@ is just a passthrough.
 | ResultSelector | Yes |
 | Retry | Yes |
 | Catch | Yes |
+| Credentials | Yes |
 
 ### Wait
 

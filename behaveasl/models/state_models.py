@@ -58,13 +58,32 @@ class PassState(AbstractStateModel):
 
 
 class TaskMockPhase(AbstractPhase):
-    def __init__(self, state_details: dict):
+    def __init__(self, *, state_details: dict):
         self._resource = state_details["Resource"]
         self._log = logging.getLogger("behaveasl.TaskMockPhase")
 
+        self._state_details = state_details
+
     def execute(self, state_input, phase_input, sr: StepResult, execution):
-        execution.resource_expectations.execute(self._resource, phase_input)
-        resp = execution.resource_response_mocks.execute(self._resource, phase_input)
+
+        role = None
+
+        if "Credentials" in self._state_details:
+            if "RoleArn" in self._state_details["Credentials"]:
+                role = self._state_details["Credentials"]["RoleArn"]
+            elif "RoleArn.$" in self._state_details["Credentials"]:
+                role = replace_expression(
+                    expr=self._state_details["Credentials"]["RoleArn.$"],
+                    input=state_input,
+                    context=execution.context,
+                )
+
+        execution.resource_expectations.execute(
+            resource_name=self._resource, resource_input=phase_input, role=role
+        )
+        resp = execution.resource_response_mocks.execute(
+            resource_name=self._resource, resource_input=phase_input, role=role
+        )
         self._log.debug(f"'{self._resource}' returned '{resp}'")
         return resp
 
@@ -75,7 +94,7 @@ class TaskState(AbstractStateModel):
         self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
         if "Parameters" in state_details:
             self._phases.append(ParametersPhase(state_details["Parameters"]))
-        self._phases.append(TaskMockPhase(state_details))
+        self._phases.append(TaskMockPhase(state_details=state_details))
         if "ResultSelector" in state_details:
             self._phases.append(
                 ResultSelectorPhase(state_details.get("ResultSelector", "$"))
@@ -457,11 +476,11 @@ class MapMockPhase(AbstractPhase):
 
         if shared_key:
             return self._execution.resource_response_mocks.execute(
-                shared_key, self._phase_input
+                resource_name=shared_key, resource_input=self._phase_input
             )
         elif "unknown" in self._execution.resource_response_mocks._map.keys():
             return self._execution.resource_response_mocks._map["unknown"].execute(
-                "unknown", ""
+                resource_name="unknown", resource_input=""
             )
         else:
             raise KeyError

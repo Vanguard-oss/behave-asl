@@ -8,10 +8,13 @@ You can only configure a mock response to have a static JSON response
 
 ## Expectations
 
-You can configure a mock to have two different types of expectations.
+You can configure a mock to have three different types of expectations.
 
 1. JSON comparison of Parameters
-1. Skip validation
+2. String comparison of the Credentials/RoleArn
+3. Skip validation
+
+You can also configure a mock that combines multiple expectations together
 
 ## Examples
 
