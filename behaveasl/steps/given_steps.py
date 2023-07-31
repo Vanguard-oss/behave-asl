@@ -9,6 +9,8 @@ from behaveasl.models.task_mock import (
     AssertParameters,
     ErrorResponse,
     StaticResponse,
+    CombinationMock,
+    AssertRole,
 )
 
 
@@ -63,6 +65,18 @@ def given_resource_any_param_will_return(context, resource):
 
 
 @given(
+    'the resource "{resource}" will be called with any parameters using role "{role}" and return'
+)
+def given_resource_any_param_will_return(context, resource, role):
+    context.execution.resource_response_mocks.add_mock(
+        resource, StaticResponse(json.loads(context.text))
+    )
+    context.execution.resource_expectations.add_mock(
+        resource, CombinationMock([AnyParameters(), AssertRole(role)])
+    )
+
+
+@given(
     'the resource "{resource}" will be called with any parameters and fail with error "{error}"'
 )
 def given_resource_any_param_fail(context, resource, error):
@@ -70,11 +84,28 @@ def given_resource_any_param_fail(context, resource, error):
     context.execution.resource_expectations.add_mock(resource, AnyParameters())
 
 
+@given(
+    'the resource "{resource}" will be called with any parameters, with role "{role}" and fail with error "{error}"'
+)
+def given_resource_any_param_fail(context, resource, role, error):
+    context.execution.resource_response_mocks.add_mock(resource, ErrorResponse(error))
+    context.execution.resource_expectations.add_mock(
+        resource, CombinationMock([AnyParameters(), AssertRole(role)])
+    )
+
+
 @given('the resource "{resource}" will be called with')
 @given('the state "{resource}" will be called with')
 def given_resource_expect_param(context, resource):
     context.execution.resource_expectations.add_mock(
         resource, AssertParameters(context.text)
+    )
+
+
+@given('the resource "{resource}" will be called with role "{role}" and parameters')
+def step_impl(context, resource, role):
+    context.execution.resource_expectations.add_mock(
+        resource, CombinationMock([AssertParameters(context.text), AssertRole(role)])
     )
 
 

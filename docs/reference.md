@@ -237,6 +237,70 @@ Feature: Example feature
 
 - This step is standalone.  It cannot be paired with one of the other mock steps
 
+
+## Given the resource "name" will be called with any parameters and return
+## Given the resource "name" will be called with any parameters using role "role" and return
+
+Tell the execution environment to mock out a resource to return a specific value.
+This step will also tell the execution environment that it doesn't matter what
+parameters are used to call the resource, but it does matter what role is used
+to call the resource
+
+**Parameters**
+
+- name - the name or ARN of the resource to mock out
+- role - ARN of the role that would be used to execute the resource
+
+**Text**
+Json object representing the resource response
+
+**Examples**
+*Definition*
+
+```
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Task",
+                "Resource": "Lambda",
+                "Credentials": {
+                    "RoleArn": "arn:aws:iam::123456789012:role/MyRole"
+                },
+                "Parameters": {
+                    "Type": "Teapot"
+                },
+                "Next": "EndState"
+            },
+            "EndState": {
+                "Type": "Task",
+                "Resource": "Lambda",
+                "End": true
+            }
+        }
+    }
+```
+
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    And the resource "Lambda" will be called with any parameters using role "arn:aws:iam::123456789012:role/MyRole" and return:
+    """
+    {
+        "Size": "Little"
+    }
+    """
+    When the state machine executes
+```
+
+**Notes**
+
+- This step is standalone.  It cannot be paired with one of the other mock steps
+- The role validation does support JsonPath
+
 ## Given branch "idx" will return
 
 Tell the execution environment that the parallel branch will return a specific json value
@@ -358,6 +422,66 @@ Feature: Example feature
 
 - This step is standalone.  It cannot be paired with one of the other mock steps
 
+## Given the resource "name" will be called with any parameters, with role "role" and fail with error "error"
+
+Tell the execution environment to mock out a resource to return an error.
+This step will also tell the execution environment that it doesn't matter what
+parameters are used to call the resource and to expect to be executed with a
+custom role arn.
+
+**Parameters**
+
+- name - the name or ARN of the resource to mock out
+- role - ARN of the role that would be used to execute the resource
+- error - the error type that should be thrown
+
+**Examples**
+*Definition*
+
+```
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Task",
+                "Resource": "Lambda",
+                "Credentials": {
+                    "RoleArn": "arn:aws:iam::123456789012:role/MyRole"
+                },
+                "Parameters": {
+                    "Type": "Teapot"
+                },
+                "Retry": [
+                    {
+                        "ErrorEquals": ["States.Timeout"]
+                    }
+                ]
+                "Next": "EndState"
+            },
+            "EndState": {
+                "Type": "Task",
+                "Resource": "Lambda",
+                "End": true
+            }
+        }
+    }
+```
+
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    And the resource "Lambda" will be called with any parameters, with role "arn:aws:iam::123456789012:role/MyRole" and fail with error "States.Timeout"
+    When the state machine executes
+    Then the next state is "FirstState"
+```
+
+**Notes**
+
+- This step is standalone.  It cannot be paired with one of the other mock steps
+
 ## Given the resource "name" will be called with
 
 Tell the execution environment that you expect the mocked resource to be called with specific parameters
@@ -406,6 +530,72 @@ Feature: Example feature
     }
     """
     And the resource "Lambda" will return:
+    """
+    {
+        "Size": "Little"
+    }
+    """
+    When the state machine executes
+```
+
+**Notes**
+
+- This must be paired with a `Given the resource "name" will return` step
+
+## Given the resource "name" will be called with role "role" and parameters
+
+Tell the execution environment that you expect the mocked resource to be called
+with specific parameters.  You expect the resource to be called with a specific
+role as well.
+
+**Parameters**
+
+- name - the name or ARN of the resource to mock out
+- role - ARN of the role that would be used to execute the resource
+
+**Text**
+Json object representing the parameters you expect the resource to be called with
+
+**Examples**
+*Definition*
+
+```
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Task",
+                "Resource": "Lambda",
+                "Credentials": {
+                    "RoleArn": "arn:aws:iam::123456789012:role/MyRole"
+                },
+                "Parameters": {
+                    "Type": "Teapot"
+                },
+                "Next": "EndState"
+            },
+            "EndState": {
+                "Type": "Task",
+                "Resource": "Lambda",
+                "End": true
+            }
+        }
+    }
+```
+
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    And the resource "Lambda" will be called with:
+    """
+    {
+        "Type": "Teapot"
+    }
+    """
+    And the resource "Lambda" will be called with role "arn:aws:iam::123456789012:role/MyRole" and parameters:
     """
     {
         "Size": "Little"
