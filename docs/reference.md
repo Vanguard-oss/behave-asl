@@ -1250,3 +1250,111 @@ Feature: Example feature
       """
 
 ```
+
+## Then the last state waited for "count" seconds
+
+Verify that the last state waited for a certain number of seconds
+
+**Parameters**
+
+- count - number of seconds that the last state waited for
+
+**Examples**
+
+*Definition*
+
+```
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Wait",
+                "Next": "EndState",
+                "SecondsPath": "$.Seconds",
+                "End": true
+            }
+        }
+    }
+```
+
+    And the current state data is:
+      """
+      {
+          "Seconds": 1
+      }
+      """
+
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: A second retry can occur
+    Given a state machine defined in "my-state-machine.asl"
+    And the current state data is:
+      """
+      {
+          "Seconds": 1
+      }
+      """
+    When the state machine executes
+    Then the last state waited for "2" seconds
+```
+
+
+## Then the last state ran with a max of "count" concurrent executions
+
+Verify that the last state ran with a specific max concurrency
+
+**Parameters**
+
+- count - max number of executions
+
+**Examples**
+
+*Definition*
+
+```
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Map",
+                "MaxConcurrency": 2,
+                "Iterator": {
+                    "StartAt": "SubState",
+                    "States": {
+                        "SubState": {
+                            "Type": "Pass",
+                            "End": true
+                        }
+                    }
+                },
+                "End": true
+            }
+        }
+    }
+```
+
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: A second retry can occur
+    Given a state machine defined in "my-state-machine.asl"
+    And the execution input is:
+      """
+      [
+          {
+              "who": "bob"
+          },
+          {
+              "who": "meg"
+          },
+          {
+              "who": "joe"
+          }
+      ]
+      """
+    When the state machine executes
+    Then the last state ran with a max of "2" concurrent executions
+```

@@ -173,3 +173,47 @@ Feature: The Map state type is supported
         "orange"
       ]
       """
+
+  Scenario: The Map type can set the max MaxConcurrency
+    Given a state machine defined by:
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Map",
+                  "MaxConcurrency": 2,
+                  "Iterator": {
+                      "StartAt": "SubState",
+                      "States": {
+                          "SubState": {
+                              "Type": "Pass",
+                              "End": true
+                          }
+                      }
+                  },
+                  "End": true
+              }
+          }
+      }
+      """
+    And the execution input is:
+      """
+      [
+          {
+              "who": "bob"
+          },
+          {
+              "who": "meg"
+          },
+          {
+              "who": "joe"
+          }
+      ]
+      """
+    And the state "FirstState" will return "unknown" when invoked with any unknown parameters
+    And the state machine is current at the state "FirstState"
+    When the state machine executes
+    Then the execution ended
+    And the execution succeeded
+    And the last state ran with a max of "2" concurrent executions

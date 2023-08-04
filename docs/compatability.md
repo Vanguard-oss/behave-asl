@@ -79,6 +79,15 @@
 | Next | No |
 | End | No |
 | ResultPath | No |
+| ItemProcessor | No |
+| ItemReader | No |
+| ItemsPath | No |
+| ItemSelector | No |
+| ItemBatcher | No |
+| MaxConcurrency | Yes |
+| ToleratedFailurePercentage | No |
+| ToleratedFailureCount | No |
+| Label | No |
 | Parameters | No |
 | ResultSelector | No |
 | Retry | No |

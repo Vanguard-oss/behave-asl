@@ -202,6 +202,9 @@ def then_waited_seconds(context, num):
 def then_waited_until_timestamp(context, timestamp):
     assert timestamp == context.execution.last_step_result.waited_until_timestamp
 
+@then(u'the last state ran with a max of "{count}" concurrent executions')
+def step_impl(context, count):
+    assert int(count) == int(context.execution.last_step_result.max_concurrency)
 
 @then(
     'the JSON output of "{state_name}" is'
