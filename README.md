@@ -92,7 +92,7 @@ behave-asl
 
 - [Reference Guide](docs/reference.md)
 - [Compatability Guide](docs/compatability.md)
-- [Change Log](CHANGELOG.md)
+- [Changelog](CHANGELOG.md)
 
 ## Contributing
 
