@@ -486,6 +486,11 @@ class MapMockPhase(AbstractPhase):
             raise KeyError
 
 
+class MapStepResult(StepResult):
+
+    max_concurrency: int = None
+
+
 class MapState(AbstractStateModel):
     def __init__(self, state_name, state_details, **kwargs):
         self._iterator = state_details.get("Iterator", None)
@@ -523,7 +528,10 @@ class MapState(AbstractStateModel):
 
     def execute(self, state_input, execution):
         """The map state can be used to run a set of steps for each element of an input array"""
-        sr = StepResult()
+        sr = MapStepResult()
+
+        sr.max_concurrency = self._max_concurrency
+
         current_data = copy.deepcopy(state_input)
 
         for phase in self._phases:
