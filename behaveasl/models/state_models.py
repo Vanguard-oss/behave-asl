@@ -442,13 +442,17 @@ class MapMockPhase(AbstractPhase):
         self._execution.context["Map"]["Item"]["Value"] = input[1]
         iteration_value = input[1]
 
-        if "Parameters" in self._state_details:
+        if "Parameters" in self._state_details or "ItemSelector" in self._state_details:
             inp = InputPathPhase(self._state_details.get("InputPath", "$"))
             inp_phase_output = inp.execute(
                 self._state_input, self._state_input, self._sr, self._execution
             )
 
-            param = ParametersPhase(self._state_details["Parameters"])
+            param = ParametersPhase(
+                self._state_details.get(
+                    "ItemSelector", self._state_details.get("Parameters", {})
+                )
+            )
 
             iteration_value = param.execute(
                 self._state_input, inp_phase_output, self._sr, self._execution
@@ -493,9 +497,11 @@ class MapStepResult(StepResult):
 
 class MapState(AbstractStateModel):
     def __init__(self, state_name, state_details, **kwargs):
-        self._iterator = state_details.get("Iterator", None)
+        self._iterator = state_details.get("ItemProcessor", None)
         if self._iterator is None:
-            raise StatesCompileException("An Iterator field must be provided.")
+            self._iterator = state_details.get("Iterator", None)
+            if self._iterator is None:
+                raise StatesCompileException("An ItemProcessor field must be provided.")
 
         self._phases = []
         self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
