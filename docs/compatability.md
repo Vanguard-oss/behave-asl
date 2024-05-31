@@ -70,6 +70,12 @@
 
 ### Map
 
+| Modes | Status |
+| ----- | ------ |
+| Inline | Yes |
+| Distributed | No |
+
+
 | Field | Status |
 | ----- | ------ |
 | Type | Yes |
@@ -79,10 +85,10 @@
 | Next | No |
 | End | No |
 | ResultPath | No |
-| ItemProcessor | No |
+| ItemProcessor | Yes |
 | ItemReader | No |
 | ItemsPath | No |
-| ItemSelector | No |
+| ItemSelector | Yes |
 | ItemBatcher | No |
 | MaxConcurrency | Yes |
 | ToleratedFailurePercentage | No |
@@ -92,6 +98,13 @@
 | ResultSelector | No |
 | Retry | No |
 | Catch | No |
+
+| Input Type | Status |
+| ---------- | ------ |
+| CSV | No |
+| object | No |
+| JSON | No |
+| S3 inventory list | No |
 
 ### Pass
 
