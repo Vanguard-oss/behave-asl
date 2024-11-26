@@ -233,6 +233,10 @@ def then_sorted_json(context, state_name):
 def step_impl(context, path, value):
     jpexpr = jsonpath.get_instance(path)
     results = jpexpr.find(context.execution.last_step_result.assigned_variables)
+    if len(results) < 1:
+        LOG.critical(f"{path} not found")
     assert len(results) == 1
     t = results[0].value
+    if t != value:
+        LOG.critical(f"{path} is [{t}], not [{value}]")
     assert t == value

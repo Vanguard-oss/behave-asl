@@ -15,14 +15,7 @@ class AbstractPhase(ABC):
             self._state = state
             self._state_name = state.state_name
 
-            langs = {
-                "JSONPath": QueryLanguage.JSONPATH,
-                "JSONata": QueryLanguage.JSONATA,
-            }
-
-            self._query_language = langs[
-                state.state_details.get("QueryLanguage", "JSONPath")
-            ]
+            self._query_language = state.query_language
         else:
             self._state = None
             self._state_name = "unknown"

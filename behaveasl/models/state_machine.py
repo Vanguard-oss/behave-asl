@@ -1,4 +1,5 @@
 from behaveasl.models.abstract_state import AbstractStateModel
+from behaveasl.models.query_language import QueryLanguage, get_query_language
 from behaveasl.models.state_models import (
     ChoiceState,
     FailState,
@@ -16,6 +17,9 @@ class StateMachineModel:
 
     def __init__(self, definition: dict):
         self._definition = definition
+        self._query_language = get_query_language(
+            definition.get("QueryLanguage", "JSONPath")
+        )
         # For state in _definition, create an instance of the correct state model based on the type of state
         self._states = self._populate_states_from_definition()
 
@@ -54,4 +58,9 @@ class StateMachineModel:
             "Succeed": SucceedState,
             "Fail": FailState,
         }
-        return type_to_class[state_type](state_name, state_details)
+        state = type_to_class[state_type](self, state_name, state_details)
+        return state
+
+    @property
+    def query_language(self) -> QueryLanguage:
+        return self._query_language
