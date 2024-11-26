@@ -2,3 +2,4 @@ behave>=1.0.25
 diff_match_patch==20200713
 jsonpath_ng==1.5.3
 PyYAML==5.4.1
+jsonata-python==0.5.1

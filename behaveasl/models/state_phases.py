@@ -1,9 +1,12 @@
 import copy
 import logging
 
-from behaveasl import expr_eval, jsonpath
+from behaveasl import expr_eval, jsonata_eval, jsonpath
 from behaveasl.models.abstract_phase import AbstractPhase
+from behaveasl.models.exceptions import StatesCompileException
 from behaveasl.models.step_result import StepResult
+
+from .query_language import QueryLanguage
 
 
 class Path(AbstractPhase):
@@ -63,6 +66,7 @@ class ResultPathPhase(AbstractPhase):
         self._log.debug(
             f"Replaced '{state_input}' with '{phase_output}', path='{self._path}', input='{phase_input}'"
         )
+
         return phase_output
 
 
@@ -79,6 +83,7 @@ class ParametersPhase(AbstractPhase):
             phase_input=phase_input,
             execution=execution,
         )
+        sr.parameters = copy.deepcopy(phase_output)
         return phase_output
 
     def parse_phase_output(
@@ -115,6 +120,46 @@ class ParametersPhase(AbstractPhase):
         return phase_output
 
 
+class AssignPhase(AbstractPhase):
+    def __init__(self, assign_input: dict = None, **kwargs):
+        super(AssignPhase, self).__init__(**kwargs)
+        self._input = assign_input or {}
+        self._log = logging.getLogger("behaveasl.AssignPhase")
+
+    def execute(self, state_input, phase_input, sr: StepResult, execution):
+        sr.assigned_variables = self._process_data(self._input, sr, execution)
+        return phase_input
+
+    def _process_data(self, data, sr: StepResult, execution):
+        if isinstance(data, dict):
+            ret = {}
+            for k, v in data.items():
+                if k.endswith(".$"):
+                    if self._query_language != QueryLanguage.JSONPATH:
+                        raise StatesCompileException(
+                            f"State [{self._state_name}] cannot assign a JSONPath variable with a non-JSONPath query language"
+                        )
+                    if isinstance(v, str):
+                        ret[k[0:-2]] = expr_eval.replace_expression(
+                            expr=v, input=sr.parameters, context=execution.context
+                        )
+                    else:
+                        raise StatesCompileException(
+                            f"State [{self._state_name}] cannot assign a non-string value to a JSONPath variable"
+                        )
+                else:
+                    ret[k] = self._process_data(v, sr, execution)
+            return ret
+        elif isinstance(data, list):
+            return [self._process_data(v, sr, execution) for v in data]
+        elif isinstance(data, str):
+            if self._query_language == QueryLanguage.JSONATA:
+                return jsonata_eval.replace_jsonata(data, sr, execution.context)
+            return data
+        else:
+            return data
+
+
 class OutputPathPhase(AbstractPhase):
     def __init__(self, output_path: str = "$", **kwargs):
         super(OutputPathPhase, self).__init__(**kwargs)
@@ -138,6 +183,7 @@ class InputPathPhase(AbstractPhase):
         self._log = logging.getLogger("behaveasl.InputPathPhase")
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
+        sr.state_input = state_input
         phase_output = expr_eval.replace_expression(
             expr=self._path, input=phase_input, context=execution.context
         )

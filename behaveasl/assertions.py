@@ -1,8 +1,7 @@
 import json
 import logging
-from urllib.parse import unquote
-
 from diff_match_patch import diff_match_patch
+from urllib.parse import unquote
 
 
 LOG = logging.getLogger("behave.assertions")

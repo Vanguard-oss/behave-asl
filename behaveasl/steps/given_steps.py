@@ -1,5 +1,4 @@
 import json
-
 from behave import given
 
 from behaveasl import parser
@@ -7,10 +6,10 @@ from behaveasl.models.execution import Execution
 from behaveasl.models.task_mock import (
     AnyParameters,
     AssertParameters,
+    AssertRole,
+    CombinationMock,
     ErrorResponse,
     StaticResponse,
-    CombinationMock,
-    AssertRole,
 )
 
 

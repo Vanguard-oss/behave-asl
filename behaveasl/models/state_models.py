@@ -10,6 +10,7 @@ from behaveasl.models.choice import create_choice
 from behaveasl.models.exceptions import StatesCompileException
 from behaveasl.models.retry import Retry
 from behaveasl.models.state_phases import (
+    AssignPhase,
     InputPathPhase,
     OutputPathPhase,
     ParametersPhase,
@@ -39,12 +40,14 @@ class PassResultPhase(AbstractPhase):
 # Order of classes follows: https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-common-fields.html
 class PassState(AbstractStateModel):
     def __init__(self, state_name: str, state_details: dict, **kwargs):
+        super(PassState, self).__init__(state_name, state_details, **kwargs)
         self._phases = []
         self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
         if "Parameters" in state_details:
             self._phases.append(ParametersPhase(state_details["Parameters"]))
         self._phases.append(PassResultPhase(state_details))
         self._phases.append(ResultPathPhase(state_details.get("ResultPath", "$")))
+        self._phases.append(AssignPhase(state_details.get("Assign", {}), state=self))
         self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
 
     def execute(self, state_input, execution):
@@ -90,6 +93,8 @@ class TaskMockPhase(AbstractPhase):
 
 class TaskState(AbstractStateModel):
     def __init__(self, state_name: str, state_details: dict, **kwargs):
+        super(TaskState, self).__init__(state_name, state_details, **kwargs)
+
         self._phases = []
         self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
         if "Parameters" in state_details:
@@ -206,13 +211,14 @@ class ChoiceSelectionPhase(AbstractPhase):
 
 class ChoiceState(AbstractStateModel):
     def __init__(self, state_name: str, state_details: dict, **kwargs):
+        super(ChoiceState, self).__init__(state_name, state_details, **kwargs)
+
         self._phases = []
         self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
         if "Parameters" in state_details:
             self._phases.append(ParametersPhase(state_details["Parameters"]))
         self._phases.append(ChoiceSelectionPhase(state_details))
         self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
-        self.state_name = state_name
 
     def execute(self, state_input, execution):
         # TODO: implement
@@ -238,7 +244,9 @@ class ChoiceState(AbstractStateModel):
 
 
 class WaitState(AbstractStateModel):
-    def __init__(self, state_name: str, state_details):
+    def __init__(self, state_name: str, state_details, **kwargs):
+        super(WaitState, self).__init__(state_name, state_details, **kwargs)
+
         self._phases = []
         self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
         self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
@@ -302,6 +310,8 @@ class SucceedState(AbstractStateModel):
     """The Succeed state terminates that machine and marks it as a success"""
 
     def __init__(self, state_name: str, state_details: dict, **kwargs):
+        super(SucceedState, self).__init__(state_name, state_details, **kwargs)
+
         self._phases = []
         self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
         self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
@@ -321,6 +331,8 @@ class FailState(AbstractStateModel):
     """The Fail state terminates the machine and marks it as a failure"""
 
     def __init__(self, state_name: str, state_details: dict, **kwargs):
+        super(FailState, self).__init__(state_name, state_details, **kwargs)
+
         self._phases = []
         self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
         self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
@@ -362,6 +374,8 @@ class ParallelMockPhase(AbstractPhase):
 
 class ParallelState(AbstractStateModel):
     def __init__(self, state_name, state_details, **kwargs):
+        super(ParallelState, self).__init__(state_name, state_details, **kwargs)
+
         self._branches = state_details.get("Branches", None)
         if self._branches is None:
             raise StatesCompileException("An Branches field must be provided.")
@@ -497,6 +511,8 @@ class MapStepResult(StepResult):
 
 class MapState(AbstractStateModel):
     def __init__(self, state_name, state_details, **kwargs):
+        super(MapState, self).__init__(state_name, state_details, **kwargs)
+
         self._iterator = state_details.get("ItemProcessor", None)
         if self._iterator is None:
             self._iterator = state_details.get("Iterator", None)

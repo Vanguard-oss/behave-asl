@@ -4,6 +4,7 @@ import logging
 
 from behaveasl.models.exceptions import (
     StatesCatchableException,
+    StatesCompileException,
     StatesException,
 )
 from behaveasl.models.state_machine import StateMachineModel
@@ -64,6 +65,14 @@ class Execution:
             except StatesCatchableException as e2:
                 self._handle_catches(current_state_obj, e2)
 
+        except StatesCompileException as e:
+            self._log.exception(
+                f"Failed to execute state {self._current_state}, cause={e}"
+            )
+            self._last_step_result.end_execution = True
+            self._last_step_result.failed = True
+            self._last_step_result.compiled = False
+            self._last_step_result.cause = str(e)
         except StatesException as e:
             self._log.exception(
                 f"Failed to execute state {self._current_state}, error={e.error}, cause={e.cause}"

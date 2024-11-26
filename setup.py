@@ -34,6 +34,7 @@ setup(
         "diff_match_patch==20200713",
         "jsonpath_ng<2.0.0",
         "PyYAML>=5.4.1",
+        "jsonata-python",
     ],
     name="behave-asl",
     packages=find_packages(),
@@ -43,5 +44,5 @@ setup(
         ]
     },
     url=("https://github.com/vanguard/behave-asl"),
-    version="1.1.0",
+    version="1.2.0",
 )

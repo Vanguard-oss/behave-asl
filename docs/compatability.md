@@ -1,5 +1,12 @@
 # behave-asl Compatability
 
+## Top Level Fields
+
+| Field | Status |
+| ----- | ------ |
+| StartAt | Yes |
+| QueryLanguage | No |
+
 ## States
 
 ### Choice
@@ -13,7 +20,7 @@
 | OutputPath | Yes |
 | Choices | Yes |
 | Default | Yes |
-
+![alt text](image.png)
 #### Comparison Operators
 
 | Operator | Status |
@@ -118,6 +125,8 @@
 | End | Yes |
 | ResultPath | Yes |
 | Parameters | Yes |
+| Assign | Yes |
+| QueryLanguage | Partial |
 
 ### Parallel
 
@@ -177,11 +186,22 @@ is just a passthrough.
 
 ## Reference Paths
 
+### JSONPath
+
 | Location | Status |
 | --- | --- |
 | State Input | Yes |
 | State Output | Yes |
 | Execution Input | Yes |
+| Context Object | Yes |
+
+### JSONata
+
+| Location | Status |
+| --- | --- |
+| State Input | Yes |
+| Result | No |
+| Error | No |
 | Context Object | Yes |
 
 ## Intrinsics
@@ -215,3 +235,9 @@ is just a passthrough.
 | Boolean | Yes | |
 | Integer | Yes | |
 | Float | Yes | x.x format only |
+
+## Query Languages
+
+| Type | Status |
+| JSONPath | Yes |
+| JSONata | Partial |

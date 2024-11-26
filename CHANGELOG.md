@@ -1,5 +1,7 @@
 # Changelog
+## 1.2.0
 
+- Added support for JSONata
 
 ## 1.1.0
 
