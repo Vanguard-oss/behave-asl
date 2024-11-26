@@ -65,12 +65,9 @@ Feature: The Pass state supports writing variables
               "FirstState": {
                   "Type": "Pass",
                   "Next": "EndState",
-                  "Parameters": {
-                      "Param": "Value1"
-                  },
                   "QueryLanguage": "JSONata",
                   "Assign": {
-                    "Var2": "{% states.input.Param1 %}"
+                    "Var2": "{% $states.input.Param1 %}"
                   }
               },
               "EndState": {
@@ -101,11 +98,8 @@ Feature: The Pass state supports writing variables
               "FirstState": {
                   "Type": "Pass",
                   "Next": "EndState",
-                  "Parameters": {
-                      "Param": "Value1"
-                  },
                   "Assign": {
-                    "Var2": "{% states.input.Param1 %}"
+                    "Var2": "{% $states.input.Param1 %}"
                   }
               },
               "EndState": {

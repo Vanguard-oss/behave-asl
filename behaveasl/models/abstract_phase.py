@@ -29,3 +29,13 @@ class AbstractPhase(ABC):
     @property
     def retry_list(self) -> list:
         return self._retry_list
+
+    @property
+    def state(self) -> AbstractStateModel:
+        return self._state
+
+    def is_using_jsonpath(self):
+        return self._query_language == QueryLanguage.JSONPATH
+
+    def is_using_jsonata(self):
+        return self._query_language == QueryLanguage.JSONATA

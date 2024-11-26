@@ -12,12 +12,14 @@ def replace_jsonata(input: str, sr: StepResult, context: dict) -> str:
 
     if input.startswith("{%") and input.endswith("%}"):
 
-        data = {"states": {"input": sr.state_input, "context": context}}
+        state_data = {"input": sr.state_input, "context": context}
 
-        expr = input[2:-2]
-        new_value = jsonata.Jsonata(expr).evaluate(data)
+        expr_str = input[2:-2].strip()
+        expr = jsonata.Jsonata(expr_str)
+        expr.assign("states", state_data)
+        new_value = expr.evaluate({})
 
-        LOG.debug(f"Replacing '{expr}' with '{new_value}', context='{data}'")
+        LOG.debug(f"Replacing '{expr_str}' with '{new_value}', context='{state_data}'")
         return new_value
 
     return input

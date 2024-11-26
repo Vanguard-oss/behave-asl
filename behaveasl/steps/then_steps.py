@@ -218,7 +218,12 @@ def step_impl(context, count):
     'the JSON output of "{state_name}" is'
 )  # this will precede an array/json response
 def then_output_is_json(context, state_name):
-    assert context.execution.last_step_result.result_data == json.loads(context.text)
+    expected = json.loads(context.text)
+    if context.execution.last_step_result.result_data != expected:
+        LOG.critical(
+            f"Expected: {expected}, Received: {context.execution.last_step_result.result_data}"
+        )
+    assert context.execution.last_step_result.result_data == expected
 
 
 @then('the sorted JSON output of "{state_name}" is')

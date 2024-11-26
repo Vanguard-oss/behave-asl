@@ -13,6 +13,7 @@ from behaveasl.models.state_phases import (
     AssignPhase,
     InputPathPhase,
     OutputPathPhase,
+    OutputPhase,
     ParametersPhase,
     ResultPathPhase,
     ResultSelectorPhase,
@@ -21,7 +22,8 @@ from behaveasl.models.step_result import StepResult
 
 
 class PassResultPhase(AbstractPhase):
-    def __init__(self, state_details: dict):
+    def __init__(self, state_details: dict, **kwargs):
+        super(PassResultPhase, self).__init__(**kwargs)
         self._next_state = state_details.get("Next", None)
         self._is_end = state_details.get("End", False)
         self._result = state_details.get("Result", None)
@@ -34,6 +36,8 @@ class PassResultPhase(AbstractPhase):
 
         if self._result is None:
             return phase_input
+        elif self.is_using_jsonata():
+            raise StatesCompileException("Result can only be used with JSONPath")
         return self._result
 
 
@@ -44,13 +48,22 @@ class PassState(AbstractStateModel):
             state_machine, state_name, state_details, **kwargs
         )
         self._phases = []
-        self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
+        self._phases.append(
+            InputPathPhase(state_details.get("InputPath", "$"), state=self)
+        )
         if "Parameters" in state_details:
-            self._phases.append(ParametersPhase(state_details["Parameters"]))
-        self._phases.append(PassResultPhase(state_details))
-        self._phases.append(ResultPathPhase(state_details.get("ResultPath", "$")))
+            self._phases.append(
+                ParametersPhase(state_details["Parameters"], state=self)
+            )
+        self._phases.append(PassResultPhase(state_details, state=self))
+        self._phases.append(
+            ResultPathPhase(state_details.get("ResultPath", "$"), state=self)
+        )
         self._phases.append(AssignPhase(state_details.get("Assign", {}), state=self))
-        self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
+        self._phases.append(
+            OutputPathPhase(state_details.get("OutputPath", "$"), state=self)
+        )
+        self._phases.append(OutputPhase(state=self))
 
     def execute(self, state_input, execution):
         # This logic may be able to move into the base class
@@ -63,7 +76,8 @@ class PassState(AbstractStateModel):
 
 
 class TaskMockPhase(AbstractPhase):
-    def __init__(self, *, state_details: dict):
+    def __init__(self, *, state_details: dict, **kwargs):
+        super(TaskMockPhase, self).__init__(**kwargs)
         self._resource = state_details["Resource"]
         self._log = logging.getLogger("behaveasl.TaskMockPhase")
 
@@ -102,14 +116,22 @@ class TaskState(AbstractStateModel):
         self._phases = []
         self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
         if "Parameters" in state_details:
-            self._phases.append(ParametersPhase(state_details["Parameters"]))
-        self._phases.append(TaskMockPhase(state_details=state_details))
+            self._phases.append(
+                ParametersPhase(state_details["Parameters"], state=self)
+            )
+        self._phases.append(TaskMockPhase(state_details=state_details, state=self))
         if "ResultSelector" in state_details:
             self._phases.append(
-                ResultSelectorPhase(state_details.get("ResultSelector", "$"))
+                ResultSelectorPhase(
+                    state_details.get("ResultSelector", "$"), state=self
+                )
             )
-        self._phases.append(ResultPathPhase(state_details.get("ResultPath", "$")))
-        self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
+        self._phases.append(
+            ResultPathPhase(state_details.get("ResultPath", "$"), state=self)
+        )
+        self._phases.append(
+            OutputPathPhase(state_details.get("OutputPath", "$"), state=self)
+        )
 
         self._next_state = state_details.get("Next", None)
         self._is_end = state_details.get("End", False)
@@ -160,7 +182,9 @@ class TaskState(AbstractStateModel):
 
 
 class ChoiceSelectionPhase(AbstractPhase):
-    def __init__(self, state_details: dict):
+    def __init__(self, state_details: dict, **kwargs):
+        super(ChoiceSelectionPhase, self).__init__(**kwargs)
+
         self._next_state = None
         # The set of Choices can also have a "Default" (if nothing matches) but is not required
         self._default_next_state = state_details.get("Default", None)
@@ -220,11 +244,17 @@ class ChoiceState(AbstractStateModel):
         )
 
         self._phases = []
-        self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
+        self._phases.append(
+            InputPathPhase(state_details.get("InputPath", "$"), state=self)
+        )
         if "Parameters" in state_details:
-            self._phases.append(ParametersPhase(state_details["Parameters"]))
-        self._phases.append(ChoiceSelectionPhase(state_details))
-        self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
+            self._phases.append(
+                ParametersPhase(state_details["Parameters"], state=self)
+            )
+        self._phases.append(ChoiceSelectionPhase(state_details, state=self))
+        self._phases.append(
+            OutputPathPhase(state_details.get("OutputPath", "$"), state=self)
+        )
 
     def execute(self, state_input, execution):
         # TODO: implement
@@ -256,8 +286,12 @@ class WaitState(AbstractStateModel):
         )
 
         self._phases = []
-        self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
-        self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
+        self._phases.append(
+            InputPathPhase(state_details.get("InputPath", "$"), state=self)
+        )
+        self._phases.append(
+            OutputPathPhase(state_details.get("OutputPath", "$"), state=self)
+        )
 
         self._next_state = state_details.get("Next", None)
         self._is_end = state_details.get("End", False)
@@ -323,8 +357,12 @@ class SucceedState(AbstractStateModel):
         )
 
         self._phases = []
-        self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
-        self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
+        self._phases.append(
+            InputPathPhase(state_details.get("InputPath", "$"), state=self)
+        )
+        self._phases.append(
+            OutputPathPhase(state_details.get("OutputPath", "$"), state=self)
+        )
 
     def execute(self, state_input, execution):
         sr = StepResult()
@@ -346,8 +384,12 @@ class FailState(AbstractStateModel):
         )
 
         self._phases = []
-        self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
-        self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
+        self._phases.append(
+            InputPathPhase(state_details.get("InputPath", "$"), state=self)
+        )
+        self._phases.append(
+            OutputPathPhase(state_details.get("OutputPath", "$"), state=self)
+        )
 
         self._error = state_details.get("Error", None)
         self._cause = state_details.get("Cause", None)
@@ -369,7 +411,9 @@ class FailState(AbstractStateModel):
 
 
 class ParallelMockPhase(AbstractPhase):
-    def __init__(self, state_name, state_details: dict):
+    def __init__(self, state_name, state_details: dict, **kwargs):
+        super(ParallelMockPhase, self).__init__(**kwargs)
+
         self._log = logging.getLogger("behaveasl.ParallelMockPhase")
         self._parallel_state_machines = state_details["Branches"]
 
@@ -395,16 +439,26 @@ class ParallelState(AbstractStateModel):
             raise StatesCompileException("An Branches field must be provided.")
 
         self._phases = []
-        self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
+        self._phases.append(
+            InputPathPhase(state_details.get("InputPath", "$"), state=self)
+        )
         if "Parameters" in state_details:
-            self._phases.append(ParametersPhase(state_details["Parameters"]))
-        self._phases.append(ParallelMockPhase(state_name, state_details))
+            self._phases.append(
+                ParametersPhase(state_details["Parameters"], state=self)
+            )
+        self._phases.append(ParallelMockPhase(state_name, state_details, state=self))
         if "ResultSelector" in state_details:
             self._phases.append(
-                ResultSelectorPhase(state_details.get("ResultSelector", "$"))
+                ResultSelectorPhase(
+                    state_details.get("ResultSelector", "$"), state=self
+                )
             )
-        self._phases.append(ResultPathPhase(state_details.get("ResultPath", "$")))
-        self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
+        self._phases.append(
+            ResultPathPhase(state_details.get("ResultPath", "$"), state=self)
+        )
+        self._phases.append(
+            OutputPathPhase(state_details.get("OutputPath", "$"), state=self)
+        )
 
         self._next_state = state_details.get("Next", None)
         self._is_end = state_details.get("End", False)
@@ -441,7 +495,9 @@ class ParallelState(AbstractStateModel):
 
 
 class ItemsPathPhase(AbstractPhase):
-    def __init__(self, state_details: dict):
+    def __init__(self, state_details: dict, **kwargs):
+        super(ItemsPathPhase, self).__init__(**kwargs)
+
         self._items_path = state_details.get("ItemsPath", "$")
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
@@ -452,7 +508,9 @@ class ItemsPathPhase(AbstractPhase):
 
 
 class MapMockPhase(AbstractPhase):
-    def __init__(self, state_name, state_details: dict):
+    def __init__(self, state_name, state_details: dict, **kwargs):
+        super(MapMockPhase, self).__init__(**kwargs)
+
         self._log = logging.getLogger("behaveasl.MapMockPhase")
         self._state_name = state_name
         self._state_details = state_details
@@ -471,7 +529,9 @@ class MapMockPhase(AbstractPhase):
         iteration_value = input[1]
 
         if "Parameters" in self._state_details or "ItemSelector" in self._state_details:
-            inp = InputPathPhase(self._state_details.get("InputPath", "$"))
+            inp = InputPathPhase(
+                self._state_details.get("InputPath", "$"), state=self.state
+            )
             inp_phase_output = inp.execute(
                 self._state_input, self._state_input, self._sr, self._execution
             )
@@ -479,7 +539,8 @@ class MapMockPhase(AbstractPhase):
             param = ParametersPhase(
                 self._state_details.get(
                     "ItemSelector", self._state_details.get("Parameters", {})
-                )
+                ),
+                state=self.state,
             )
 
             iteration_value = param.execute(
@@ -536,15 +597,23 @@ class MapState(AbstractStateModel):
                 raise StatesCompileException("An ItemProcessor field must be provided.")
 
         self._phases = []
-        self._phases.append(InputPathPhase(state_details.get("InputPath", "$")))
-        self._phases.append(ItemsPathPhase(state_details))
-        self._phases.append(MapMockPhase(state_name, state_details))
+        self._phases.append(
+            InputPathPhase(state_details.get("InputPath", "$"), state=self)
+        )
+        self._phases.append(ItemsPathPhase(state_details, state=self))
+        self._phases.append(MapMockPhase(state_name, state_details, state=self))
         if "ResultSelector" in state_details:
             self._phases.append(
-                ResultSelectorPhase(state_details.get("ResultSelector", "$"))
+                ResultSelectorPhase(
+                    state_details.get("ResultSelector", "$"), state=self
+                )
             )
-        self._phases.append(ResultPathPhase(state_details.get("ResultPath", "$")))
-        self._phases.append(OutputPathPhase(state_details.get("OutputPath", "$")))
+        self._phases.append(
+            ResultPathPhase(state_details.get("ResultPath", "$"), state=self)
+        )
+        self._phases.append(
+            OutputPathPhase(state_details.get("OutputPath", "$"), state=self)
+        )
 
         self._next_state = state_details.get("Next", None)
         self._is_end = state_details.get("End", False)

@@ -139,3 +139,38 @@ Feature: The Pass type can have an input path that filters the input
     Then the execution failed
     And the execution error was "States.Runtime"
     And the execution error cause contained "DoesNotExist"
+
+  Scenario: The Pass type cannot set InputPath when using JSONata
+    Given a state machine defined by:
+      """
+      {
+          "StartAt": "FirstState",
+          "QueryLanguage": "JSONata",
+          "States": {
+              "FirstState": {
+                  "Type": "Pass",
+                  "Next": "EndState",
+                  "InputPath": "$.Map",
+                  "Parameters": {
+                      "Param.$": "$.Key"
+                  },
+                  "ResultPath": "$.output"
+              },
+              "EndState": {
+                  "Type": "Pass",
+                  "Result": "end",
+                  "End": true
+              }
+          }
+      }
+      """
+    And the current state data is:
+      """
+      {
+          "Map": {
+              "Key": "Value"
+          }
+      }
+      """
+    When the state machine executes
+    Then the state machine failed to compile

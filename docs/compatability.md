@@ -18,9 +18,12 @@
 | InputPath | Yes|
 | Parameters | Yes |
 | OutputPath | Yes |
+| Output | No |
 | Choices | Yes |
 | Default | Yes |
-![alt text](image.png)
+| Assign | No |
+| QueryLanguage | Partial |
+
 #### Comparison Operators
 
 | Operator | Status |
@@ -89,6 +92,7 @@
 | Comment | Yes |
 | InputPath | No|
 | OutputPath | No |
+| Output | No |
 | Next | No |
 | End | No |
 | ResultPath | No |
@@ -105,6 +109,8 @@
 | ResultSelector | No |
 | Retry | No |
 | Catch | No |
+| Assign | No |
+| QueryLanguage | Partial |
 
 | Input Type | Status |
 | ---------- | ------ |
@@ -121,6 +127,7 @@
 | Comment | Yes |
 | InputPath | Yes |
 | OutputPath | Yes |
+| Output | Yes |
 | Next | Yes |
 | End | Yes |
 | ResultPath | Yes |
@@ -136,6 +143,7 @@
 | Comment | Yes |
 | InputPath | Yes|
 | OutputPath | Yes |
+| Output | No |
 | Next | Yes |
 | End | Yes |
 | ResultPath | Yes |
@@ -143,6 +151,8 @@
 | ResultSelector | Yes |
 | Retry | No |
 | Catch | No |
+| Assign | No |
+| QueryLanguage | Partial |
 
 ### Succeed
 
@@ -164,6 +174,7 @@ is just a passthrough.
 | Comment | Yes |
 | InputPath | Yes|
 | OutputPath | Yes |
+| Output | No |
 | Next | Yes |
 | End | Yes |
 | ResultPath | Yes |
@@ -172,6 +183,8 @@ is just a passthrough.
 | Retry | Yes |
 | Catch | Yes |
 | Credentials | Yes |
+| Assign | No |
+| QueryLanguage | Partial |
 
 ### Wait
 
@@ -181,8 +194,11 @@ is just a passthrough.
 | Comment | Yes |
 | InputPath | No|
 | OutputPath | No |
+| Output | No |
 | Next | No |
 | End | No |
+| Assign | No |
+| QueryLanguage | Partial |
 
 ## Reference Paths
 

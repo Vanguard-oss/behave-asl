@@ -122,7 +122,9 @@ class Execution:
 
             error_data = {"Cause": e.cause}
 
-            rpp = ResultPathPhase(result_path=catch.result_path)
+            rpp = ResultPathPhase(
+                result_path=catch.result_path, state=current_state_obj
+            )
 
             self._last_step_result.result_data = rpp.execute(
                 self._current_state_data,
