@@ -20,6 +20,7 @@ class Execution:
         self._state_machine: StateMachineModel = state_machine
         self._current_state: str = state_machine.get_initial_state_name()
         self._current_state_data: dict = {}
+        self._current_variables: dict = {}
         self._last_step_result: StepResult = StepResult()
         self._context_obj: dict = {
             "Execution": {
@@ -172,6 +173,12 @@ class Execution:
     def set_current_state_name(self, name: str):
         """Set the name of the current state of the execution"""
         self._current_state = name
+
+    def set_current_variables(self, data: dict):
+        self._current_variables = data
+
+    def get_current_variables(self) -> dict:
+        return self._current_variables
 
     def set_retry_count(self, count: int):
         self._context_obj["State"]["RetryCount"] = count

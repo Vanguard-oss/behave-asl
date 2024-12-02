@@ -176,7 +176,9 @@ class AssignPhase(AbstractPhase):
             return [self._process_data(v, sr, execution) for v in data]
         elif isinstance(data, str):
             if self._query_language == QueryLanguage.JSONATA:
-                return jsonata_eval.replace_jsonata(data, sr, execution.context)
+                return jsonata_eval.replace_jsonata(
+                    data, sr, execution.context, execution.get_current_variables()
+                )
             return data
         else:
             return data
@@ -214,7 +216,9 @@ class OutputPhase(AbstractPhase):
         elif isinstance(data, list):
             return [self._process_data(v, sr, execution) for v in data]
         elif isinstance(data, str):
-            return jsonata_eval.replace_jsonata(data, sr, execution.context)
+            return jsonata_eval.replace_jsonata(
+                data, sr, execution.context, execution.get_current_variables()
+            )
         else:
             return data
 

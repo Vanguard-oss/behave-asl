@@ -151,3 +151,8 @@ def given_for_return(context, key, state):
     context.execution.resource_response_mocks.add_mock(
         key, StaticResponse(json.loads(context.text))
     )
+
+
+@given("the current variables are")
+def step_impl(context):
+    context.execution.set_current_variables(json.loads(context.text))

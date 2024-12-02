@@ -31,7 +31,9 @@ class JSONataChoice(Choice):
 
     def evaluate(self, state_input, phase_input, sr, execution) -> bool:
         # Evaluate the JSONata expression
-        return jsonata_eval.evaluate_jsonata(self._expression, sr, execution.context)
+        return jsonata_eval.evaluate_jsonata(
+            self._expression, sr, execution.context, execution.get_current_variables()
+        )
 
     def get_assignments(self) -> dict:
         return self._assignments

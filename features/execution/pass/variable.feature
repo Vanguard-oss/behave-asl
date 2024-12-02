@@ -1,6 +1,6 @@
 Feature: The Pass state supports writing variables
 
-  Scenario: The Pass type can assing a variable using a constant
+  Scenario: The Pass type can assign a variable using a constant
     Given a state machine defined by:
       """
       {
@@ -28,7 +28,7 @@ Feature: The Pass state supports writing variables
     Then the next state is "EndState"
     And the variable path "Var2" matches "Value2"
 
-  Scenario: The Pass type can assing a variable using a JSONPath reading from the Parameters
+  Scenario: The Pass type can assign a variable using a JSONPath reading from the Parameters
     Given a state machine defined by:
       """
       {
@@ -56,7 +56,7 @@ Feature: The Pass state supports writing variables
     Then the next state is "EndState"
     And the variable path "Var2" matches "Value1"
 
-  Scenario: The Pass type can assing a variable using a JSONata reading from the state input
+  Scenario: The Pass type can assign a variable using a JSONata reading from the state input
     Given a state machine defined by:
       """
       {
@@ -88,7 +88,7 @@ Feature: The Pass state supports writing variables
     Then the next state is "EndState"
     And the variable path "Var2" matches "Value1"
 
-  Scenario: The Pass type can assing a variable with JSONata as the default query language reading from the state input
+  Scenario: The Pass type can assign a variable with JSONata as the default query language reading from the state input
     Given a state machine defined by:
       """
       {
@@ -120,3 +120,41 @@ Feature: The Pass state supports writing variables
     Then the next state is "EndState"
     And the variable path "Var2" matches "Value1"
 
+
+  Scenario: The Pass type can use a variable from a previous state
+    Given a state machine defined by:
+      """
+      {
+          "StartAt": "FirstState",
+          "QueryLanguage": "JSONata",
+          "States": {
+              "FirstState": {
+                  "Type": "Pass",
+                  "Next": "EndState",
+                  "Output": {
+                    "A": "{% $B %}"
+                  }
+              },
+              "EndState": {
+                  "Type": "Pass",
+                  "Result": "end",
+                  "End": true
+              }
+          }
+      }
+      """
+    And the current state data is:
+      """
+      {
+          "Param1": "Value1"
+      }
+      """
+    And the current variables are:
+      """
+      {
+          "B": "C"
+      }
+      """
+    When the state machine executes
+    Then the next state is "EndState"
+    And the step result data path "$.A" matches "C"

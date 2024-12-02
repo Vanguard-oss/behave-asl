@@ -305,11 +305,17 @@ class WaitPhase(AbstractPhase):
         if self.is_using_jsonata():
             if self._seconds:
                 sr.waited_seconds = jsonata_eval.evaluate_jsonata(
-                    self._seconds, sr, execution.context
+                    self._seconds,
+                    sr,
+                    execution.context,
+                    execution.get_current_variables(),
                 )
             elif self._timestamp:
                 sr.waited_until_timestamp = jsonata_eval.evaluate_jsonata(
-                    self._timestamp, sr, execution.context
+                    self._timestamp,
+                    sr,
+                    execution.context,
+                    execution.get_current_variables(),
                 )
         elif self._seconds:
             sr.waited_seconds = self._seconds
@@ -458,14 +464,18 @@ class FailState(AbstractStateModel):
 
     def _parse_jsonata_errors(self, state_input, execution, sr):
         if self._error is not None:
-            sr.error = jsonata_eval.replace_jsonata(self._error, sr, execution.context)
+            sr.error = jsonata_eval.replace_jsonata(
+                self._error, sr, execution.context, execution.get_current_variables()
+            )
         elif self._error_path is not None:
             raise StatesCompileException(
                 "Fail states that use JSONata cannot have an ErrorPath"
             )
 
         if self._cause is not None:
-            sr.cause = jsonata_eval.replace_jsonata(self._cause, sr, execution.context)
+            sr.cause = jsonata_eval.replace_jsonata(
+                self._cause, sr, execution.context, execution.get_current_variables()
+            )
         elif self._cause_path is not None:
             raise StatesCompileException(
                 "Fail states that use JSONata cannot have a CausePath"
