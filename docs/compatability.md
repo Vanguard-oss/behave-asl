@@ -204,15 +204,19 @@ is just a passthrough.
 
 | Field | Status |
 | ----- | ------ |
+| Assign | Yes |
+| Comment | Ignored |
+| End | Yes |
+| InputPath | Yes |
+| Next | Yes |
+| Output | Yes |
+| OutputPath | Yes |
+| QueryLanguage | Yes |
+| Seconds | Yes |
+| SecondsPath | Yes |
+| Timestamp | Yes |
+| TimestampPath | Yes |
 | Type | Yes |
-| Comment | Yes |
-| InputPath | No|
-| OutputPath | No |
-| Output | No |
-| Next | No |
-| End | No |
-| Assign | No |
-| QueryLanguage | Partial |
 
 ## Reference Paths
 

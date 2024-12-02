@@ -25,9 +25,11 @@ def replace_jsonata(input: str, sr: StepResult, context: dict) -> str:
     return input
 
 
-def evaluate_jsonata(input: str, sr: StepResult, context: dict) -> str:
+def evaluate_jsonata(input, sr: StepResult, context: dict) -> str:
     """Evaluate JSONata expression and return the result"""
 
+    if not type(input) == str:
+        return input
     if input.startswith("{%") and input.endswith("%}"):
 
         state_data = {"input": sr.state_input, "context": context}

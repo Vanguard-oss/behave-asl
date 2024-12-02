@@ -292,6 +292,42 @@ class ChoiceState(AbstractStateModel):
         return sr
 
 
+class WaitPhase(AbstractPhase):
+    def __init__(self, state_details: dict, **kwargs):
+        super(WaitPhase, self).__init__(**kwargs)
+
+        self._seconds = state_details.get("Seconds", None)
+        self._timestamp = state_details.get("Timestamp", None)
+        self._seconds_path = state_details.get("SecondsPath", None)
+        self._timestamp_path = state_details.get("TimestampPath", None)
+
+    def execute(self, state_input, phase_input, sr: StepResult, execution):
+        if self.is_using_jsonata():
+            if self._seconds:
+                sr.waited_seconds = jsonata_eval.evaluate_jsonata(
+                    self._seconds, sr, execution.context
+                )
+            elif self._timestamp:
+                sr.waited_until_timestamp = jsonata_eval.evaluate_jsonata(
+                    self._timestamp, sr, execution.context
+                )
+        elif self._seconds:
+            sr.waited_seconds = self._seconds
+        elif self._timestamp:
+            sr.waited_until_timestamp = self._timestamp
+        elif self._seconds_path:
+            parsed_seconds = replace_expression(
+                expr=self._seconds_path, input=phase_input, context=execution.context
+            )
+            sr.waited_seconds = parsed_seconds
+        elif self._timestamp_path:
+            parsed_timestamp = replace_expression(
+                expr=self._timestamp_path, input=phase_input, context=execution.context
+            )
+            sr.waited_until_timestamp = parsed_timestamp
+        return phase_input
+
+
 class WaitState(AbstractStateModel):
     def __init__(self, state_machine, state_name: str, state_details, **kwargs):
         super(WaitState, self).__init__(
@@ -302,9 +338,12 @@ class WaitState(AbstractStateModel):
         self._phases.append(
             InputPathPhase(state_details.get("InputPath", "$"), state=self)
         )
+        self._phases.append(WaitPhase(state_details, state=self))
+        self._phases.append(AssignPhase(state_details.get("Assign", {}), state=self))
         self._phases.append(
             OutputPathPhase(state_details.get("OutputPath", "$"), state=self)
         )
+        self._phases.append(OutputPhase(state=self))
 
         self._next_state = state_details.get("Next", None)
         self._is_end = state_details.get("End", False)
@@ -315,6 +354,7 @@ class WaitState(AbstractStateModel):
         self._seconds_path = state_details.get("SecondsPath", None)
         self._timestamp_path = state_details.get("TimestampPath", None)
 
+    def _validate(self):
         if (
             not sum(
                 bool(x)
@@ -333,6 +373,9 @@ class WaitState(AbstractStateModel):
 
     def execute(self, state_input, execution):
         """The wait state delays the state machine from continuing for a specified time"""
+
+        self._validate()
+
         sr = StepResult()
         current_data = copy.deepcopy(state_input)
         for phase in self._phases:
@@ -342,21 +385,6 @@ class WaitState(AbstractStateModel):
         if self._next_state is not None:
             sr.next_state = self._next_state
         sr.end_execution = self._is_end
-
-        if self._seconds:
-            sr.waited_seconds = self._seconds
-        elif self._timestamp:
-            sr.waited_until_timestamp = self._timestamp
-        elif self._seconds_path:
-            parsed_seconds = replace_expression(
-                expr=self._seconds_path, input=state_input, context=execution.context
-            )
-            sr.waited_seconds = parsed_seconds
-        elif self._timestamp_path:
-            parsed_timestamp = replace_expression(
-                expr=self._timestamp_path, input=state_input, context=execution.context
-            )
-            sr.waited_until_timestamp = parsed_timestamp
 
         return sr
 
