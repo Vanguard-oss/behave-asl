@@ -1,30 +1,43 @@
 # behave-asl Compatability
 
+| Status  | Description |
+| ------- | ----------- |
+| Yes     | Fully Supported |
+| No      | Not Supported |
+| Ignored | Value can be set, but it not actually used/validated |
+| Partial | The value will be used and validated in some situations |
+
 ## Top Level Fields
 
 | Field | Status |
 | ----- | ------ |
+| Comment | Ignored |
+| QueryLanguage | Partial |
 | StartAt | Yes |
-| QueryLanguage | No |
+| TimeoutSeconds | Ignored |
+| Version | Ignored |
+| States | Yes |
 
 ## States
 
 ### Choice
 
-| Field | Status |
-| ----- | ------ |
-| Type | Yes |
-| Comment | Yes |
-| InputPath | Yes|
-| Parameters | Yes |
-| OutputPath | Yes |
-| Output | No |
-| Choices | Yes |
-| Default | Yes |
-| Assign | No |
-| QueryLanguage | Partial |
+| Field | Status | Notes |
+| ----- | ------ | ----- |
+| Assign | No | |
+| Choices | Yes | |
+| Comment | Ignored |
+| Default | Yes | |
+| End | Yes | |
+| InputPath | Yes| |
+| Next | Yes | |
+| Output | No | |
+| OutputPath | Yes | |
+| Parameters | Yes | The ASL docs no longer show this as a validate option |
+| QueryLanguage | Partial | |
+| Type | Yes | |
 
-#### Comparison Operators
+#### JSONPath Comparison Operators
 
 | Operator | Status |
 | -------- | ------ |

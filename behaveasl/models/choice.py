@@ -1,6 +1,7 @@
 import re
 from datetime import datetime
 
+from behaveasl import jsonata_eval
 from behaveasl.models.exceptions import StatesRuntimeException
 from behaveasl.models.state_phases import Path
 
@@ -10,6 +11,22 @@ class Choice:
 
     def evaluate(self, state_input, phase_input, sr, execution) -> bool:
         return False
+
+
+class JSONataChoice(Choice):
+    """Choice that runs a JSONata expression"""
+
+    def __init__(self, expression: str):
+        """Constructor
+
+        Args:
+            expression (str): The JSONata expression to evaluate
+        """
+        self._expression = expression
+
+    def evaluate(self, state_input, phase_input, sr, execution) -> bool:
+        # Evaluate the JSONata expression
+        return jsonata_eval.evaluate_jsonata(self._expression, sr, execution.context)
 
 
 class AndChoice(Choice):
@@ -570,5 +587,7 @@ def create_choice(fields: dict) -> Choice:
         return OrChoice(choices=fields["Or"])
     elif "Not" in fields:
         return NotChoice(child=create_choice(fields["Not"]))
+    elif "Condition" in fields:
+        return JSONataChoice(expression=fields["Condition"])
 
     raise StatesRuntimeException(f"Invalid choice configuration: {fields}")
