@@ -375,6 +375,7 @@ class SucceedState(AbstractStateModel):
         self._phases.append(
             OutputPathPhase(state_details.get("OutputPath", "$"), state=self)
         )
+        self._phases.append(OutputPhase(state=self))
 
     def execute(self, state_input, execution):
         sr = StepResult()

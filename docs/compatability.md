@@ -26,15 +26,9 @@
 | ----- | ------ | ----- |
 | Assign | No | |
 | Choices | Yes | |
-| Comment | Ignored |
+| Comment | Ignored | |
 | Default | Yes | |
-| End | Yes | |
-| InputPath | Yes| |
-| Next | Yes | |
-| Output | No | |
-| OutputPath | Yes | |
-| Parameters | Yes | The ASL docs no longer show this as a validate option |
-| QueryLanguage | Partial | |
+| QueryLanguage | Yes | |
 | Type | Yes | |
 
 #### JSONPath Comparison Operators
@@ -171,10 +165,11 @@
 
 | Field | Status |
 | ----- | ------ |
-| Type | Yes |
-| Comment | Yes |
+| Comment | Ignored |
 | InputPath | Yes |
+| Output | Yes |
 | OutputPath | Yes |
+| Type | Yes |
 
 ### Task
 
