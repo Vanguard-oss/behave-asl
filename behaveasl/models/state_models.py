@@ -2,6 +2,7 @@ import copy
 import json
 import logging
 
+from behaveasl import jsonata_eval
 from behaveasl.expr_eval import replace_expression
 from behaveasl.models.abstract_phase import AbstractPhase
 from behaveasl.models.abstract_state import AbstractStateModel
@@ -405,15 +406,20 @@ class FailState(AbstractStateModel):
         )
 
         self._error = state_details.get("Error", None)
+        self._error_path = state_details.get("ErrorPath", None)
         self._cause = state_details.get("Cause", None)
+        self._cause_path = state_details.get("CausePath", None)
 
     def execute(self, state_input, execution):
         """The fail state will optionally raise an error with a cause"""
         sr = StepResult()
         sr.end_execution = True
         sr.failed = True
-        sr.error = self._error
-        sr.cause = self._cause
+
+        if self.is_using_jsonata():
+            self._parse_jsonata_errors(state_input, execution, sr)
+        else:
+            self._parse_jsonpath_errors(state_input, execution, sr)
 
         current_data = copy.deepcopy(state_input)
         for phase in self._phases:
@@ -421,6 +427,44 @@ class FailState(AbstractStateModel):
         sr.result_data = current_data
 
         return sr
+
+    def _parse_jsonata_errors(self, state_input, execution, sr):
+        if self._error is not None:
+            sr.error = jsonata_eval.replace_jsonata(self._error, sr, execution.context)
+        elif self._error_path is not None:
+            raise StatesCompileException(
+                "Fail states that use JSONata cannot have an ErrorPath"
+            )
+
+        if self._cause is not None:
+            sr.cause = jsonata_eval.replace_jsonata(self._cause, sr, execution.context)
+        elif self._cause_path is not None:
+            raise StatesCompileException(
+                "Fail states that use JSONata cannot have a CausePath"
+            )
+
+    def _parse_jsonpath_errors(self, state_input, execution, sr):
+        if self._error_path is not None:
+            sr.error = replace_expression(
+                expr=self._error_path, input=state_input, context=execution.context
+            )
+            if self._error is not None:
+                raise StatesCompileException(
+                    "Fail states cannot have both Error an ErrorPath"
+                )
+        else:
+            sr.error = self._error
+
+        if self._cause_path is not None:
+            sr.cause = replace_expression(
+                expr=self._cause_path, input=state_input, context=execution.context
+            )
+            if self._cause is not None:
+                raise StatesCompileException(
+                    "Fail states cannot have both Cause an CausePath"
+                )
+        else:
+            sr.cause = self._cause
 
 
 class ParallelMockPhase(AbstractPhase):

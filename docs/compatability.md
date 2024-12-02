@@ -82,8 +82,13 @@
 
 | Field | Status |
 | ----- | ------ |
+| Cause | Yes |
+| CausePath | Yes |
+| Comment | Ignored |
+| Error | Yes |
+| ErrorPath | Yes |
+| QueryLanguage | Yes |
 | Type | Yes |
-| Comment | Yes |
 
 ### Map
 
@@ -169,6 +174,7 @@
 | InputPath | Yes |
 | Output | Yes |
 | OutputPath | Yes |
+| QueryLanguage | Yes |
 | Type | Yes |
 
 ### Task

@@ -27,6 +27,12 @@ class AbstractStateModel(ABC):
         else:
             self.query_language = self._state_machine.query_language
 
+    def is_using_jsonpath(self):
+        return self._query_language == QueryLanguage.JSONPATH
+
+    def is_using_jsonata(self):
+        return self._query_language == QueryLanguage.JSONATA
+
     @property
     def state_machine(self):
         return self._state_machine
