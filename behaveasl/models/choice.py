@@ -12,21 +12,29 @@ class Choice:
     def evaluate(self, state_input, phase_input, sr, execution) -> bool:
         return False
 
+    def get_assignments(self) -> dict:
+        return {}
+
 
 class JSONataChoice(Choice):
     """Choice that runs a JSONata expression"""
 
-    def __init__(self, expression: str):
+    def __init__(self, expression: str, assignments: dict):
         """Constructor
 
         Args:
             expression (str): The JSONata expression to evaluate
+            assignments (str): The assignments this choice will set
         """
         self._expression = expression
+        self._assignments = assignments
 
     def evaluate(self, state_input, phase_input, sr, execution) -> bool:
         # Evaluate the JSONata expression
         return jsonata_eval.evaluate_jsonata(self._expression, sr, execution.context)
+
+    def get_assignments(self) -> dict:
+        return self._assignments
 
 
 class AndChoice(Choice):
@@ -588,6 +596,8 @@ def create_choice(fields: dict) -> Choice:
     elif "Not" in fields:
         return NotChoice(child=create_choice(fields["Not"]))
     elif "Condition" in fields:
-        return JSONataChoice(expression=fields["Condition"])
+        return JSONataChoice(
+            expression=fields["Condition"], assignments=fields.get("Assign", {})
+        )
 
     raise StatesRuntimeException(f"Invalid choice configuration: {fields}")

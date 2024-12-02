@@ -245,3 +245,10 @@ def step_impl(context, path, value):
     if t != value:
         LOG.critical(f"{path} is [{t}], not [{value}]")
     assert t == value
+
+
+@then('the variable path "{path}" does not exist')
+def step_impl(context, path):
+    jpexpr = jsonpath.get_instance(path)
+    results = jpexpr.find(context.execution.last_step_result.assigned_variables)
+    assert len(results) == 0

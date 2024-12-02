@@ -217,12 +217,24 @@ class ChoiceSelectionPhase(AbstractPhase):
             ):
                 # If 2 choices match, we choose the first one
                 sr.next_state = choice_next
+
+                # Run the assign phase for this choice's Assign field
+                AssignPhase(choice.get_assignments(), state=self.state).execute(
+                    state_input, phase_input, sr, execution
+                )
+
                 # Choice does not modify phase input currently
                 return phase_input
         # If we still have not found a matching choice, and we have a default, use it
         if self._next_state is None:
             if self._default_next_state is not None:
                 sr.next_state = self._default_next_state
+
+                # Run the assign phase for the default choice's Assign field
+                AssignPhase(
+                    self.state.state_details.get("Assign", {}), state=self.state
+                ).execute(state_input, phase_input, sr, execution)
+
                 # Choice does not modify phase input currently
                 return phase_input
                 # If we have NO matching Choices and no Default, throw an error, set StepResult w/failed + cause + error

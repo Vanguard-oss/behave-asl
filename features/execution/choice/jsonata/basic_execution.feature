@@ -12,7 +12,6 @@ Feature: The Choice state type supports JSONata
                   "Choices": [
                       {
                           "Condition": "{% true %}",
-                          "StringEquals": "blue",
                           "Next": "MatchState"
                       }
                   ]
@@ -51,7 +50,6 @@ Feature: The Choice state type supports JSONata
                   "Choices": [
                       {
                           "Condition": "{% false %}",
-                          "StringEquals": "blue",
                           "Next": "MatchState"
                       }
                   ],
