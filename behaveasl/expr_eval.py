@@ -124,6 +124,22 @@ def _replace_jsonpath_expressions(*, args, input, context):
 
 
 def replace_expression(*, expr: str, input, context: dict, variables: dict = None):
+    """
+    Process an ASL JSONPath expression and return the value
+
+    Args:
+        expr (str): The expression to evaluate
+        input (dict): The input data
+        context (dict): The context data from the state machine
+        variables (dict): The variables
+    
+    Returns:
+        object: The result of the expression
+    """
+
+    # If this is calling the Context object, then remove the first dollar sign to convert
+    # the expression to something a JSONPath parser can parse.  Then feed in the context
+    # object instead of the input data
     if expr.startswith("$$."):
         context_expr = expr[1:]
         jpexpr = jsonpath.get_instance(context_expr)
@@ -135,10 +151,20 @@ def replace_expression(*, expr: str, input, context: dict, variables: dict = Non
             )
             return new_value
         raise StatesRuntimeException(f"Invalid path {expr}: No results")
+    # If the expression wasn't calling the context object, but did start with two dollar signs,
+    # then it is a variable lookup
     elif expr.startswith("$$") and variables is not None:
+        # The $$VAR syntax is non-standard, so we have to determine which variable is being
+        # used in order to know how to reformat the expression and to determine which data
+        # to put into the search
         for var_name, var_value in variables.items():
+            # If it is an exact match, then just return the variable's value
             if expr == f"$${var_name}":
                 return var_value
+
+            # We look for a "break" between the variable name and the rest of the expression
+            # We do this because we want to make sure we don't process the wrong variable when
+            # there is a longer variable name that is a prefix of a shorter variable name
             for expr_break in [".", "["]:
                 if expr.startswith(f"$${var_name}{expr_break}"):
                     var_expr = (

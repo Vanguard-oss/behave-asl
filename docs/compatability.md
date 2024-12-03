@@ -226,13 +226,14 @@
 | State Output | Yes |
 | Execution Input | Yes |
 | Context Object | Yes |
+| Variables | Yes |
 
 ### JSONata
 
 | Location | Status |
 | --- | --- |
 | State Input | Yes |
-| Result | No |
+| Result | Yes |
 | Error | No |
 | Context Object | Yes |
 
