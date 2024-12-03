@@ -121,7 +121,7 @@ Feature: The Pass state supports writing variables
     And the variable path "Var2" matches "Value1"
 
 
-  Scenario: The Pass type can use a variable from a previous state
+  Scenario: The Pass type can use a variable from a previous state using JSONata
     Given a state machine defined by:
       """
       {
@@ -158,3 +158,117 @@ Feature: The Pass state supports writing variables
     When the state machine executes
     Then the next state is "EndState"
     And the step result data path "$.A" matches "C"
+
+  Scenario: The Pass type can use a variable from a previous state using JSONPath
+    Given a state machine defined by:
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Pass",
+                  "Next": "EndState",
+                  "Parameters": {
+                    "MyParam.$": "$$MyVar"
+                  }
+              },
+              "EndState": {
+                  "Type": "Pass",
+                  "Result": "end",
+                  "End": true
+              }
+          }
+      }
+      """
+    And the current state data is:
+      """
+      {
+          "Param1": "Value1"
+      }
+      """
+    And the current variables are:
+      """
+      {
+          "MyVar": "Value2"
+      }
+      """
+    When the state machine executes
+    Then the next state is "EndState"
+    And the step result data path "$.MyParam" matches "Value2"
+
+  Scenario: The Pass type can use a variable path from a previous state using JSONPath
+    Given a state machine defined by:
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Pass",
+                  "Next": "EndState",
+                  "Parameters": {
+                    "MyParam.$": "$$MyVar.Level2"
+                  }
+              },
+              "EndState": {
+                  "Type": "Pass",
+                  "Result": "end",
+                  "End": true
+              }
+          }
+      }
+      """
+    And the current state data is:
+      """
+      {
+          "Param1": "Value1"
+      }
+      """
+    And the current variables are:
+      """
+      {
+          "MyVar": {
+            "Level2": "Value2"
+          }
+      }
+      """
+    When the state machine executes
+    Then the next state is "EndState"
+    And the step result data path "$.MyParam" matches "Value2"
+
+  Scenario: The Pass type can use a variable array from a previous state using JSONPath
+    Given a state machine defined by:
+      """
+      {
+          "StartAt": "FirstState",
+          "States": {
+              "FirstState": {
+                  "Type": "Pass",
+                  "Next": "EndState",
+                  "Parameters": {
+                    "MyParam.$": "$$MyVar[0]"
+                  }
+              },
+              "EndState": {
+                  "Type": "Pass",
+                  "Result": "end",
+                  "End": true
+              }
+          }
+      }
+      """
+    And the current state data is:
+      """
+      {
+          "Param1": "Value1"
+      }
+      """
+    And the current variables are:
+      """
+      {
+          "MyVar": ["Value2"],
+          "MyVar2": ["Value2"]
+      }
+      """
+    When the state machine executes
+    Then the next state is "EndState"
+    And the step result data path "$.MyParam" matches "Value2"

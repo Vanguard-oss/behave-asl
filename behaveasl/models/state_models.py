@@ -105,6 +105,7 @@ class TaskMockPhase(AbstractPhase):
                     expr=self._state_details["Credentials"]["RoleArn.$"],
                     input=state_input,
                     context=execution.context,
+                    variables=execution.get_current_variables(),
                 )
 
         execution.resource_expectations.execute(
@@ -336,12 +337,18 @@ class WaitPhase(AbstractPhase):
             sr.waited_until_timestamp = self._timestamp
         elif self._seconds_path:
             parsed_seconds = replace_expression(
-                expr=self._seconds_path, input=phase_input, context=execution.context
+                expr=self._seconds_path,
+                input=phase_input,
+                context=execution.context,
+                variables=execution.get_current_variables(),
             )
             sr.waited_seconds = parsed_seconds
         elif self._timestamp_path:
             parsed_timestamp = replace_expression(
-                expr=self._timestamp_path, input=phase_input, context=execution.context
+                expr=self._timestamp_path,
+                input=phase_input,
+                context=execution.context,
+                variables=execution.get_current_variables(),
             )
             sr.waited_until_timestamp = parsed_timestamp
         return phase_input
@@ -497,7 +504,10 @@ class FailState(AbstractStateModel):
     def _parse_jsonpath_errors(self, state_input, execution, sr):
         if self._error_path is not None:
             sr.error = replace_expression(
-                expr=self._error_path, input=state_input, context=execution.context
+                expr=self._error_path,
+                input=state_input,
+                context=execution.context,
+                variables=execution.get_current_variables(),
             )
             if self._error is not None:
                 raise StatesCompileException(
@@ -508,7 +518,10 @@ class FailState(AbstractStateModel):
 
         if self._cause_path is not None:
             sr.cause = replace_expression(
-                expr=self._cause_path, input=state_input, context=execution.context
+                expr=self._cause_path,
+                input=state_input,
+                context=execution.context,
+                variables=execution.get_current_variables(),
             )
             if self._cause is not None:
                 raise StatesCompileException(
@@ -610,7 +623,10 @@ class ItemsPathPhase(AbstractPhase):
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
         phase_output = replace_expression(
-            expr=self._items_path, input=phase_input, context=execution.context
+            expr=self._items_path,
+            input=phase_input,
+            context=execution.context,
+            variables=execution.get_current_variables(),
         )
         return phase_output
 

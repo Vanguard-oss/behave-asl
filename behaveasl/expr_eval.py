@@ -123,8 +123,8 @@ def _replace_jsonpath_expressions(*, args, input, context):
     return new_args
 
 
-def replace_expression(*, expr: str, input, context: dict):
-    if expr.startswith("$$"):
+def replace_expression(*, expr: str, input, context: dict, variables: dict = None):
+    if expr.startswith("$$."):
         context_expr = expr[1:]
         jpexpr = jsonpath.get_instance(context_expr)
         results = jpexpr.find(context)
@@ -135,6 +135,26 @@ def replace_expression(*, expr: str, input, context: dict):
             )
             return new_value
         raise StatesRuntimeException(f"Invalid path {expr}: No results")
+    elif expr.startswith("$$") and variables is not None:
+        for var_name, var_value in variables.items():
+            if expr == f"$${var_name}":
+                return var_value
+            for expr_break in [".", "["]:
+                if expr.startswith(f"$${var_name}{expr_break}"):
+                    var_expr = (
+                        "$" + expr_break + expr[len(f"$${var_name}{expr_break}") :]
+                    )
+                    jpexpr = jsonpath.get_instance(var_expr)
+
+                    results = jpexpr.find(var_value)
+                    if len(results) == 1:
+                        new_value = results[0].value
+                        LOG.debug(
+                            f"Replacing '{expr}' [from Context] with '{new_value}', context='{context}'"
+                        )
+                        return new_value
+                    raise StatesRuntimeException(f"Invalid path {expr}: No results")
+
     elif expr.startswith("$"):
         jpexpr = jsonpath.get_instance(expr)
         results = jpexpr.find(input)

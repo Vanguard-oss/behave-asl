@@ -130,7 +130,10 @@ class ParametersPhase(AbstractPhase):
                 if k.endswith(".$"):
 
                     new_value = expr_eval.replace_expression(
-                        expr=v, input=phase_input, context=execution.context
+                        expr=v,
+                        input=phase_input,
+                        context=execution.context,
+                        variables=execution.get_current_variables(),
                     )
                     phase_output[k[0:-2]] = new_value
 
@@ -196,7 +199,10 @@ class AssignPhase(AbstractPhase):
                         )
                     if isinstance(v, str):
                         ret[k[0:-2]] = expr_eval.replace_expression(
-                            expr=v, input=sr.parameters, context=execution.context
+                            expr=v,
+                            input=sr.parameters,
+                            context=execution.context,
+                            variables=execution.get_current_variables(),
                         )
                     else:
                         raise StatesCompileException(
@@ -266,7 +272,10 @@ class OutputPathPhase(AbstractPhase):
     def execute(self, state_input, phase_input, sr: StepResult, execution):
         if self.is_using_jsonpath():
             phase_output = expr_eval.replace_expression(
-                expr=self._path, input=phase_input, context=execution.context
+                expr=self._path,
+                input=phase_input,
+                context=execution.context,
+                variables=execution.get_current_variables(),
             )
             self._log.debug(
                 f"Replaced '{phase_input}' with '{phase_output}', path='{self._path}'"
@@ -292,7 +301,10 @@ class InputPathPhase(AbstractPhase):
 
         if self.is_using_jsonpath():
             phase_output = expr_eval.replace_expression(
-                expr=self._path, input=phase_input, context=execution.context
+                expr=self._path,
+                input=phase_input,
+                context=execution.context,
+                variables=execution.get_current_variables(),
             )
             self._log.debug(
                 f"Replaced '{phase_input}' with '{phase_output}', path='{self._path}'"
@@ -343,7 +355,10 @@ class ResultSelectorPhase(AbstractPhase):
                 # If 'v' is a JsonPath, then eval it against the state_input
                 if k.endswith(".$"):
                     new_value = expr_eval.replace_expression(
-                        expr=v, input=phase_input, context=execution.context
+                        expr=v,
+                        input=phase_input,
+                        context=execution.context,
+                        variables=execution.get_current_variables(),
                     )
                     phase_output[k[0:-2]] = new_value
                 else:
