@@ -66,3 +66,40 @@ Feature: The Task state supports the Credentials field
       """
     When the state machine executes
     Then the next state is "EndState"
+
+  Scenario: The Task can use JSONata credentials
+    Given a state machine defined by:
+      """
+      {
+          "StartAt": "FirstState",
+          "QueryLanguage": "JSONata",
+          "States": {
+              "FirstState": {
+                  "Type": "Task",
+                  "Resource": "Lambda",
+                  "Credentials": {
+                      "RoleArn": "{% $states.input.RoleArn %}"
+                  },
+                  "Next": "EndState"
+              },
+              "EndState": {
+                  "Type": "Task",
+                  "Resource": "Lambda",
+                  "End": true
+              }
+          }
+      }
+      """
+    And the resource "Lambda" will be called with any parameters using role "arn:aws:iam::123456789012:role/MyRole" and return:
+      """
+      {
+      }
+      """
+    And the current state data is:
+      """
+      {
+          "RoleArn": "arn:aws:iam::123456789012:role/MyRole"
+      }
+      """
+    When the state machine executes
+    Then the next state is "EndState"

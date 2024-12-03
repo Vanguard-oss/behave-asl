@@ -11,6 +11,7 @@ from behaveasl.models.choice import create_choice
 from behaveasl.models.exceptions import StatesCompileException
 from behaveasl.models.retry import Retry
 from behaveasl.models.state_phases import (
+    ArgumentsPhase,
     AssignPhase,
     InputPathPhase,
     OutputPathPhase,
@@ -90,7 +91,15 @@ class TaskMockPhase(AbstractPhase):
 
         if "Credentials" in self._state_details:
             if "RoleArn" in self._state_details["Credentials"]:
-                role = self._state_details["Credentials"]["RoleArn"]
+                if self.is_using_jsonata():
+                    role = jsonata_eval.replace_jsonata(
+                        self._state_details["Credentials"]["RoleArn"],
+                        sr,
+                        execution.context,
+                        execution.get_current_variables(),
+                    )
+                else:
+                    role = self._state_details["Credentials"]["RoleArn"]
             elif "RoleArn.$" in self._state_details["Credentials"]:
                 role = replace_expression(
                     expr=self._state_details["Credentials"]["RoleArn.$"],
@@ -120,6 +129,9 @@ class TaskState(AbstractStateModel):
             self._phases.append(
                 ParametersPhase(state_details["Parameters"], state=self)
             )
+        elif "Arguments" in state_details:
+            self._phases.append(ArgumentsPhase(state_details["Arguments"], state=self))
+
         self._phases.append(TaskMockPhase(state_details=state_details, state=self))
         if "ResultSelector" in state_details:
             self._phases.append(
@@ -133,6 +145,7 @@ class TaskState(AbstractStateModel):
         self._phases.append(
             OutputPathPhase(state_details.get("OutputPath", "$"), state=self)
         )
+        self._phases.append(OutputPhase(state=self))
 
         self._next_state = state_details.get("Next", None)
         self._is_end = state_details.get("End", False)

@@ -12,7 +12,11 @@ def replace_jsonata(input: str, sr: StepResult, context: dict, variables: dict) 
 
     if input.startswith("{%") and input.endswith("%}"):
 
-        state_data = {"input": sr.state_input, "context": context}
+        state_data = {
+            "input": sr.state_input,
+            "context": context,
+            "result": sr.result_data,
+        }
 
         expr_str = input[2:-2].strip()
         expr = jsonata.Jsonata(expr_str)
@@ -34,7 +38,11 @@ def evaluate_jsonata(input, sr: StepResult, context: dict, variables: dict) -> s
         return input
     if input.startswith("{%") and input.endswith("%}"):
 
-        state_data = {"input": sr.state_input, "context": context}
+        state_data = {
+            "input": sr.state_input,
+            "context": context,
+            "result": sr.result_data,
+        }
 
         expr_str = input[2:-2].strip()
         expr = jsonata.Jsonata(expr_str)

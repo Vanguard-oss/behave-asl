@@ -179,26 +179,24 @@
 
 ### Task
 
-The Task state doesn't simulate the interaction with an external resource yet.  It
-is just a passthrough.
-
-| Field | Status |
-| ----- | ------ |
-| Type | Yes |
-| Comment | Yes |
-| InputPath | Yes|
-| OutputPath | Yes |
-| Output | No |
-| Next | Yes |
+| Field | Status | Notes |
+| ----- | ------ | ----- |
+| Arguments | Yes | |
+| Assign | No | |
+| Catch | Partial | JSONPath only |
+| Comment | Ignored | |
+| Credentials | Yes | |
 | End | Yes |
-| ResultPath | Yes |
+| InputPath | Yes|
+| Next | Yes |
+| Output | Yes |
+| OutputPath | Yes |
 | Parameters | Yes |
-| ResultSelector | Yes |
-| Retry | Yes |
-| Catch | Yes |
-| Credentials | Yes |
-| Assign | No |
 | QueryLanguage | Partial |
+| ResultPath | Yes |
+| ResultSelector | Yes |
+| Retry | Partial | JSONPath only |
+| Type | Yes | |
 
 ### Wait
 

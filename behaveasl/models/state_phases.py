@@ -142,6 +142,39 @@ class ParametersPhase(AbstractPhase):
         return phase_output
 
 
+class ArgumentsPhase(AbstractPhase):
+    def __init__(self, arguments, **kwargs):
+        super(ArgumentsPhase, self).__init__(**kwargs)
+        self._arguments = arguments
+        self._log = logging.getLogger("behaveasl.ArgumentsPhase")
+
+    def execute(self, state_input, phase_input, sr: StepResult, execution):
+
+        phase_output = {}
+        if self.is_using_jsonata():
+            phase_output = self._process_data(self._arguments, sr, execution)
+            sr.parameters = copy.deepcopy(phase_output)
+        else:
+            phase_output = phase_input
+
+        return phase_output
+
+    def _process_data(self, data, sr: StepResult, execution):
+        if isinstance(data, dict):
+            ret = {}
+            for k, v in data.items():
+                ret[k] = self._process_data(v, sr, execution)
+            return ret
+        elif isinstance(data, list):
+            return [self._process_data(v, sr, execution) for v in data]
+        elif isinstance(data, str):
+            return jsonata_eval.replace_jsonata(
+                data, sr, execution.context, execution.get_current_variables()
+            )
+        else:
+            return data
+
+
 class AssignPhase(AbstractPhase):
     def __init__(self, assign_input: dict = None, **kwargs):
         super(AssignPhase, self).__init__(**kwargs)
@@ -192,6 +225,7 @@ class OutputPhase(AbstractPhase):
     def execute(self, state_input, phase_input, sr: StepResult, execution):
         if "Output" in self.state.state_details:
             if self.is_using_jsonata():
+                sr.result_data = phase_input
                 phase_output = self._process_data(
                     self.state.state_details["Output"], sr, execution
                 )
