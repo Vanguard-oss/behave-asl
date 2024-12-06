@@ -2,6 +2,7 @@ import copy
 import datetime
 import logging
 
+from behaveasl import jsonata_eval
 from behaveasl.models.exceptions import (
     StatesCatchableException,
     StatesCompileException,
@@ -42,6 +43,7 @@ class Execution:
     def execute(self):
         """Execute a single step"""
         current_state_obj = self._state_machine.get_state(self._current_state)
+        self._current_state_obj = current_state_obj
         self._context_obj["State"]["Name"] = self._current_state
         self._context_obj["State"]["EnteredTime"] = datetime.datetime.now().isoformat()
 
@@ -56,6 +58,22 @@ class Execution:
                 self._current_state = self._last_step_result.next_state
                 self._current_state_data = self._last_step_result.result_data
                 self._context_obj["State"]["RetryCount"] = 0
+
+            self._state_fields = {}
+            for k, v in current_state_obj.state_details.items():
+                if (
+                    current_state_obj.is_using_jsonata()
+                    and k in current_state_obj.list_fields_that_can_be_transformed()
+                ):
+                    v = str(v)
+                    v = jsonata_eval.replace_jsonata(
+                        v,
+                        self._last_step_result,
+                        self._context_obj,
+                        self.get_current_variables(),
+                    )
+                self._state_fields[k] = v
+
         except StatesCatchableException as e:
             self._log.exception(
                 f"Error executing state {self._current_state}, error={e.error}, cause={e.cause}"
@@ -170,6 +188,9 @@ class Execution:
         """Set the current state data that will be the input of the next state"""
         self._current_state_data = data
 
+    def get_current_state_obj(self):
+        return self._current_state_obj
+
     def set_current_state_name(self, name: str):
         """Set the name of the current state of the execution"""
         self._current_state = name
@@ -182,6 +203,9 @@ class Execution:
 
     def set_retry_count(self, count: int):
         self._context_obj["State"]["RetryCount"] = count
+
+    def get_state_field(self, field):
+        return self._state_fields[field]
 
     @property
     def last_step_result(self) -> StepResult:

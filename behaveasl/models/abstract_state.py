@@ -19,6 +19,9 @@ class AbstractStateModel(ABC):
         """Execute the step and return the result"""
         raise NotImplementedError
 
+    def list_fields_that_can_be_transformed(self):
+        return []
+
     def _determine_query_language(self):
         if "QueryLanguage" in self._state_details:
             self.query_language = get_query_language(

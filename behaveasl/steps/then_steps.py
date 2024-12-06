@@ -252,3 +252,8 @@ def step_impl(context, path):
     jpexpr = jsonpath.get_instance(path)
     results = jpexpr.find(context.execution.last_step_result.assigned_variables)
     assert len(results) == 0
+
+
+@then('the states "{field}" field was "{value}"')
+def step_impl(context, field, value):
+    assert str(context.execution.get_state_field(field)) == str(value)

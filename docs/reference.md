@@ -1129,6 +1129,28 @@ Feature: Example feature
     Then the variable path "$.hello" matches "world"
 ```
 
+## Then the states "field" field was "value"
+
+Validate that a state's field was evaluated to a specific value.  If the state uses JSONata and
+the that fields supports using JSONata expressions, then it will be evaluated.
+
+**Parameters**
+
+- field - a field name
+- value - the value to check against
+
+**Examples**
+
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    When the state machine executes
+    Then the states "MaxConcurrency" field was "2"
+```
+
 ## Then the execution ended
 
 Validates that the execution has ended

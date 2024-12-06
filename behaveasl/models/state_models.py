@@ -14,12 +14,12 @@ from behaveasl.models.state_phases import (
     ArgumentsPhase,
     AssignPhase,
     InputPathPhase,
+    JsonataResolverPhase,
     OutputPathPhase,
     OutputPhase,
     ParametersPhase,
     ResultPathPhase,
     ResultSelectorPhase,
-    JsonataResolverPhase,
 )
 from behaveasl.models.step_result import StepResult
 
@@ -790,6 +790,9 @@ class MapState(AbstractStateModel):
             self._catch_list = []
             for c in self._catch:
                 self._catch_list.append(Catch(c))
+
+    def list_fields_that_can_be_transformed(self):
+        return ["MaxConcurrency"]
 
     def execute(self, state_input, execution):
         """The map state can be used to run a set of steps for each element of an input array"""
