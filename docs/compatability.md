@@ -97,32 +97,48 @@
 | Inline | Yes |
 | Distributed | No |
 
-
 | Field | Status |
 | ----- | ------ |
-| Type | Yes |
-| Comment | Yes |
-| InputPath | No|
-| OutputPath | No |
-| Output | No |
-| Next | No |
-| End | No |
-| ResultPath | No |
+| Assign | Yes |
+| Catch | No |
+| Comment | Ignored |
+| End | Yes |
+| InputPath | Yes|
+| ItemBatcher | No |
 | ItemProcessor | Yes |
 | ItemReader | No |
-| ItemsPath | No |
+| Items | Yes |
 | ItemSelector | Yes |
-| ItemBatcher | No |
+| ItemsPath | Yes |
+| Label | No |
 | MaxConcurrency | Yes |
+| Next | Yes |
+| Output | Yes |
+| OutputPath | Yes |
+| Parameters | Yes |
+| QueryLanguage | Partial |
+| ResultPath | Yes |
+| ResultSelector | Yes |
+| Retry | No |
 | ToleratedFailurePercentage | No |
 | ToleratedFailureCount | No |
-| Label | No |
-| Parameters | No |
-| ResultSelector | No |
-| Retry | No |
-| Catch | No |
-| Assign | No |
-| QueryLanguage | Partial |
+| Type | Yes |
+
+
+| Mode   | QueryLanguage | Processing    | Input     | Parameters   | Status |
+| ------ | ------------- | ------------- | --------- | ------------ | ------ |
+| Inline | JSONPath      | Iterator      | ItemsPath | None         | Yes    | 
+| Inline | JSONPath      | Iterator      | ItemsPath | Parameters   | Yes    | 
+| Inline | JSONPath      | Iterator      | ItemsPath | ItemSelector | Yes    | 
+| Inline | JSONPath      | ItemProcessor | ItemsPath | None         | Yes    | 
+| Inline | JSONPath      | ItemProcessor | ItemsPath | Parameters   | Yes    | 
+| Inline | JSONPath      | ItemProcessor | ItemsPath | ItemSelector | Yes    | 
+| Inline | JSONata       | Iterator      | Items     | None         | No     | 
+| Inline | JSONata       | Iterator      | Items     | Parameters   | No     | 
+| Inline | JSONata       | Iterator      | Items     | ItemSelector | No     | 
+| Inline | JSONata       | ItemProcessor | Items     | None         | Yes    | 
+| Inline | JSONata       | ItemProcessor | Items     | Parameters   | No     | 
+| Inline | JSONata       | ItemProcessor | Items     | ItemSelector | Yes    | 
 
 | Input Type | Status |
 | ---------- | ------ |

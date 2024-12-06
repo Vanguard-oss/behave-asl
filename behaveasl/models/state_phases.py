@@ -95,7 +95,7 @@ class ParametersPhase(AbstractPhase):
                 raise StatesCompileException(
                     "Parameters can only be used with JSONPath"
                 )
-        elif "ItemSelector" in self.state.state_details:
+        elif "ItemSelector" in self.state.state_details and self.is_using_jsonpath():
             phase_output = {}
             phase_output = self.parse_phase_output(
                 current_parameters=self._parameters,
@@ -113,6 +113,7 @@ class ParametersPhase(AbstractPhase):
     ):
         if phase_output is None:
             phase_output = {}
+
         for k, v in current_parameters.items():
             # If 'v' is a dictionary, recurse - else:
             if type(v) == dict:
@@ -143,6 +144,39 @@ class ParametersPhase(AbstractPhase):
                 f"ParametersPhase: Replaced '{phase_input}' with '{phase_output}', params='{self._parameters}'"
             )
         return phase_output
+
+
+class JsonataResolverPhase(AbstractPhase):
+    def __init__(self, data, **kwargs):
+        super(JsonataResolverPhase, self).__init__(**kwargs)
+        self._data = data
+        self._log = logging.getLogger("behaveasl.JsonataResolverPhase")
+
+    def execute(self, state_input, phase_input, sr: StepResult, execution):
+
+        phase_output = {}
+        if self.is_using_jsonata():
+            phase_output = self._process_data(self._data, sr, execution)
+            sr.parameters = copy.deepcopy(phase_output)
+        else:
+            phase_output = phase_input
+
+        return phase_output
+
+    def _process_data(self, data, sr: StepResult, execution):
+        if isinstance(data, dict):
+            ret = {}
+            for k, v in data.items():
+                ret[k] = self._process_data(v, sr, execution)
+            return ret
+        elif isinstance(data, list):
+            return [self._process_data(v, sr, execution) for v in data]
+        elif isinstance(data, str):
+            return jsonata_eval.replace_jsonata(
+                data, sr, execution.context, execution.get_current_variables()
+            )
+        else:
+            return data
 
 
 class ArgumentsPhase(AbstractPhase):

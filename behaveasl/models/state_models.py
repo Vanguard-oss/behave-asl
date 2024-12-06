@@ -19,6 +19,7 @@ from behaveasl.models.state_phases import (
     ParametersPhase,
     ResultPathPhase,
     ResultSelectorPhase,
+    JsonataResolverPhase,
 )
 from behaveasl.models.step_result import StepResult
 
@@ -650,7 +651,18 @@ class MapMockPhase(AbstractPhase):
         self._phase_input = phase_input
         self._sr = sr
         self._execution = execution
-        return list(map(self.execute_single, enumerate(phase_input)))
+
+        items = phase_input
+        if self.is_using_jsonpath():
+            items = ItemsPathPhase(self._state_details, state=self.state).execute(
+                state_input, phase_input, sr, execution
+            )
+        elif self.is_using_jsonata() and "Items" in self._state_details:
+            items = JsonataResolverPhase(
+                self._state_details.get("Items"), state=self.state
+            ).execute(state_input, phase_input, sr, execution)
+
+        return list(map(self.execute_single, enumerate(items)))
 
     def execute_single(self, input):
         # https://docs.aws.amazon.com/step-functions/latest/dg/input-output-contextobject.html#contextobject-map
@@ -658,24 +670,31 @@ class MapMockPhase(AbstractPhase):
         self._execution.context["Map"]["Item"]["Value"] = input[1]
         iteration_value = input[1]
 
-        if "Parameters" in self._state_details or "ItemSelector" in self._state_details:
-            inp = InputPathPhase(
-                self._state_details.get("InputPath", "$"), state=self.state
-            )
-            inp_phase_output = inp.execute(
-                self._state_input, self._state_input, self._sr, self._execution
-            )
+        item_input = []
+        if self.is_using_jsonata():
+            if "ItemSelector" in self._state_details:
+                param = ArgumentsPhase(
+                    self._state_details.get("ItemSelector"), state=self.state
+                )
+                iteration_value = param.execute(
+                    self._state_input, self._phase_input, self._sr, self._execution
+                )
+        elif self.is_using_jsonpath():
+            if (
+                "Parameters" in self._state_details
+                or "ItemSelector" in self._state_details
+            ):
 
-            param = ParametersPhase(
-                self._state_details.get(
-                    "ItemSelector", self._state_details.get("Parameters", {})
-                ),
-                state=self.state,
-            )
+                param = ParametersPhase(
+                    self._state_details.get(
+                        "ItemSelector", self._state_details.get("Parameters", {})
+                    ),
+                    state=self.state,
+                )
 
-            iteration_value = param.execute(
-                self._state_input, inp_phase_output, self._sr, self._execution
-            )
+                iteration_value = param.execute(
+                    self._state_input, self._phase_input, self._sr, self._execution
+                )
 
         if isinstance(iteration_value, dict):
             mock_value = json.dumps(iteration_value, sort_keys=True)
@@ -727,10 +746,16 @@ class MapState(AbstractStateModel):
                 raise StatesCompileException("An ItemProcessor field must be provided.")
 
         self._phases = []
-        self._phases.append(
-            InputPathPhase(state_details.get("InputPath", "$"), state=self)
-        )
-        self._phases.append(ItemsPathPhase(state_details, state=self))
+
+        if self.is_using_jsonpath():
+            self._phases.append(
+                InputPathPhase(state_details.get("InputPath", "$"), state=self)
+            )
+            # self._phases.append(ItemsPathPhase(state_details, state=self))
+        # elif self.is_using_jsonata():
+        #     if "Items" in state_details:
+        #         self._phases.append(JsonataResolverPhase(state_details.get("Items"), state=self))
+
         self._phases.append(MapMockPhase(state_name, state_details, state=self))
         if "ResultSelector" in state_details:
             self._phases.append(
@@ -738,12 +763,15 @@ class MapState(AbstractStateModel):
                     state_details.get("ResultSelector", "$"), state=self
                 )
             )
+        self._phases.append(AssignPhase(state_details.get("Assign", {}), state=self))
+
         self._phases.append(
             ResultPathPhase(state_details.get("ResultPath", "$"), state=self)
         )
         self._phases.append(
             OutputPathPhase(state_details.get("OutputPath", "$"), state=self)
         )
+        self._phases.append(OutputPhase(state=self))
 
         self._next_state = state_details.get("Next", None)
         self._is_end = state_details.get("End", False)
@@ -768,6 +796,7 @@ class MapState(AbstractStateModel):
         sr = MapStepResult()
 
         sr.max_concurrency = self._max_concurrency
+        sr.state_input = state_input
 
         current_data = copy.deepcopy(state_input)
 
