@@ -151,20 +151,20 @@
 
 | Field | Status |
 | ----- | ------ |
-| Type | Yes |
-| Comment | Yes |
-| InputPath | Yes|
-| OutputPath | Yes |
-| Output | No |
-| Next | Yes |
+| Assign | Yes |
+| Catch | No |
+| Comment | Ignored |
 | End | Yes |
-| ResultPath | Yes |
+| InputPath | Yes|
+| Next | Yes |
+| Output | Yes |
+| OutputPath | Yes |
 | Parameters | Yes |
+| QueryLanguage | Yes |
+| ResultPath | Yes |
 | ResultSelector | Yes |
 | Retry | No |
-| Catch | No |
-| Assign | No |
-| QueryLanguage | Partial |
+| Type | Yes |
 
 ### Succeed
 

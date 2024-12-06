@@ -58,10 +58,10 @@ class PassState(AbstractStateModel):
                 ParametersPhase(state_details["Parameters"], state=self)
             )
         self._phases.append(PassResultPhase(state_details, state=self))
+        self._phases.append(AssignPhase(state_details.get("Assign", {}), state=self))
         self._phases.append(
             ResultPathPhase(state_details.get("ResultPath", "$"), state=self)
         )
-        self._phases.append(AssignPhase(state_details.get("Assign", {}), state=self))
         self._phases.append(
             OutputPathPhase(state_details.get("OutputPath", "$"), state=self)
         )
@@ -563,10 +563,14 @@ class ParallelState(AbstractStateModel):
         self._phases.append(
             InputPathPhase(state_details.get("InputPath", "$"), state=self)
         )
+
         if "Parameters" in state_details:
             self._phases.append(
                 ParametersPhase(state_details["Parameters"], state=self)
             )
+        elif "Arguments" in state_details:
+            self._phases.append(ArgumentsPhase(state_details["Arguments"], state=self))
+
         self._phases.append(ParallelMockPhase(state_name, state_details, state=self))
         if "ResultSelector" in state_details:
             self._phases.append(
@@ -574,12 +578,14 @@ class ParallelState(AbstractStateModel):
                     state_details.get("ResultSelector", "$"), state=self
                 )
             )
+        self._phases.append(AssignPhase(state_details.get("Assign", {}), state=self))
         self._phases.append(
             ResultPathPhase(state_details.get("ResultPath", "$"), state=self)
         )
         self._phases.append(
             OutputPathPhase(state_details.get("OutputPath", "$"), state=self)
         )
+        self._phases.append(OutputPhase(state=self))
 
         self._next_state = state_details.get("Next", None)
         self._is_end = state_details.get("End", False)

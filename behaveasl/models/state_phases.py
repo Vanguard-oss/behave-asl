@@ -185,10 +185,15 @@ class AssignPhase(AbstractPhase):
         self._log = logging.getLogger("behaveasl.AssignPhase")
 
     def execute(self, state_input, phase_input, sr: StepResult, execution):
-        sr.assigned_variables = self._process_data(self._input, sr, execution)
+        if self.is_using_jsonata():
+            sr.result_data = phase_input
+
+        sr.assigned_variables = self._process_data(
+            self._input, phase_input, sr, execution
+        )
         return phase_input
 
-    def _process_data(self, data, sr: StepResult, execution):
+    def _process_data(self, data, input, sr: StepResult, execution):
         if isinstance(data, dict):
             ret = {}
             for k, v in data.items():
@@ -200,7 +205,7 @@ class AssignPhase(AbstractPhase):
                     if isinstance(v, str):
                         ret[k[0:-2]] = expr_eval.replace_expression(
                             expr=v,
-                            input=sr.parameters,
+                            input=input,
                             context=execution.context,
                             variables=execution.get_current_variables(),
                         )
@@ -209,10 +214,10 @@ class AssignPhase(AbstractPhase):
                             f"State [{self._state_name}] cannot assign a non-string value to a JSONPath variable"
                         )
                 else:
-                    ret[k] = self._process_data(v, sr, execution)
+                    ret[k] = self._process_data(v, input, sr, execution)
             return ret
         elif isinstance(data, list):
-            return [self._process_data(v, sr, execution) for v in data]
+            return [self._process_data(v, input, sr, execution) for v in data]
         elif isinstance(data, str):
             if self._query_language == QueryLanguage.JSONATA:
                 return jsonata_eval.replace_jsonata(

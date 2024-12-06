@@ -132,7 +132,7 @@ def replace_expression(*, expr: str, input, context: dict, variables: dict = Non
         input (dict): The input data
         context (dict): The context data from the state machine
         variables (dict): The variables
-    
+
     Returns:
         object: The result of the expression
     """

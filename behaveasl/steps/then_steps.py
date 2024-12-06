@@ -241,7 +241,7 @@ def step_impl(context, path, value):
     if len(results) < 1:
         LOG.critical(f"{path} not found")
     assert len(results) == 1
-    t = results[0].value
+    t = str(results[0].value)
     if t != value:
         LOG.critical(f"{path} is [{t}], not [{value}]")
     assert t == value
