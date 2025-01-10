@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from .query_language import QueryLanguage, get_query_language
-from .step_result import StepResult
+from behaveasl.models.query_language import QueryLanguage, get_query_language
+from behaveasl.models.step_result import StepResult
 
 
 class AbstractStateModel(ABC):

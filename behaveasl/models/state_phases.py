@@ -4,9 +4,8 @@ import logging
 from behaveasl import expr_eval, jsonata_eval, jsonpath
 from behaveasl.models.abstract_phase import AbstractPhase
 from behaveasl.models.exceptions import StatesCompileException
+from behaveasl.models.query_language import QueryLanguage
 from behaveasl.models.step_result import StepResult
-
-from .query_language import QueryLanguage
 
 
 class Path(AbstractPhase):

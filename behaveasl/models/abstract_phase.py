@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
 
 from behaveasl.models.abstract_state import AbstractStateModel
-
-from .query_language import QueryLanguage
-from .step_result import StepResult
+from behaveasl.models.query_language import QueryLanguage
+from behaveasl.models.step_result import StepResult
 
 
 class AbstractPhase(ABC):
