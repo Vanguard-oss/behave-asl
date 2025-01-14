@@ -28,6 +28,8 @@ External contributor signs contributor license agreement, and issues a pull requ
 ## How to Run Tests
 This library extends '''behave''', but it also uses '''behave''' as its testing framework.
 
-To run tests, set up a virtual environment and install the requirements. From the root directory, to run tests, you can use the following command:
+First set up a virtual environment and install the requirements.txt and and requirements.dev.txt. From the root directory, to run tests, you can use the following command:
 ```
+behave
 ```
+:)
