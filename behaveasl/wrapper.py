@@ -1,6 +1,5 @@
 import os
 import sys
-
 from behave import __version__ as behave_version
 from behave.configuration import ConfigError, Configuration
 from behave.runner import Runner

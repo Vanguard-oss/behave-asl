@@ -608,6 +608,68 @@ Feature: Example feature
 
 - This must be paired with a `Given the resource "name" will return` step
 
+## Given the current variables are
+
+Tell the execution environment what the current variables are.  The content should contain the combination
+of any global or local scoped variables.
+
+**Text**
+
+JSON that contains the variables that will get set
+
+**Examples**
+*Definition*
+
+```
+    {
+        "StartAt": "FirstState",
+        "States": {
+            "FirstState": {
+                "Type": "Task",
+                "Resource": "Lambda",
+                "Credentials": {
+                    "RoleArn": "arn:aws:iam::123456789012:role/MyRole"
+                },
+                "Parameters": {
+                    "Type": "Teapot"
+                },
+                "Assign": {
+                    "MyVar.$": "$.Liquid"
+                },
+                "Next": "SecondState"
+            },
+            "SecondState": {
+                "Type": "Pass",
+                "Parameters": {
+                    "Type": "$$MyVar"
+                },
+                "Next": "EndState"
+            },
+            "EndState": {
+                "Type": "Task",
+                "Resource": "Lambda",
+                "End": true
+            }
+        }
+    }
+```
+
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    And the state machine is current at the state "SecondState"
+    And the current variables are:
+    """
+    {
+        "MyVar": "TEST"
+    }
+    """
+    When the state machine executes
+```
+
 ______________________________________________________________________
 
 ## When the state machine executes
@@ -1037,6 +1099,56 @@ Feature: Example feature
     Given a state machine defined in "my-state-machine.asl"
     When the state machine executes
     Then the step result data path "$.hello" matches "world"
+```
+
+## Then the variable path "path" matches "value"
+
+Validate a field in the step's variable assignments
+
+**Parameters**
+
+- path - a JsonPath query to traverse into the variable data
+- value - the value to check against
+
+**Examples**
+*Assign data*
+
+```
+{
+    "hello": "world"
+}
+```
+
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    When the state machine executes
+    Then the variable path "$.hello" matches "world"
+```
+
+## Then the states "field" field was "value"
+
+Validate that a state's field was evaluated to a specific value.  If the state uses JSONata and
+the that fields supports using JSONata expressions, then it will be evaluated.
+
+**Parameters**
+
+- field - a field name
+- value - the value to check against
+
+**Examples**
+
+*Feature file*
+
+```
+Feature: Example feature
+  Scenario: Load a state machine from an asl file
+    Given a state machine defined in "my-state-machine.asl"
+    When the state machine executes
+    Then the states "MaxConcurrency" field was "2"
 ```
 
 ## Then the execution ended

@@ -1,6 +1,5 @@
 import json
 import logging
-
 from behave import then
 
 from behaveasl import assertions, jsonpath
@@ -31,12 +30,14 @@ def then_result_data_is_none(context, path):
     assert len(results) == 1
     assert results[0].value is None
 
+
 @then('the step result data path "{path}" is true')
 def then_result_data_is_none(context, path):
     jpexpr = jsonpath.get_instance(path)
     results = jpexpr.find(context.execution.last_step_result.result_data)
     assert len(results) == 1
     assert results[0].value == True
+
 
 @then('the step result data path "{path}" is false')
 def then_result_data_is_none(context, path):
@@ -193,6 +194,11 @@ def then_error_cause_contained(context, cause):
     assert cause in context.execution.last_step_result.cause
 
 
+@then("the state machine failed to compile")
+def then_execution_failed_to_compile(context):
+    assert not context.execution.last_step_result.compiled
+
+
 @then('the last state waited for "{num}" seconds')
 def then_waited_seconds(context, num):
     assert int(num) == context.execution.last_step_result.waited_seconds
@@ -202,15 +208,22 @@ def then_waited_seconds(context, num):
 def then_waited_until_timestamp(context, timestamp):
     assert timestamp == context.execution.last_step_result.waited_until_timestamp
 
-@then(u'the last state ran with a max of "{count}" concurrent executions')
+
+@then('the last state ran with a max of "{count}" concurrent executions')
 def step_impl(context, count):
     assert int(count) == int(context.execution.last_step_result.max_concurrency)
+
 
 @then(
     'the JSON output of "{state_name}" is'
 )  # this will precede an array/json response
 def then_output_is_json(context, state_name):
-    assert context.execution.last_step_result.result_data == json.loads(context.text)
+    expected = json.loads(context.text)
+    if context.execution.last_step_result.result_data != expected:
+        LOG.critical(
+            f"Expected: {expected}, Received: {context.execution.last_step_result.result_data}"
+        )
+    assert context.execution.last_step_result.result_data == expected
 
 
 @then('the sorted JSON output of "{state_name}" is')
@@ -219,3 +232,28 @@ def then_sorted_json(context, state_name):
         context.execution.last_step_result.result_data.sort()
         == json.loads(context.text).sort()
     )
+
+
+@then('the variable path "{path}" matches "{value}"')
+def step_impl(context, path, value):
+    jpexpr = jsonpath.get_instance(path)
+    results = jpexpr.find(context.execution.last_step_result.assigned_variables)
+    if len(results) < 1:
+        LOG.critical(f"{path} not found")
+    assert len(results) == 1
+    t = str(results[0].value)
+    if t != value:
+        LOG.critical(f"{path} is [{t}], not [{value}]")
+    assert t == value
+
+
+@then('the variable path "{path}" does not exist')
+def step_impl(context, path):
+    jpexpr = jsonpath.get_instance(path)
+    results = jpexpr.find(context.execution.last_step_result.assigned_variables)
+    assert len(results) == 0
+
+
+@then('the states "{field}" field was "{value}"')
+def step_impl(context, field, value):
+    assert str(context.execution.get_state_field(field)) == str(value)

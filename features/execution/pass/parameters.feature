@@ -235,3 +235,35 @@ Feature: The Pass type can have parameters set
     And the step result data path "$.output.OutputDetails.productDetails.color" matches "blue"
     And the step result data path "$.output.OutputDetails.productDetails.material" is a string
     And the step result data path "$.output.OutputDetails.productDetails.material" matches "cotton"
+
+  Scenario: The Pass type cannot use Parameters with JSONata
+    Given a state machine defined by:
+      """
+      {
+          "StartAt": "FirstState",
+          "QueryLanguage": "JSONata",
+          "States": {
+              "FirstState": {
+                  "Type": "Pass",
+                  "Next": "EndState",
+                  "Parameters": {
+                      "Static": "Value"
+                  },
+                  "ResultPath": "$.output"
+              },
+              "EndState": {
+                  "Type": "Pass",
+                  "Result": "end",
+                  "End": true
+              }
+          }
+      }
+      """
+    And the current state data is:
+      """
+      {
+          "Existing": "Value"
+      }
+      """
+    When the state machine executes
+    Then the state machine failed to compile

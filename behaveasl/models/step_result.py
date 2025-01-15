@@ -5,10 +5,14 @@ from dataclasses import dataclass
 class StepResult:
     """Data Class storing information about the result of a step execution"""
 
+    state_input: object = None
+    parameters: object = None
     next_state: str = None
     result_data: object = None
+    assigned_variables: object = None
     end_execution: bool = False
     failed: bool = False
+    compiled: bool = True
     cause: str = None
     error: str = None
     waited_seconds: int = None

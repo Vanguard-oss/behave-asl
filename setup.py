@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
-github_docs_base_url = "https://github.com/vanguard/behave-asl/blob/master/"
+github_docs_base_url = "https://github.com/vanguard-oss/behave-asl/blob/master/"
 # Have Pypi use FQDN to Github, but everywhere else use relative links
 long_description = re.compile(r"\(([a-zA-Z0-9_\-/]*.md)\)").sub(f"({github_docs_base_url}\\1)", long_description)
 
@@ -18,9 +18,6 @@ setup(
         'Natural Language :: English',
         'License :: OSI Approved :: Apache Software License',
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
@@ -34,6 +31,7 @@ setup(
         "diff_match_patch==20200713",
         "jsonpath_ng<2.0.0",
         "PyYAML>=5.4.1",
+        "jsonata-python",
     ],
     name="behave-asl",
     packages=find_packages(),
@@ -42,6 +40,6 @@ setup(
             "behave-asl = behaveasl.cli:main",
         ]
     },
-    url=("https://github.com/vanguard/behave-asl"),
-    version="1.1.0",
+    url=("https://github.com/vanguard-oss/behave-asl"),
+    version="1.2.0",
 )

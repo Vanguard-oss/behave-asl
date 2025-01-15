@@ -1,20 +1,37 @@
 # behave-asl Compatability
 
+| Status  | Description |
+| ------- | ----------- |
+| Yes     | Fully Supported |
+| No      | Not Supported |
+| Ignored | Value can be set, but it not actually used/validated |
+| Partial | The value will be used and validated in some situations |
+
+## Top Level Fields
+
+| Field | Status |
+| ----- | ------ |
+| Comment | Ignored |
+| QueryLanguage | Partial |
+| StartAt | Yes |
+| TimeoutSeconds | Ignored |
+| Version | Ignored |
+| States | Yes |
+
 ## States
 
 ### Choice
 
-| Field | Status |
-| ----- | ------ |
-| Type | Yes |
-| Comment | Yes |
-| InputPath | Yes|
-| Parameters | Yes |
-| OutputPath | Yes |
-| Choices | Yes |
-| Default | Yes |
+| Field | Status | Notes |
+| ----- | ------ | ----- |
+| Assign | No | |
+| Choices | Yes | |
+| Comment | Ignored | |
+| Default | Yes | |
+| QueryLanguage | Yes | |
+| Type | Yes | |
 
-#### Comparison Operators
+#### JSONPath Comparison Operators
 
 | Operator | Status |
 | -------- | ------ |
@@ -65,8 +82,13 @@
 
 | Field | Status |
 | ----- | ------ |
+| Cause | Yes |
+| CausePath | Yes |
+| Comment | Ignored |
+| Error | Yes |
+| ErrorPath | Yes |
+| QueryLanguage | Yes |
 | Type | Yes |
-| Comment | Yes |
 
 ### Map
 
@@ -75,29 +97,48 @@
 | Inline | Yes |
 | Distributed | No |
 
-
 | Field | Status |
 | ----- | ------ |
-| Type | Yes |
-| Comment | Yes |
-| InputPath | No|
-| OutputPath | No |
-| Next | No |
-| End | No |
-| ResultPath | No |
+| Assign | Yes |
+| Catch | No |
+| Comment | Ignored |
+| End | Yes |
+| InputPath | Yes|
+| ItemBatcher | No |
 | ItemProcessor | Yes |
 | ItemReader | No |
-| ItemsPath | No |
+| Items | Yes |
 | ItemSelector | Yes |
-| ItemBatcher | No |
+| ItemsPath | Yes |
+| Label | No |
 | MaxConcurrency | Yes |
+| Next | Yes |
+| Output | Yes |
+| OutputPath | Yes |
+| Parameters | Yes |
+| QueryLanguage | Partial |
+| ResultPath | Yes |
+| ResultSelector | Yes |
+| Retry | No |
 | ToleratedFailurePercentage | No |
 | ToleratedFailureCount | No |
-| Label | No |
-| Parameters | No |
-| ResultSelector | No |
-| Retry | No |
-| Catch | No |
+| Type | Yes |
+
+
+| Mode   | QueryLanguage | Processing    | Input     | Parameters   | Status |
+| ------ | ------------- | ------------- | --------- | ------------ | ------ |
+| Inline | JSONPath      | Iterator      | ItemsPath | None         | Yes    | 
+| Inline | JSONPath      | Iterator      | ItemsPath | Parameters   | Yes    | 
+| Inline | JSONPath      | Iterator      | ItemsPath | ItemSelector | Yes    | 
+| Inline | JSONPath      | ItemProcessor | ItemsPath | None         | Yes    | 
+| Inline | JSONPath      | ItemProcessor | ItemsPath | Parameters   | Yes    | 
+| Inline | JSONPath      | ItemProcessor | ItemsPath | ItemSelector | Yes    | 
+| Inline | JSONata       | Iterator      | Items     | None         | No     | 
+| Inline | JSONata       | Iterator      | Items     | Parameters   | No     | 
+| Inline | JSONata       | Iterator      | Items     | ItemSelector | No     | 
+| Inline | JSONata       | ItemProcessor | Items     | None         | Yes    | 
+| Inline | JSONata       | ItemProcessor | Items     | Parameters   | No     | 
+| Inline | JSONata       | ItemProcessor | Items     | ItemSelector | Yes    | 
 
 | Input Type | Status |
 | ---------- | ------ |
@@ -114,74 +155,102 @@
 | Comment | Yes |
 | InputPath | Yes |
 | OutputPath | Yes |
+| Output | Yes |
 | Next | Yes |
 | End | Yes |
 | ResultPath | Yes |
 | Parameters | Yes |
+| Assign | Yes |
+| QueryLanguage | Partial |
 
 ### Parallel
 
 | Field | Status |
 | ----- | ------ |
-| Type | Yes |
-| Comment | Yes |
-| InputPath | Yes|
-| OutputPath | Yes |
-| Next | Yes |
+| Assign | Yes |
+| Catch | No |
+| Comment | Ignored |
 | End | Yes |
-| ResultPath | Yes |
+| InputPath | Yes|
+| Next | Yes |
+| Output | Yes |
+| OutputPath | Yes |
 | Parameters | Yes |
+| QueryLanguage | Yes |
+| ResultPath | Yes |
 | ResultSelector | Yes |
 | Retry | No |
-| Catch | No |
+| Type | Yes |
 
 ### Succeed
 
 | Field | Status |
 | ----- | ------ |
-| Type | Yes |
-| Comment | Yes |
+| Comment | Ignored |
 | InputPath | Yes |
+| Output | Yes |
 | OutputPath | Yes |
+| QueryLanguage | Yes |
+| Type | Yes |
 
 ### Task
 
-The Task state doesn't simulate the interaction with an external resource yet.  It
-is just a passthrough.
-
-| Field | Status |
-| ----- | ------ |
-| Type | Yes |
-| Comment | Yes |
-| InputPath | Yes|
-| OutputPath | Yes |
-| Next | Yes |
+| Field | Status | Notes |
+| ----- | ------ | ----- |
+| Arguments | Yes | |
+| Assign | No | |
+| Catch | Partial | JSONPath only |
+| Comment | Ignored | |
+| Credentials | Yes | |
 | End | Yes |
-| ResultPath | Yes |
+| InputPath | Yes|
+| Next | Yes |
+| Output | Yes |
+| OutputPath | Yes |
 | Parameters | Yes |
+| QueryLanguage | Partial |
+| ResultPath | Yes |
 | ResultSelector | Yes |
-| Retry | Yes |
-| Catch | Yes |
-| Credentials | Yes |
+| Retry | Partial | JSONPath only |
+| Type | Yes | |
 
 ### Wait
 
 | Field | Status |
 | ----- | ------ |
+| Assign | Yes |
+| Comment | Ignored |
+| End | Yes |
+| InputPath | Yes |
+| Next | Yes |
+| Output | Yes |
+| OutputPath | Yes |
+| QueryLanguage | Yes |
+| Seconds | Yes |
+| SecondsPath | Yes |
+| Timestamp | Yes |
+| TimestampPath | Yes |
 | Type | Yes |
-| Comment | Yes |
-| InputPath | No|
-| OutputPath | No |
-| Next | No |
-| End | No |
 
 ## Reference Paths
+
+### JSONPath
 
 | Location | Status |
 | --- | --- |
 | State Input | Yes |
 | State Output | Yes |
 | Execution Input | Yes |
+| Context Object | Yes |
+| Variables | Yes |
+
+### JSONata
+
+| Location | Status |
+| --- | --- |
+| State Input | Yes |
+| Result | Yes |
+| Error | No |
 | Context Object | Yes |
 
 ## Intrinsics
@@ -215,3 +284,9 @@ is just a passthrough.
 | Boolean | Yes | |
 | Integer | Yes | |
 | Float | Yes | x.x format only |
+
+## Query Languages
+
+| Type | Status |
+| JSONPath | Yes |
+| JSONata | Partial |

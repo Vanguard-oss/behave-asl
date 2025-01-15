@@ -1,5 +1,4 @@
 import json
-
 from behave import given
 
 from behaveasl import parser
@@ -7,10 +6,10 @@ from behaveasl.models.execution import Execution
 from behaveasl.models.task_mock import (
     AnyParameters,
     AssertParameters,
+    AssertRole,
+    CombinationMock,
     ErrorResponse,
     StaticResponse,
-    CombinationMock,
-    AssertRole,
 )
 
 
@@ -152,3 +151,8 @@ def given_for_return(context, key, state):
     context.execution.resource_response_mocks.add_mock(
         key, StaticResponse(json.loads(context.text))
     )
+
+
+@given("the current variables are")
+def step_impl(context):
+    context.execution.set_current_variables(json.loads(context.text))

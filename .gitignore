@@ -2,6 +2,7 @@
 .vscode/
 behave_asl.egg-info/
 venv/
+.venv/
 **.ipynb
 .hypothesis/
 dist

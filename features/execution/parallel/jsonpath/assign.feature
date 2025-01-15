@@ -1,6 +1,6 @@
-Feature: The Parallel type can filter input by using Parameters
+Feature: The Parallel type can assign variables using JSONPath
 
-  Scenario: The Parallel type can end the execution
+  Scenario: The Parallel type can assign variables using JSONPath
     Given a state machine defined by:
       """
       {
@@ -9,10 +9,11 @@ Feature: The Parallel type can filter input by using Parameters
         "States": {
           "LookupCustomerInfo": {
             "Type": "Parallel",
-            "Parameters": {
-                "Key1.$": "$.Foo"
-            },
             "End": true,
+            "ResultPath": "$.Res",
+            "Assign": {
+                "res.$": "$"
+            },
             "Branches": [
               {
                 "StartAt": "LookupAddress",
@@ -56,14 +57,18 @@ Feature: The Parallel type can filter input by using Parameters
     When the state machine executes
     Then the execution ended
     And the execution succeeded
-    And the step result data path "$" is a list
     And the step result data is
       """
-      ["123 Unit Test Street", {"number": 8675309}]
+      {
+          "Foo": "Bar",
+          "Res": ["123 Unit Test Street", {"number": 8675309}]
+      }
       """
     And branches were called with
       """
       {
-          "Key1": "Bar"
+          "Foo": "Bar"
       }
       """
+    And the variable path "res[0]" matches "123 Unit Test Street"
+    And the variable path "res[1].number" matches "8675309"

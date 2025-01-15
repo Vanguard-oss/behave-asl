@@ -160,3 +160,35 @@ Feature: The Pass type can set result data
           "Size.$": "$$.Execution.Input.Size"
       }
       """
+
+  Scenario: Result cannot be used with JSONata
+    Given a state machine defined by:
+      """
+      {
+          "StartAt": "FirstState",
+          "QueryLanguage": "JSONata",
+          "States": {
+              "FirstState": {
+                  "Type": "Pass",
+                  "Next": "EndState",
+                  "Result": {
+                      "StringField": "ABC",
+                      "IntField": 123
+                  }
+              },
+              "EndState": {
+                  "Type": "Pass",
+                  "Result": "end",
+                  "End": true
+              }
+          }
+      }
+      """
+    And the current state data is:
+      """
+      {
+          "Existing": "Value"
+      }
+      """
+    When the state machine executes
+    Then the state machine failed to compile

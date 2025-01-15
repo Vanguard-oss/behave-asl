@@ -41,3 +41,36 @@ Feature: The Pass type can have a result path that selects the result
           }
       }
       """
+
+
+  Scenario: ResultPath cannot be used with JSONata
+    Given a state machine defined by:
+      """
+      {
+          "StartAt": "FirstState",
+          "QueryLanguage": "JSONata",
+          "States": {
+              "FirstState": {
+                  "Type": "Pass",
+                  "Next": "EndState",
+                  "InputPath": "$.Map",
+                  "ResultPath": "$.out"
+              },
+              "EndState": {
+                  "Type": "Pass",
+                  "Result": "end",
+                  "End": true
+              }
+          }
+      }
+      """
+    And the current state data is:
+      """
+      {
+          "Map": {
+              "Key": "Value"
+          }
+      }
+      """
+    When the state machine executes
+    Then the state machine failed to compile
